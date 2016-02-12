@@ -21,6 +21,6 @@ export function add (el, className) {
   }
 }
 
-export function remove (el, className) {
+export function rm (el, className) {
   el.className = el.className.replace(lookupClass(className), ' ').trim();
 }

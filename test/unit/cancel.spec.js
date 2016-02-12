@@ -21,87 +21,105 @@ describe('cancel does not throw when not dragging', function () {
   });
 });
 
-/*
-describe()
-test('when dragging and cancel gets called, nothing happens', function (t) {
-  var div = document.createElement('div');
-  var item = document.createElement('div');
-  var drake = dragula([div]);
-  div.appendChild(item);
-  document.body.appendChild(div);
-  drake.start(item);
-  drake.cancel();
-  t.equal(div.children.length, 1, 'nothing happens');
-  t.equal(drake.dragging, false, 'drake has stopped dragging');
-  t.end();
-});
+describe('cancelling a drag operation', function() {
+  beforeEach(function() {
+    this.div = document.createElement('div');
+    this.item = document.createElement('div');
+    this.drake = dragula([this.div]);
+    this.div.appendChild(this.item);
+    document.body.appendChild(this.div);
 
-test('when dragging and cancel gets called, cancel event is emitted', function (t) {
-  var div = document.createElement('div');
-  var item = document.createElement('div');
-  var drake = dragula([div]);
-  div.appendChild(item);
-  document.body.appendChild(div);
-  drake.start(item);
-  drake.on('cancel', cancel);
-  drake.on('dragend', dragend);
-  drake.cancel();
-  t.plan(3);
-  t.end();
-  function dragend () {
-    t.pass('dragend got called');
-  }
-  function cancel (target, container) {
-    t.equal(target, item, 'cancel was invoked with item');
-    t.equal(container, div, 'cancel was invoked with container');
-  }
-});
+    this.targetParam;
+    this.containerParam;
+    this.sourceParam;
 
-test('when dragging a copy and cancel gets called, default does not revert', function (t) {
-  var div = document.createElement('div');
-  var div2 = document.createElement('div');
-  var item = document.createElement('div');
-  var drake = dragula([div, div2]);
-  div.appendChild(item);
-  document.body.appendChild(div);
-  document.body.appendChild(div2);
-  drake.start(item);
-  div2.appendChild(item);
-  drake.on('drop', drop);
-  drake.on('dragend', dragend);
-  drake.cancel();
-  t.plan(4);
-  t.end();
-  function dragend () {
-    t.pass('dragend got called');
-  }
-  function drop (target, parent, source) {
-    t.equal(target, item, 'drop was invoked with item');
-    t.equal(parent, div2, 'drop was invoked with final container');
-    t.equal(source, div, 'drop was invoked with source container');
-  }
-});
+    this.dragendCalled = false;
+    this.onDragend = () => {
+      this.dragendCalled = true;
+    };
+    this.drake.on('dragend', this.onDragend);
 
-test('when dragging a copy and cancel gets called, revert is executed', function (t) {
-  var div = document.createElement('div');
-  var div2 = document.createElement('div');
-  var item = document.createElement('div');
-  var drake = dragula([div, div2]);
-  div.appendChild(item);
-  document.body.appendChild(div);
-  document.body.appendChild(div2);
-  drake.start(item);
-  div2.appendChild(item);
-  drake.on('cancel', cancel);
-  drake.on('dragend', dragend);
-  drake.cancel(true);
-  t.plan(3);
-  t.end();
-  function dragend () {
-    t.pass('dragend got called');
-  }
-  function cancel (target, container) {
-    t.equal(target, item, 'cancel was invoked with item');
-    t.equal(container, div, 'cancel was invoked with container');
-  }
-});*/
+    this.onCancel = (target, container, source) => {
+      this.targetParam = target;
+      this.containerParam = container;
+      this.sourceParam = source;
+    };
+    this.drake.on('cancel', this.onCancel);
+  });
+
+  it('should leave the DOM the same', function() {
+    //arrange
+    this.drake.start(this.item);
+
+    //act
+    this.drake.cancel();
+
+    //assert
+    expect(this.div.children.length).toBe(1);
+    expect(this.drake.dragging).toBeFalsy();
+  });
+
+  it('should emit the cancel event', function() {
+    //arrange
+    this.drake.start(this.item);
+
+    //act
+    this.drake.cancel();
+
+    //assert
+    expect(this.targetParam).toBe(this.item);
+    expect(this.containerParam).toBe(this.div);
+    expect(this.dragendCalled).toBeTruthy();
+  });
+
+  it('should not revert by default', function() {
+    //arrange
+    let div2 = document.createElement('div');
+    let drake = dragula([this.div, div2]);
+    this.div.appendChild(this.item);
+    document.body.appendChild(this.div);
+    document.body.appendChild(div2);
+    drake.start(this.item);
+    div2.appendChild(this.item);
+    let targetParam;
+    let parentParam;
+    let sourceParam;
+
+
+    drake.on('drop', (target, parent, source) => {
+      targetParam = target;
+      parentParam = parent;
+      sourceParam = source;
+    });
+    drake.on('dragend', this.onDragend);
+
+    //act
+    drake.cancel();
+
+    //assert
+    expect(this.dragendCalled).toBeTruthy();
+    expect(targetParam).toBe(this.item);
+    expect(parentParam).toBe(div2);
+    expect(sourceParam).toBe(this.div);
+  });
+
+  it('should revert when dragging a copy', function() {
+    //arrange
+    var div2 = document.createElement('div');
+    var drake = dragula([this.div, div2]);
+    document.body.appendChild(this.div);
+    document.body.appendChild(div2);
+    drake.start(this.item);
+    div2.appendChild(this.item);
+    drake.on('cancel', this.onCancel);
+    drake.on('dragend', this.onDragend);
+
+    //act
+    drake.cancel(true);
+
+    //assert
+    expect(this.dragendCalled).toBeTruthy();
+    expect(this.targetParam).toBe(this.item);
+    expect(this.containerParam).toBe(this.div);
+  });
+});

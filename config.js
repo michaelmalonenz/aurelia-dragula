@@ -4,7 +4,11 @@ System.config({
   babelOptions: {
     "optional": [
       "runtime",
-      "optimisation.modules.system"
+      "optimisation.modules.system",
+      "es7.decorators",
+      "es7.classProperties",
+      "es7.asyncFunctions",
+      "es7.functionBind"
     ]
   },
   paths: {
@@ -16,7 +20,7 @@ System.config({
     "babel": "npm:babel-core@5.8.35",
     "babel-runtime": "npm:babel-runtime@5.8.35",
     "contra": "npm:contra@1.9.1",
-    "core-js": "npm:core-js@1.2.6",
+    "core-js": "npm:core-js@2.1.0",
     "crossvent": "npm:crossvent@1.5.4",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
@@ -40,7 +44,7 @@ System.config({
       "atoa": "npm:atoa@1.0.0",
       "ticky": "npm:ticky@1.0.0"
     },
-    "npm:core-js@1.2.6": {
+    "npm:core-js@2.1.0": {
       "fs": "github:jspm/nodelibs-fs@0.1.2",
       "path": "github:jspm/nodelibs-path@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2",
