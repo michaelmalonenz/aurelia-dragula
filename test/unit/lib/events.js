@@ -1,6 +1,6 @@
-export function raise (el, type, options) {
-  var o = options || {};
-  var e = document.createEvent('Event');
+export function raise(el, type, options) {
+  let o = options || {};
+  let e = document.createEvent('Event');
   e.initEvent(type, true, true);
   Object.keys(o).forEach(apply);
   el.dispatchEvent(e);
