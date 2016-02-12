@@ -5,3 +5,4 @@ bower_components
 .DS_STORE
 build/reports
 *.sublime-project
+aurelia-dragula.sublime-workspace
