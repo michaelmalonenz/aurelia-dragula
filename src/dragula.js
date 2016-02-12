@@ -529,8 +529,8 @@ function getOffset (el) {
 }
 
 function getScroll (scrollProp, offsetProp) {
-  if (typeof global[offsetProp] !== 'undefined') {
-    return global[offsetProp];
+  if (typeof window[offsetProp] !== 'undefined') {
+    return window[offsetProp];
   }
   if (documentElement.clientHeight) {
     return documentElement[scrollProp];
