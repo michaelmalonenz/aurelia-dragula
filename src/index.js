@@ -1,8 +1,9 @@
 import {Options, GLOBAL_OPTIONS} from './aurelia/options';
 
-export function configure(config, callback) {
-  config.globalResources(['./dragula.js', './aurelia/options']);
+import {dragula} from './dragula';
+export {dragula};
 
+export function configure(config, callback) {
   let defaults = new Options();
   config.container.registerInstance(GLOBAL_OPTIONS, defaults);
 
