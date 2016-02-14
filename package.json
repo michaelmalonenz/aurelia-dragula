@@ -52,6 +52,7 @@
       "dist": "dist/amd"
     },
     "dependencies": {
+      "aurelia-dependency-injection": "^1.0.0-beta.1.1.3",
       "contra": "^1.9.1",
       "crossvent": "^1.5.4"
     },

@@ -17,6 +17,7 @@ System.config({
   },
 
   map: {
+    "aurelia-dependency-injection": "npm:aurelia-dependency-injection@1.0.0-beta.1.1.3",
     "babel": "npm:babel-core@5.8.35",
     "babel-runtime": "npm:babel-runtime@5.8.35",
     "contra": "npm:contra@1.9.1",
@@ -36,6 +37,16 @@ System.config({
     },
     "npm:assert@1.3.0": {
       "util": "npm:util@0.10.3"
+    },
+    "npm:aurelia-dependency-injection@1.0.0-beta.1.1.3": {
+      "aurelia-logging": "npm:aurelia-logging@1.0.0-beta.1.1.1",
+      "aurelia-metadata": "npm:aurelia-metadata@1.0.0-beta.1.1.4",
+      "aurelia-pal": "npm:aurelia-pal@1.0.0-beta.1.1.1",
+      "core-js": "npm:core-js@2.1.0"
+    },
+    "npm:aurelia-metadata@1.0.0-beta.1.1.4": {
+      "aurelia-pal": "npm:aurelia-pal@1.0.0-beta.1.1.1",
+      "core-js": "npm:core-js@2.1.0"
     },
     "npm:babel-runtime@5.8.35": {
       "process": "github:jspm/nodelibs-process@0.1.2"
