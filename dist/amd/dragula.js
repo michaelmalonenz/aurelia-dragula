@@ -228,7 +228,8 @@ define(['exports', 'contra', 'crossvent', './classes'], function (exports, _cont
 
       _source = context.source;
       _item = context.item;
-      _initialSibling = _currentSibling = nextEl(context.item);
+      _initialSibling = context.item.nextElement;
+      _currentSibling = nextEl(context.item);
 
       drake.dragging = true;
       drake.emit('drag', _item, _source);
