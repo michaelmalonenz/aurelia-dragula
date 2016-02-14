@@ -1,8 +1,22 @@
 'use strict';
 
-var emitter = require('contra/emitter');
-var crossvent = require('crossvent');
-var classes = require('./classes');
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports.dragula = dragula;
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _contra = require('contra');
+
+var _crossvent = require('crossvent');
+
+var crossvent = _interopRequireWildcard(_crossvent);
+
+var _classes = require('./classes');
+
+var classes = _interopRequireWildcard(_classes);
+
 var doc = document;
 var documentElement = doc.documentElement;
 
@@ -64,7 +78,7 @@ function dragula(initialContainers, options) {
     o.mirrorContainer = doc.body;
   }
 
-  var drake = emitter({
+  var drake = (0, _contra.emitter)({
     containers: o.containers,
     start: manualStart,
     end: end,
@@ -536,9 +550,9 @@ function touchy(el, op, type, fn) {
     mousedown: 'MSPointerDown',
     mousemove: 'MSPointerMove'
   };
-  if (global.navigator.pointerEnabled) {
+  if (window.navigator.pointerEnabled) {
     crossvent[op](el, pointers[type], fn);
-  } else if (global.navigator.msPointerEnabled) {
+  } else if (window.navigator.msPointerEnabled) {
     crossvent[op](el, microsoft[type], fn);
   } else {
     crossvent[op](el, touch[type], fn);
@@ -571,8 +585,8 @@ function getOffset(el) {
 }
 
 function getScroll(scrollProp, offsetProp) {
-  if (typeof global[offsetProp] !== 'undefined') {
-    return global[offsetProp];
+  if (typeof window[offsetProp] !== 'undefined') {
+    return window[offsetProp];
   }
   if (documentElement.clientHeight) {
     return documentElement[scrollProp];
@@ -660,5 +674,3 @@ function getCoord(coord, e) {
   }
   return host[coord];
 }
-
-module.exports = dragula;

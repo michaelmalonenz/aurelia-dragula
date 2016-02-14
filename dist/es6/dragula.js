@@ -1,12 +1,12 @@
-'use strict';
+import {emitter} from 'contra';
+import * as crossvent from 'crossvent';
 
-var emitter = require('contra/emitter');
-var crossvent = require('crossvent');
-var classes = require('./classes');
+import * as classes from './classes';
+
 var doc = document;
 var documentElement = doc.documentElement;
 
-function dragula (initialContainers, options) {
+export function dragula(initialContainers, options) {
   var len = arguments.length;
   if (len === 1 && Array.isArray(initialContainers) === false) {
     options = initialContainers;
@@ -500,9 +500,9 @@ function touchy (el, op, type, fn) {
     mousedown: 'MSPointerDown',
     mousemove: 'MSPointerMove'
   };
-  if (global.navigator.pointerEnabled) {
+  if (window.navigator.pointerEnabled) {
     crossvent[op](el, pointers[type], fn);
-  } else if (global.navigator.msPointerEnabled) {
+  } else if (window.navigator.msPointerEnabled) {
     crossvent[op](el, microsoft[type], fn);
   } else {
     crossvent[op](el, touch[type], fn);
@@ -529,8 +529,8 @@ function getOffset (el) {
 }
 
 function getScroll (scrollProp, offsetProp) {
-  if (typeof global[offsetProp] !== 'undefined') {
-    return global[offsetProp];
+  if (typeof window[offsetProp] !== 'undefined') {
+    return window[offsetProp];
   }
   if (documentElement.clientHeight) {
     return documentElement[scrollProp];
@@ -597,4 +597,3 @@ function getCoord (coord, e) {
   return host[coord];
 }
 
-module.exports = dragula;

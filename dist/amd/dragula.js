@@ -1,9 +1,11 @@
-define(['exports'], function (exports) {
+define(['exports', 'contra', 'crossvent', './classes'], function (exports, _contra, _crossvent, _classes) {
   'use strict';
 
-  var emitter = require('contra/emitter');
-  var crossvent = require('crossvent');
-  var classes = require('./classes');
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  exports.dragula = dragula;
+
   var doc = document;
   var documentElement = doc.documentElement;
 
@@ -65,7 +67,7 @@ define(['exports'], function (exports) {
       o.mirrorContainer = doc.body;
     }
 
-    var drake = emitter({
+    var drake = (0, _contra.emitter)({
       containers: o.containers,
       start: manualStart,
       end: end,
@@ -100,8 +102,8 @@ define(['exports'], function (exports) {
 
     function movements(remove) {
       var op = remove ? 'remove' : 'add';
-      crossvent[op](documentElement, 'selectstart', preventGrabbed);
-      crossvent[op](documentElement, 'click', preventGrabbed);
+      _crossvent[op](documentElement, 'selectstart', preventGrabbed);
+      _crossvent[op](documentElement, 'click', preventGrabbed);
     }
 
     function destroy() {
@@ -170,7 +172,7 @@ define(['exports'], function (exports) {
       _offsetX = getCoord('pageX', e) - offset.left;
       _offsetY = getCoord('pageY', e) - offset.top;
 
-      classes.add(_copy || _item, 'gu-transit');
+      _classes.add(_copy || _item, 'gu-transit');
       renderMirrorImage();
       drag(e);
     }
@@ -323,7 +325,7 @@ define(['exports'], function (exports) {
       ungrab();
       removeMirrorImage();
       if (item) {
-        classes.rm(item, 'gu-transit');
+        _classes.rm(item, 'gu-transit');
       }
       if (_renderTimer) {
         clearTimeout(_renderTimer);
@@ -435,12 +437,12 @@ define(['exports'], function (exports) {
     }
 
     function spillOver(el) {
-      classes.rm(el, 'gu-hide');
+      _classes.rm(el, 'gu-hide');
     }
 
     function spillOut(el) {
       if (drake.dragging) {
-        classes.add(el, 'gu-hide');
+        _classes.add(el, 'gu-hide');
       }
     }
 
@@ -452,17 +454,17 @@ define(['exports'], function (exports) {
       _mirror = _item.cloneNode(true);
       _mirror.style.width = getRectWidth(rect) + 'px';
       _mirror.style.height = getRectHeight(rect) + 'px';
-      classes.rm(_mirror, 'gu-transit');
-      classes.add(_mirror, 'gu-mirror');
+      _classes.rm(_mirror, 'gu-transit');
+      _classes.add(_mirror, 'gu-mirror');
       o.mirrorContainer.appendChild(_mirror);
       touchy(documentElement, 'add', 'mousemove', drag);
-      classes.add(o.mirrorContainer, 'gu-unselectable');
+      _classes.add(o.mirrorContainer, 'gu-unselectable');
       drake.emit('cloned', _mirror, _item, 'mirror');
     }
 
     function removeMirrorImage() {
       if (_mirror) {
-        classes.rm(o.mirrorContainer, 'gu-unselectable');
+        _classes.rm(o.mirrorContainer, 'gu-unselectable');
         touchy(documentElement, 'remove', 'mousemove', drag);
         getParent(_mirror).removeChild(_mirror);
         _mirror = null;
@@ -537,13 +539,13 @@ define(['exports'], function (exports) {
       mousedown: 'MSPointerDown',
       mousemove: 'MSPointerMove'
     };
-    if (global.navigator.pointerEnabled) {
-      crossvent[op](el, pointers[type], fn);
-    } else if (global.navigator.msPointerEnabled) {
-      crossvent[op](el, microsoft[type], fn);
+    if (window.navigator.pointerEnabled) {
+      _crossvent[op](el, pointers[type], fn);
+    } else if (window.navigator.msPointerEnabled) {
+      _crossvent[op](el, microsoft[type], fn);
     } else {
-      crossvent[op](el, touch[type], fn);
-      crossvent[op](el, type, fn);
+      _crossvent[op](el, touch[type], fn);
+      _crossvent[op](el, type, fn);
     }
   }
 
@@ -572,8 +574,8 @@ define(['exports'], function (exports) {
   }
 
   function getScroll(scrollProp, offsetProp) {
-    if (typeof global[offsetProp] !== 'undefined') {
-      return global[offsetProp];
+    if (typeof window[offsetProp] !== 'undefined') {
+      return window[offsetProp];
     }
     if (documentElement.clientHeight) {
       return documentElement[scrollProp];
@@ -661,6 +663,4 @@ define(['exports'], function (exports) {
     }
     return host[coord];
   }
-
-  module.exports = dragula;
 });

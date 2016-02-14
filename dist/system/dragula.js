@@ -1,7 +1,9 @@
-System.register([], function (_export) {
+System.register(['contra', 'crossvent', './classes'], function (_export) {
   'use strict';
 
   var emitter, crossvent, classes, doc, documentElement;
+
+  _export('dragula', dragula);
 
   function dragula(initialContainers, options) {
     var len = arguments.length;
@@ -533,9 +535,9 @@ System.register([], function (_export) {
       mousedown: 'MSPointerDown',
       mousemove: 'MSPointerMove'
     };
-    if (global.navigator.pointerEnabled) {
+    if (window.navigator.pointerEnabled) {
       crossvent[op](el, pointers[type], fn);
-    } else if (global.navigator.msPointerEnabled) {
+    } else if (window.navigator.msPointerEnabled) {
       crossvent[op](el, microsoft[type], fn);
     } else {
       crossvent[op](el, touch[type], fn);
@@ -568,8 +570,8 @@ System.register([], function (_export) {
   }
 
   function getScroll(scrollProp, offsetProp) {
-    if (typeof global[offsetProp] !== 'undefined') {
-      return global[offsetProp];
+    if (typeof window[offsetProp] !== 'undefined') {
+      return window[offsetProp];
     }
     if (documentElement.clientHeight) {
       return documentElement[scrollProp];
@@ -657,16 +659,17 @@ System.register([], function (_export) {
     }
     return host[coord];
   }
-
   return {
-    setters: [],
+    setters: [function (_contra) {
+      emitter = _contra.emitter;
+    }, function (_crossvent) {
+      crossvent = _crossvent;
+    }, function (_classes) {
+      classes = _classes;
+    }],
     execute: function () {
-      emitter = require('contra/emitter');
-      crossvent = require('crossvent');
-      classes = require('./classes');
       doc = document;
       documentElement = doc.documentElement;
-      module.exports = dragula;
     }
   };
 });
