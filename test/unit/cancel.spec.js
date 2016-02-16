@@ -77,19 +77,15 @@ describe('cancelling a drag operation', function() {
     let div2 = document.createElement('div');
     let drake = dragula([this.div, div2]);
     this.div.appendChild(this.item);
-    document.body.appendChild(this.div);
     document.body.appendChild(div2);
+
     drake.start(this.item);
     div2.appendChild(this.item);
-    let targetParam;
-    let parentParam;
-    let sourceParam;
-
 
     drake.on('drop', (target, parent, source) => {
-      targetParam = target;
-      parentParam = parent;
-      sourceParam = source;
+      expect(target).toBe(this.item);
+      expect(parent).toBe(div2);
+      expect(source).toBe(this.div);
     });
     drake.on('dragend', this.onDragend);
 
@@ -98,9 +94,6 @@ describe('cancelling a drag operation', function() {
 
     //assert
     expect(this.dragendCalled).toBeTruthy();
-    expect(targetParam).toBe(this.item);
-    expect(parentParam).toBe(div2);
-    expect(sourceParam).toBe(this.div);
   });
 
   it('should revert when dragging a copy', function() {
@@ -121,5 +114,24 @@ describe('cancelling a drag operation', function() {
     expect(this.dragendCalled).toBeTruthy();
     expect(this.targetParam).toBe(this.item);
     expect(this.containerParam).toBe(this.div);
+  });
+
+  it('returns the item to original position, including comment nodes', function() {
+    //arrange
+    let siblingInnerHtml = '<!--<view>--><div class="testDiv"></div><!--</view>-->'
+    let sibling = document.createElement('div');
+    sibling.innerHTML = siblingInnerHtml;
+    let drake = dragula();
+    document.body.appendChild(sibling);
+    let item = sibling.querySelector('.testDiv');
+    expect(item).not.toBeNull();
+
+    //act
+    drake.start(item);
+    drake.cancel();
+    
+    //assert
+    expect(sibling.innerHTML).toBe(siblingInnerHtml, 'nothing happens');
+    expect(drake.dragging).toBeFalsy('drake has stopped dragging');
   });
 });
