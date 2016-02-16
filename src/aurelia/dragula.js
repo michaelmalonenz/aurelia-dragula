@@ -67,8 +67,53 @@ export class Dragula {
   //events
   _events (remove) {
     let op = remove ? 'remove' : 'add';
-    touchy(documentElement, op, 'mousedown', grab);
-    touchy(documentElement, op, 'mouseup', release);
+    touchy(document.documentElement, op, 'mousedown', ::this._grab);
+    touchy(document.documentElement, op, 'mouseup', ::this._release);
+  }
+
+  //grab
+  _grab(e) {
+    this._moveX = e.clientX;
+    this._moveY = e.clientY;
+
+    let ignore = whichMouseButton(e) !== 1 || e.metaKey || e.ctrlKey;
+    if (ignore) {
+      return; // we only care about honest-to-god left clicks and touch events
+    }
+    let item = e.target;
+    let context = this._canStart(item);
+    if (!context) {
+      return;
+    }
+    this._grabbed = context;
+    eventualMovements();
+    if (e.type === 'mousedown') {
+      if (isInput(item)) { // see also: https://github.com/bevacqua/dragula/issues/208
+        item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
+      } else {
+        e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
+      }
+    }
+  }
+
+  _release(e) {
+    this._ungrab();
+
+    if (!this.drake.dragging) {
+      return;
+    }
+    let item = this._copy || this._item;
+    let clientX = getCoord('clientX', e);
+    let clientY = getCoord('clientY', e);
+    let elementBehindCursor = getElementBehindPoint(this._mirror, clientX, clientY);
+    let dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
+    if (dropTarget && ((this._copy && this.options.copySortSource) || (!this._copy || dropTarget !== this._source))) {
+      this._drop(item, dropTarget);
+    } else if (this.options.removeOnSpill) {
+      this._remove();
+    } else {
+      this._cancel();
+    }
   }
 
   //start
@@ -144,4 +189,13 @@ export class Dragula {
   //getParent
   _getParent(el) { return el.parentNode === document ? null : el.parentNode; }
 
+  //isInput
+  _isInput(el) { return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || this._isEditable(el); }
+  //isEditable
+  _isEditable(el) {
+    if (!el) { return false; } // no parents were editable
+    if (el.contentEditable === 'false') { return false; } // stop the lookup
+    if (el.contentEditable === 'true') { return true; } // found a contentEditable element in the chain
+    return this._isEditable(this._getParent(el)); // contentEditable is set to 'inherit'
+  }
 }
