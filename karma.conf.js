@@ -39,8 +39,12 @@ module.exports = function(config) {
         modules: 'system',
         moduleIds: false,
         optional: [
-          "es7.decorators",
-          "es7.classProperties"
+            "runtime",
+            "optimisation.modules.system",
+            "es7.decorators",
+            "es7.classProperties",
+            "es7.asyncFunctions",
+            "es7.functionBind"
         ]
       }
     },

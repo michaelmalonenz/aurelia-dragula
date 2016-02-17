@@ -1,23 +1,22 @@
-import {Container} from 'aurelia-dependency-injection';
+import {inject} from 'aurelia-dependency-injection';
 import {touchy} from './touchy';
+import {GLOBAL_OPTIONS, Options} from './options';
+import {emitter} from 'contra';
 
+@inject(GLOBAL_OPTIONS)
 export class Dragula {
 
-  constructor(initialContainers, options) {
+  constructor(options) {
     let len = arguments.length;
-    if (len === 1 && Array.isArray(initialContainers) === false) {
-      options = initialContainers;
-      initialContainers = [];
-    }
-    this.options = Object.assign({}, Container.instance.get(GLOBAL_OPTIONS), options);
-    this.options.containers = initialContainers;
+    this.options = options || new Options();
+    this.options.containers = [];
     this.drake = emitter({
       containers: this.options.containers,
-      start: manualStart,
-      end: end,
-      cancel: cancel,
-      remove: remove,
-      destroy: destroy,
+      start: ::this.start,
+      end: ::this.end,
+      cancel: ::this.cancel,
+      remove: ::this.remove,
+      destroy: ::this.destroy,
       dragging: false
     });
 
@@ -44,6 +43,10 @@ export class Dragula {
    // return drake;
   }
 
+  on() {
+    this.drake.on(...arguments);
+  }
+
   get containers() {
     return this.options.containers;
   }
@@ -59,6 +62,82 @@ export class Dragula {
       this._start(context);
     }
   }
+
+  end () {
+    if (!drake.dragging) {
+      return;
+    }
+    let item = this._copy || this._item;
+    drop(item, this._getParent(item));
+  }
+
+  drop(item, target) {
+    let parent = this._getParent(item);
+    if (this._copy && this.options.copySortSource && target === this._source) {
+      parent.removeChild(_item);
+    }
+    if (this._isInitialPlacement(target)) {
+      this.drake.emit('cancel', item, this._source, this._source);
+    } else {
+      this.drake.emit('drop', item, target, this._source, this._currentSibling);
+    }
+    this._cleanup();
+  }
+
+  remove() {
+    if (!this.drake.dragging) {
+      return;
+    }
+    let item = this._copy || this._item;
+    let parent = this._getParent(item);
+    if (parent) {
+      parent.removeChild(item);
+    }
+    this.drake.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
+    this._cleanup();
+  }
+
+  cancel(revert) {
+    if (!this.drake.dragging) {
+      return;
+    }
+    let reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
+    let item = this._copy || this._item;
+    let parent = this._getParent(item);
+    if (parent === this._source && this._copy) {
+      parent.removeChild(this._copy);
+    }
+    let initial = this._isInitialPlacement(parent);
+    if (initial === false && !this._copy && reverts) {
+      this._source.insertBefore(item, this._initialSibling);
+    }
+    if (initial || reverts) {
+      this.drake.emit('cancel', item, this._source, this._source);
+    } else {
+      this.drake.emit('drop', item, parent, _source, _currentSibling);
+    }
+    this._cleanup();
+  }
+
+  //cleanup
+  _cleanup () {
+    let item = this._copy || this._item;
+    ungrab();
+    removeMirrorImage();
+    if (item) {
+      classes.rm(item, 'gu-transit');
+    }
+    if (this._renderTimer) {
+      clearTimeout(this._renderTimer);
+    }
+    this.drake.dragging = false;
+    if (this._lastDropTarget) {
+      this.drake.emit('out', item, this._lastDropTarget, this._source);
+    }
+    this.drake.emit('dragend', item);
+    this._source = this._item = this._copy = this._initialSibling = this._currentSibling = this._renderTimer = this._lastDropTarget = null;
+  }
+
     
   isContainer (el) {
     return this.drake.containers.indexOf(el) !== -1 || this.options.isContainer(el);
@@ -71,12 +150,19 @@ export class Dragula {
     touchy(document.documentElement, op, 'mouseup', ::this._release);
   }
 
+
+  //eventualMovements
+  _eventualMovements(remove) {
+    let op = remove ? 'remove' : 'add';
+    touchy(document.documentElement, op, 'mousemove', ::this._startBecauseMouseMoved);
+  }
+
   //grab
   _grab(e) {
     this._moveX = e.clientX;
     this._moveY = e.clientY;
 
-    let ignore = whichMouseButton(e) !== 1 || e.metaKey || e.ctrlKey;
+    let ignore = this._whichMouseButton(e) !== 1 || e.metaKey || e.ctrlKey;
     if (ignore) {
       return; // we only care about honest-to-god left clicks and touch events
     }
@@ -132,6 +218,42 @@ export class Dragula {
     this.drake.emit('drag', this._item, this._source);
   }
 
+  //startBecauseMouseMoved
+  _startBecauseMouseMoved (e) {
+    if (!_grabbed) {
+      return;
+    }
+    if (this._whichMouseButton(e) === 0) {
+      release({});
+      return; // when text is selected on an input and then dragged, mouseup doesn't fire. this is our only hope
+    }
+    // truthy check fixes #239, equality fixes #207
+    if (e.clientX !== void 0 && e.clientX === _moveX && e.clientY !== void 0 && e.clientY === _moveY) {
+      return;
+    }
+    if (this.options.ignoreInputTextSelection) {
+      let clientX = getCoord('clientX', e);
+      let clientY = getCoord('clientY', e);
+      let elementBehindCursor = document.elementFromPoint(clientX, clientY);
+      if (this._isInput(elementBehindCursor)) {
+        return;
+      }
+    }
+
+    let grabbed = this._grabbed; // call to end() unsets _grabbed
+    this._eventualMovements(true);
+    movements();
+    this.end();
+    this._start(grabbed);
+
+    let offset = getOffset(_item);
+    _offsetX = getCoord('pageX', e) - offset.left;
+    _offsetY = getCoord('pageY', e) - offset.top;
+
+    classes.add(_copy || _item, 'gu-transit');
+    renderMirrorImage();
+    drag(e);
+  }
   //isCopy
   _isCopy(item, container) {
     return typeof this.options.copy === 'boolean' ? this.options.copy : this.options.copy(item, container);
@@ -174,6 +296,11 @@ export class Dragula {
     };
   }
 
+  destroy () {
+    this._events(true);
+    this._release({});
+  }
+
   //nextEl
   _nextEl(el) {
     return el.nextElementSibling || manually();
@@ -184,6 +311,28 @@ export class Dragula {
       } while (sibling && sibling.nodeType !== 1);
       return sibling;
     }
+  }
+
+  //whichMouseButton
+  _whichMouseButton(e) {
+    if (e.touches !== void 0) { return e.touches.length; }
+    if (e.which !== void 0 && e.which !== 0) { return e.which; } // see https://github.com/bevacqua/dragula/issues/261
+    if (e.buttons !== void 0) { return e.buttons; }
+    let button = e.button;
+    if (button !== void 0) { // see https://github.com/jquery/jquery/blob/99e8ff1baa7ae341e94bb89c3e84570c7c3ad9ea/src/event.js#L573-L575
+      return button & 1 ? 1 : button & 2 ? 3 : (button & 4 ? 2 : 0);
+    }
+  }
+
+  //getElementBehindPoint
+  _getElementBehindPoint(point, x, y) {
+    let p = point || {};
+    let state = p.className;
+    let el;
+    p.className += ' gu-hide';
+    el = document.elementFromPoint(x, y);
+    p.className = state;
+    return el;
   }
 
   //getParent
