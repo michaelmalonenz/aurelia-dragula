@@ -208,8 +208,7 @@ export class Dragula {
 
     this._source = context.source;
     this._item = context.item;
-    this._initialSibling = context.item.nextElement;
-    this._currentSibling = Util.nextEl(context.item);
+    this._initialSibling = this._currentSibling = Util.nextEl(context.item);
 
     this.drake.dragging = true;
     this.drake.emit('drag', this._item, this._source);
