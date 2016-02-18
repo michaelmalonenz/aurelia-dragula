@@ -3,6 +3,9 @@ import {touchy} from './touchy';
 import {GLOBAL_OPTIONS, Options} from './options';
 import {Util} from './util';
 import {emitter} from 'contra';
+import * as crossvent from 'crossvent';
+import * as classes from '../classes';
+
 
 @inject(GLOBAL_OPTIONS)
 export class Dragula {
@@ -10,10 +13,9 @@ export class Dragula {
   constructor(options) {
     let len = arguments.length;
     this.options = options || new Options();
-    this.options.containers = [];
     this.drake = emitter({
       containers: this.options.containers,
-      start: ::this.start,
+      start: ::this.manualStart,
       end: ::this.end,
       cancel: ::this.cancel,
       remove: ::this.remove,
@@ -44,8 +46,8 @@ export class Dragula {
    // return drake;
   }
 
-  on() {
-    this.drake.on(...arguments);
+  on(eventName, callback) {
+    this.drake.on(eventName, callback);
   }
 
   get containers() {
@@ -76,8 +78,8 @@ export class Dragula {
   //movements
   _movements (remove) {
     let op = remove ? 'remove' : 'add';
-    crossvent[op](documentElement, 'selectstart', this._preventGrabbed); // IE8
-    crossvent[op](documentElement, 'click', this._preventGrabbed);
+    crossvent[op](document.documentElement, 'selectstart', this._preventGrabbed); // IE8
+    crossvent[op](document.documentElement, 'click', this._preventGrabbed);
   }
 
   destroy () {
@@ -143,7 +145,7 @@ export class Dragula {
     this._eventualMovements(true);
     this._movements();
     this.end();
-    this._start(grabbed);
+    this.start(grabbed);
 
     let offset = getOffset(_item);
     _offsetX = getCoord('pageX', e) - offset.left;
@@ -191,16 +193,14 @@ export class Dragula {
     };
   }
 
-  //manualStart
-  start(item) {
+  manualStart(item) {
     let context = this._canStart(item);
     if (context) {
-      this._start(context);
+      this.start(context);
     }
   }
 
-  //start
-  _start(context) {
+  start(context) {
     if (this._isCopy(context.item, context.source)) {
       this._copy = context.item.cloneNode(true);
       this.drake.emit('cloned', this._copy, context.item, 'copy');
@@ -209,7 +209,7 @@ export class Dragula {
     this._source = context.source;
     this._item = context.item;
     this._initialSibling = context.item.nextElement;
-    this._currentSibling = nextEl(context.item);
+    this._currentSibling = Util.nextEl(context.item);
 
     this.drake.dragging = true;
     this.drake.emit('drag', this._item, this._source);
@@ -242,11 +242,11 @@ export class Dragula {
     let elementBehindCursor = getElementBehindPoint(this._mirror, clientX, clientY);
     let dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
     if (dropTarget && ((this._copy && this.options.copySortSource) || (!this._copy || dropTarget !== this._source))) {
-      this._drop(item, dropTarget);
+      this.drop(item, dropTarget);
     } else if (this.options.removeOnSpill) {
-      this._remove();
+      this.remove();
     } else {
-      this._cancel();
+      this.cancel();
     }
   }
 
@@ -293,7 +293,7 @@ export class Dragula {
     if (initial || reverts) {
       this.drake.emit('cancel', item, this._source, this._source);
     } else {
-      this.drake.emit('drop', item, parent, _source, _currentSibling);
+      this.drake.emit('drop', item, parent, this._source, this._currentSibling);
     }
     this._cleanup();
   }
@@ -302,7 +302,7 @@ export class Dragula {
   _cleanup () {
     let item = this._copy || this._item;
     this._ungrab();
-    this._removeMirrorImage();
+    this.removeMirrorImage();
     if (item) {
       classes.rm(item, 'gu-transit');
     }
@@ -321,12 +321,12 @@ export class Dragula {
     let sibling;
     if (s !== void 0) {
       sibling = s;
-    } else if (_mirror) {
-      sibling = _currentSibling;
+    } else if (this._mirror) {
+      sibling = this._currentSibling;
     } else {
-      sibling = nextEl(_copy || _item);
+      sibling = Util.nextEl(this._copy || this._item);
     }
-    return target === _source && sibling === _initialSibling;
+    return target === this._source && sibling === this._initialSibling;
   }
 
   _findDropTarget (elementBehindCursor, clientX, clientY) {
@@ -336,14 +336,14 @@ export class Dragula {
     }
     return target;
 
-    function accepted() {
+    accepted = () => {
       let droppable = this.isContainer(target);
       if (droppable === false) {
         return false;
       }
 
       let immediate = Util.getImmediateChild(target, elementBehindCursor);
-      let reference = Util.getReference(target, immediate, clientX, clientY);
+      let reference = this.getReference(target, immediate, clientX, clientY);
       let initial = this._isInitialPlacement(target, reference);
       if (initial) {
         return true; // should always be able to drop it right back where it was
@@ -385,7 +385,7 @@ export class Dragula {
     let reference;
     let immediate = Util.getImmediateChild(dropTarget, elementBehindCursor);
     if (immediate !== null) {
-      reference = Util.getReference(dropTarget, immediate, clientX, clientY);
+      reference = this.getReference(dropTarget, immediate, clientX, clientY);
     } else if (this.options.revertOnSpill === true && !this._copy) {
       reference = this._initialSibling;
       dropTarget = this._source;

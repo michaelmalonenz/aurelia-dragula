@@ -52,7 +52,7 @@ describe('cancelling a drag operation', function() {
 
   it('should leave the DOM the same', function() {
     //arrange
-    this.drake.start(this.item);
+    this.drake.manualStart(this.item);
 
     //act
     this.drake.cancel();
@@ -64,7 +64,7 @@ describe('cancelling a drag operation', function() {
 
   it('should emit the cancel event', function() {
     //arrange
-    this.drake.start(this.item);
+    this.drake.manualStart(this.item);
 
     //act
     this.drake.cancel();
@@ -78,11 +78,13 @@ describe('cancelling a drag operation', function() {
   it('should not revert by default', function() {
     //arrange
     let div2 = document.createElement('div');
-    let drake = dragula([this.div, div2]);
+    this.options = new Options();
+    this.options.containers = [this.div, div2];
+    let drake = new Dragula(this.options);
     this.div.appendChild(this.item);
     document.body.appendChild(div2);
 
-    drake.start(this.item);
+    drake.manualStart(this.item);
     div2.appendChild(this.item);
 
     drake.on('drop', (target, parent, source) => {
@@ -90,7 +92,7 @@ describe('cancelling a drag operation', function() {
       expect(parent).toBe(div2);
       expect(source).toBe(this.div);
     });
-    drake.on('dragend', this.onDragend);
+    drake.on('dragend', () => this.dragendCalled = true);
 
     //act
     drake.cancel();
@@ -102,10 +104,12 @@ describe('cancelling a drag operation', function() {
   it('should revert when dragging a copy', function() {
     //arrange
     var div2 = document.createElement('div');
-    var drake = dragula([this.div, div2]);
+    this.options = new Options();
+    this.options.containers = [this.div, div2];
+    let drake = new Dragula(this.options);
     document.body.appendChild(this.div);
     document.body.appendChild(div2);
-    drake.start(this.item);
+    drake.manualStart(this.item);
     div2.appendChild(this.item);
     drake.on('cancel', this.onCancel);
     drake.on('dragend', this.onDragend);
@@ -124,13 +128,13 @@ describe('cancelling a drag operation', function() {
     let siblingInnerHtml = '<!--<view>--><div class="testDiv"></div><!--</view>-->'
     let sibling = document.createElement('div');
     sibling.innerHTML = siblingInnerHtml;
-    let drake = dragula();
+    let drake = new Dragula(new Options());
     document.body.appendChild(sibling);
     let item = sibling.querySelector('.testDiv');
     expect(item).not.toBeNull();
 
     //act
-    drake.start(item);
+    drake.manualStart(item);
     drake.cancel();
     
     //assert
