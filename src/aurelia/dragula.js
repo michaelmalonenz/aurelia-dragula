@@ -58,12 +58,16 @@ export class Dragula {
     this.options.containers = value;
   }
 
-  isContainer (el) {
+  get dragging() {
+    return this.drake.dragging;
+  }
+
+  isContainer(el) {
     return this.drake.containers.indexOf(el) !== -1 || this.options.isContainer(el);
   }
 
   //events
-  _events (remove) {
+  _events(remove) {
     let op = remove ? 'remove' : 'add';
     touchy(document.documentElement, op, 'mousedown', ::this._grab);
     touchy(document.documentElement, op, 'mouseup', ::this._release);
@@ -82,7 +86,7 @@ export class Dragula {
     crossvent[op](document.documentElement, 'click', this._preventGrabbed);
   }
 
-  destroy () {
+  destroy() {
     this._events(true);
     this._release({});
   }
@@ -228,7 +232,7 @@ export class Dragula {
     this._eventualMovements(true);
     this._movements(true);
   }
-  
+
   _release(e) {
     this._ungrab();
 
@@ -236,10 +240,10 @@ export class Dragula {
       return;
     }
     let item = this._copy || this._item;
-    let clientX = getCoord('clientX', e);
-    let clientY = getCoord('clientY', e);
-    let elementBehindCursor = getElementBehindPoint(this._mirror, clientX, clientY);
-    let dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
+    let clientX = Util.getCoord('clientX', e);
+    let clientY = Util.getCoord('clientY', e);
+    let elementBehindCursor = Util.getElementBehindPoint(this._mirror, clientX, clientY);
+    let dropTarget = this._findDropTarget(elementBehindCursor, clientX, clientY);
     if (dropTarget && ((this._copy && this.options.copySortSource) || (!this._copy || dropTarget !== this._source))) {
       this.drop(item, dropTarget);
     } else if (this.options.removeOnSpill) {
@@ -328,14 +332,8 @@ export class Dragula {
     return target === this._source && sibling === this._initialSibling;
   }
 
-  _findDropTarget (elementBehindCursor, clientX, clientY) {
-    let target = elementBehindCursor;
-    while (target && !accepted()) {
-      target = Util.getParent(target);
-    }
-    return target;
-
-    accepted = () => {
+  _findDropTarget(elementBehindCursor, clientX, clientY) {
+    let accepted = () => {
       let droppable = this.isContainer(target);
       if (droppable === false) {
         return false;
@@ -349,6 +347,12 @@ export class Dragula {
       }
       return this.options.accepts(this._item, target, this._source, reference);
     }
+
+    let target = elementBehindCursor;
+    while (target && !accepted()) {
+      target = Util.getParent(target);
+    }
+    return target;
   }
 
   drag(e) {
