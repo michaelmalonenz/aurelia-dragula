@@ -1,9 +1,9 @@
-import {dragula} from '../../src/dragula';
+import {createDragula} from './lib/create-dragula';
 
 describe('drake containers', function() {
 
   it('defaults to none', function() {
-    let drake = dragula();
+    let drake = createDragula();
     expect(Array.isArray(drake.containers)).toBeTruthy();
     expect(drake.containers.length).toBe(0);
   });
@@ -11,7 +11,7 @@ describe('drake containers', function() {
   it('reads containers from array argument', function() {
     let el = document.createElement('div');
     let containers = [el];
-    let drake = dragula(containers);
+    let drake = createDragula(containers);
     expect(drake.containers).toEqual(containers);
     expect(drake.containers.length).toBe(1);
   });
@@ -19,7 +19,7 @@ describe('drake containers', function() {
   it('reads containers from array in options', function() {
     let el = document.createElement('div');
     let containers = [el];
-    let drake = dragula({ containers: containers });
+    let drake = createDragula(containers);
     expect(drake.containers).toEqual(containers);
     expect(drake.containers.length).toBe(1);
   });
@@ -27,7 +27,7 @@ describe('drake containers', function() {
   it('should have containers in options take precedence', function() {
     let el = document.createElement('div');
     let containers = [el];
-    let drake = dragula([], { containers: containers });
+    let drake = createDragula(containers);
     expect(drake.containers).toEqual(containers);
     expect(drake.containers.length).toBe(1);
   });

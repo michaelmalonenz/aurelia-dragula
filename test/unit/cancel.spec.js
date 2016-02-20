@@ -1,8 +1,9 @@
-import {dragula} from '../../src/dragula';
+import {createDragula} from './lib/create-dragula';
+import {Options} from '../../src/options';
 
 describe('cancel does not throw when not dragging', function () {
   beforeEach(function() {
-    this.drake = dragula();
+    this.drake = new createDragula();
   })
 
   it('a single time', function() {
@@ -25,7 +26,7 @@ describe('cancelling a drag operation', function() {
   beforeEach(function() {
     this.div = document.createElement('div');
     this.item = document.createElement('div');
-    this.drake = dragula([this.div]);
+    this.drake = new createDragula([this.div]);
     this.div.appendChild(this.item);
     document.body.appendChild(this.div);
 
@@ -49,7 +50,7 @@ describe('cancelling a drag operation', function() {
 
   it('should leave the DOM the same', function() {
     //arrange
-    this.drake.start(this.item);
+    this.drake.manualStart(this.item);
 
     //act
     this.drake.cancel();
@@ -61,7 +62,7 @@ describe('cancelling a drag operation', function() {
 
   it('should emit the cancel event', function() {
     //arrange
-    this.drake.start(this.item);
+    this.drake.manualStart(this.item);
 
     //act
     this.drake.cancel();
@@ -75,11 +76,11 @@ describe('cancelling a drag operation', function() {
   it('should not revert by default', function() {
     //arrange
     let div2 = document.createElement('div');
-    let drake = dragula([this.div, div2]);
+    let drake = new createDragula([this.div, div2]);
     this.div.appendChild(this.item);
     document.body.appendChild(div2);
 
-    drake.start(this.item);
+    drake.manualStart(this.item);
     div2.appendChild(this.item);
 
     drake.on('drop', (target, parent, source) => {
@@ -87,7 +88,7 @@ describe('cancelling a drag operation', function() {
       expect(parent).toBe(div2);
       expect(source).toBe(this.div);
     });
-    drake.on('dragend', this.onDragend);
+    drake.on('dragend', () => this.dragendCalled = true);
 
     //act
     drake.cancel();
@@ -99,10 +100,10 @@ describe('cancelling a drag operation', function() {
   it('should revert when dragging a copy', function() {
     //arrange
     var div2 = document.createElement('div');
-    var drake = dragula([this.div, div2]);
+    let drake = new createDragula([this.div, div2]);
     document.body.appendChild(this.div);
     document.body.appendChild(div2);
-    drake.start(this.item);
+    drake.manualStart(this.item);
     div2.appendChild(this.item);
     drake.on('cancel', this.onCancel);
     drake.on('dragend', this.onDragend);
@@ -121,15 +122,15 @@ describe('cancelling a drag operation', function() {
     let siblingInnerHtml = '<!--<view>--><div class="testDiv"></div><!--</view>-->'
     let sibling = document.createElement('div');
     sibling.innerHTML = siblingInnerHtml;
-    let drake = dragula();
+    let drake = new createDragula();
     document.body.appendChild(sibling);
     let item = sibling.querySelector('.testDiv');
     expect(item).not.toBeNull();
 
     //act
-    drake.start(item);
+    drake.manualStart(item);
     drake.cancel();
-    
+
     //assert
     expect(sibling.innerHTML).toBe(siblingInnerHtml, 'nothing happens');
     expect(drake.dragging).toBeFalsy('drake has stopped dragging');

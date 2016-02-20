@@ -1,12 +1,12 @@
-import {dragula} from '../../src/dragula';
+import {Dragula} from '../../src/dragula';
 
 describe('drake', function() {
   it('can be instantiated without throwing', function() {
-    expect(() => dragula()).not.toThrow();
+    expect(() => new Dragula()).not.toThrow();
   });
 
   it('has expected api properties', function() {
-    let drake = dragula();
+    let drake = new Dragula();
     expect(drake).not.toEqual(null);
     expect(typeof drake).toBe('object');
     expect(Array.isArray(drake.containers)).toBeTruthy();

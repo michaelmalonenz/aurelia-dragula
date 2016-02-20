@@ -1,12 +1,13 @@
-import {dragula} from '../../src/dragula';
+import {createDragula} from './lib/create-dragula';
+import {Options} from '../../src/options';
 
 describe('destroy', function() {
   beforeEach(function() {
-    this.drake = dragula();
+    this.drake = createDragula();
   })
 
   it('does not throw when not dragging, destroyed, or whatever when called once', function() {
-    expect(this.drake.destroy).not.toThrow();
+    expect(() => this.drake.destroy()).not.toThrow();
   });
 
   it('does not throw when not dragging, destroyed, or whatever when called multiple times', function() {
@@ -31,10 +32,10 @@ describe('destroy', function() {
 
   it('when dragging, DOM is left in tact', function() {
     //arrange
-    let drake = dragula([this.div]);
+    let drake = createDragula([this.div]);
     this.div.appendChild(this.item);
     document.body.appendChild(this.div);
-    drake.start(this.item);
+    drake.manualStart(this.item);
 
     //act
     drake.destroy();
@@ -46,12 +47,12 @@ describe('destroy', function() {
 
   it('when dragging and destroy gets called, dragend event is emitted gracefully', function() {
     //arrange
-    let drake = dragula([this.div]);
+    let drake = createDragula([this.div]);
     this.div.appendChild(this.item);
     document.body.appendChild(this.div);
     drake.on('dragend', () => this.dragendCalled = true);
-    drake.start(this.item);
-    
+    drake.manualStart(this.item);
+
     //act
     drake.destroy();
 
@@ -61,11 +62,11 @@ describe('destroy', function() {
 
   it('when dragging a copy and destroy gets called, default does not revert', function() {
     let div2 = document.createElement('div');
-    let drake = dragula([this.div, div2]);
+    let drake = createDragula([this.div, div2]);
     this.div.appendChild(this.item);
     document.body.appendChild(this.div);
     document.body.appendChild(div2);
-    drake.start(this.item);
+    drake.manualStart(this.item);
     div2.appendChild(this.item);
     drake.on('drop', (target, parent, source) => {
       expect(target).toBe(this.item);
@@ -84,11 +85,13 @@ describe('destroy', function() {
   it('when dragging a copy and destroy gets called, revert is executed', function() {
     //arrange
     let div2 = document.createElement('div');
-    let drake = dragula([this.div, div2], { revertOnSpill: true });
+    let options = new Options();
+    options.revertOnSpill = true;
+    let drake = createDragula([this.div, div2], options);
     this.div.appendChild(this.item);
     document.body.appendChild(this.div);
     document.body.appendChild(div2);
-    drake.start(this.item);
+    drake.manualStart(this.item);
     div2.appendChild(this.item);
 
     drake.on('cancel', (target, container) => {
