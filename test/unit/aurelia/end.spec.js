@@ -1,11 +1,11 @@
-import {dragula} from '../../src/dragula';
+import {createDragula} from '../lib/create-dragula';
 
 describe('end', function() {
 
   describe('does not throw when not dragging', function() {
-    
+
     beforeEach(function() {
-      this.drake = dragula();
+      this.drake = createDragula();
     });
 
     it('a single time', function() {
@@ -37,10 +37,10 @@ describe('end', function() {
   });
 
   it('when already dragging, .end() ends (cancels) previous drag', function() {
-    var drake = dragula([this.div]);
-    
-    drake.start(this.item1);
-    
+    var drake = createDragula([this.div]);
+
+    drake.manualStart(this.item1);
+
     drake.on('dragend', (item) => {
       expect(item).toBe(this.item1, 'dragend invoked with correct item');
     });
@@ -48,21 +48,21 @@ describe('end', function() {
       expect(item).toBe(this.item1, 'cancel invoked with correct item');
       expect(source).toBe(this.div, 'cancel invoked with correct source');
     });
-    
+
     drake.end();
-    
+
     expect(drake.dragging).toBeFalsy('final state is: drake is not dragging');
   });
 
   it('when already dragged, ends (drops) previous drag', function() {
     var div2 = document.createElement('div');
-    var drake = dragula([this.div, this.div2]);
+    var drake = createDragula([this.div, this.div2]);
     document.body.appendChild(div2);
 
-    drake.start(this.item1);
+    drake.manualStart(this.item1);
 
     div2.appendChild(this.item1);
-    
+
     drake.on('dragend', (item) => {
       expect(item).toBe(this.item1, 'dragend invoked with correct item');
     });

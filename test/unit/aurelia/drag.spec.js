@@ -1,5 +1,6 @@
-import {raise} from './lib/events';
-import {dragula} from '../../src/dragula';
+import {createDragula} from '../lib/create-dragula';
+import {Options} from '../../../src/aurelia/options';
+import {raise} from '../lib/events';
 
 describe('drag', function() {
 
@@ -25,7 +26,8 @@ describe('drag', function() {
       let div = document.createElement('div');
       let item = document.createElement(o.tag || 'div');
       let passes = o.passes !== false;
-      let drake = dragula([div], o.dragulaOpts);
+      let opts = Object.assign(new Options(), o.dragulaOpts);
+      let drake = createDragula([div], opts);
 
       div.appendChild(item);
       document.body.appendChild(div);
@@ -51,14 +53,14 @@ describe('drag', function() {
     let div = document.createElement('div');
     let item1 = document.createElement('div');
     let item2 = document.createElement('div');
-    let drake = dragula([div]);
+    let drake = createDragula([div]);
 
     div.appendChild(item1);
     div.appendChild(item2);
 
     document.body.appendChild(div);
 
-    drake.start(item1);
+    drake.manualStart(item1);
 
     drake.on('dragend', end);
     drake.on('cancel', cancel);
@@ -87,13 +89,13 @@ describe('drag', function() {
     let div2 = document.createElement('div');
     let item1 = document.createElement('div');
     let item2 = document.createElement('div');
-    let drake = dragula([div, div2]);
+    let drake = createDragula([div, div2]);
     div.appendChild(item1);
     div.appendChild(item2);
     document.body.appendChild(div);
     document.body.appendChild(div2);
 
-    drake.start(item1);
+    drake.manualStart(item1);
 
     div2.appendChild(item1);
 
@@ -124,20 +126,20 @@ describe('drag', function() {
     let div = document.createElement('div');
     let item1 = document.createElement('div');
     let item2 = document.createElement('span');
-    let drake = dragula([div], { copy: true });
+    let drake = createDragula([div], { copy: true });
     item2.innerHTML = '<em>the force is <strong>with this one</strong></em>';
     div.appendChild(item1);
     div.appendChild(item2);
     document.body.appendChild(div);
-    
-    drake.start(item1);
-    
+
+    drake.manualStart(item1);
+
     drake.on('cloned', cloned);
     drake.on('drag', drag);
-    
+
     raise(item2, 'mousedown', { which: 1 });
     raise(item2, 'mousemove', { which: 1 });
-    
+
     expect(drake.dragging).toBe(true, 'final state is drake is dragging');
 
     function cloned (copy, item) {
@@ -155,7 +157,7 @@ describe('drag', function() {
   it('when dragging, element gets gu-transit class', function() {
     let div = document.createElement('div');
     let item = document.createElement('div');
-    dragula([div]);
+    createDragula([div]);
     div.appendChild(item);
     document.body.appendChild(div);
 
@@ -168,7 +170,7 @@ describe('drag', function() {
   it('when dragging, body gets gu-unselectable class', function() {
     let div = document.createElement('div');
     let item = document.createElement('div');
-    dragula([div]);
+    createDragula([div]);
     div.appendChild(item);
     document.body.appendChild(div);
 
@@ -181,7 +183,7 @@ describe('drag', function() {
   it('when dragging, element gets a mirror image for show', function() {
     let div = document.createElement('div');
     let item = document.createElement('div');
-    let drake = dragula([div]);
+    let drake = createDragula([div]);
     item.innerHTML = '<em>the force is <strong>with this one</strong></em>';
     div.appendChild(item);
     document.body.appendChild(div);
@@ -204,7 +206,7 @@ describe('drag', function() {
     let div = document.createElement('div');
     let item = document.createElement('div');
 
-    let drake = dragula([div], {
+    let drake = createDragula([div], {
       'mirrorContainer': mirrorContainer
     });
 
@@ -225,7 +227,7 @@ describe('drag', function() {
   it('when dragging stops, element gets gu-transit class removed', function() {
     let div = document.createElement('div');
     let item = document.createElement('div');
-    let drake = dragula([div]);
+    let drake = createDragula([div]);
     div.appendChild(item);
     document.body.appendChild(div);
 
@@ -242,7 +244,7 @@ describe('drag', function() {
   it('when dragging stops, body becomes selectable again', function() {
     let div = document.createElement('div');
     let item = document.createElement('div');
-    let drake = dragula([div]);
+    let drake = createDragula([div]);
     div.appendChild(item);
     document.body.appendChild(div);
 
@@ -261,7 +263,7 @@ describe('drag', function() {
     let item = document.createElement('div');
     item.className = 'copyable';
     div.className = 'contains';
-    let drake = dragula([div], {
+    let drake = createDragula([div], {
       copy: checkCondition
     });
     item.innerHTML = '<em>the force is <strong>with this one</strong></em>';

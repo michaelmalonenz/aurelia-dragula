@@ -1,5 +1,5 @@
-import {raise} from './lib/events';
-import {dragula} from '../../src/dragula';
+import {raise} from '../lib/events';
+import {createDragula} from '../lib/create-dragula';
 
 describe('events', function() {
 
@@ -12,31 +12,31 @@ describe('events', function() {
 
   it('.start() emits "cloned" for copies', function() {
     //arrange
-    let drake = dragula([this.div], { copy: true });
-    
+    let drake = createDragula([this.div], { copy: true });
+
     drake.on('cloned', (copy, original, type) => {
       //assert
       expect(copy).not.toBe(this.item, 'copy is not a reference to item');
       expect(copy).toEqual(this.item, 'copy of original is provided');
       expect(original).toBe(this.item, 'original item is provided');
     });
-    
+
     //act
-    drake.start(this.item);
+    drake.manualStart(this.item);
   });
 
   it('.start() emits "drag" for items', function() {
-    let drake = dragula([this.div]);
+    let drake = createDragula([this.div]);
     drake.on('drag', (original, container) => {
       expect(original).toBe(this.item, 'item is a reference to moving target');
       expect(container).toBe(this.div, 'container matches expected div');
     });
 
-    drake.start(this.item);
+    drake.manualStart(this.item);
   });
 
   it('.end() emits "cancel" when not moved', function() {
-    let drake = dragula([this.div]);
+    let drake = createDragula([this.div]);
 
     drake.on('dragend', (original) => {
       expect(original).toBe(this.item, 'item is a reference to moving target');
@@ -54,7 +54,7 @@ describe('events', function() {
 
   it('.end() emits "drop" when moved', function() {
     let div2 = document.createElement('div');
-    let drake = dragula([this.div, div2]);
+    let drake = createDragula([this.div, div2]);
     document.body.appendChild(div2);
 
     drake.on('dragend', (original) => {
@@ -74,7 +74,7 @@ describe('events', function() {
   });
 
   it('.remove() emits "remove" for items', function() {
-    let drake = dragula([this.div]);
+    let drake = createDragula([this.div]);
 
     drake.on('dragend', (original) => {
       expect(original).toBe(this.item, 'item is a reference to moving target');
@@ -87,14 +87,14 @@ describe('events', function() {
 
     raise(this.item, 'mousedown', { which: 1 });
     raise(this.item, 'mousemove', { which: 1 });
-    
+
     drake.remove();
   });
 
   //this.item does not have the 'gu-transit' class, so this fails...
   xit('.remove() emits "cancel" for copies', function() {
     let dragendCalled = false;
-    let drake = dragula([this.div], { copy: true });
+    let drake = createDragula([this.div], { copy: true });
 
     drake.on('dragend', () => dragendCalled = true);
     drake.on('cancel', (copy, container) => {
@@ -105,14 +105,14 @@ describe('events', function() {
 
     raise(this.item, 'mousedown', { which: 1 });
     raise(this.item, 'mousemove', { which: 1 });
-    
+
     drake.remove();
 
     expect(dragendCalled).toBeTruthy();
   });
 
   it('.cancel() emits "cancel" when not moved', function() {
-    let drake = dragula([this.div]);
+    let drake = createDragula([this.div]);
 
     drake.on('dragend', (original) => {
       expect(original).toBe(this.item, 'item is a reference to moving target');
@@ -130,7 +130,7 @@ describe('events', function() {
 
   it('.cancel() emits "drop" when not reverted', function() {
     let div2 = document.createElement('div');
-    let drake = dragula([this.div]);
+    let drake = createDragula([this.div]);
     document.body.appendChild(div2);
 
     drake.on('dragend', (original) => {
@@ -152,7 +152,7 @@ describe('events', function() {
 
   it('.cancel() emits "cancel" when reverts', function() {
     let div2 = document.createElement('div');
-    let drake = dragula([this.div], { revertOnSpill: true });
+    let drake = createDragula([this.div], { revertOnSpill: true });
     document.body.appendChild(div2);
 
     drake.on('dragend', (original) => {
@@ -167,13 +167,13 @@ describe('events', function() {
     raise(this.item, 'mousemove', { which: 1 });
 
     div2.appendChild(this.item);
-    
+
     drake.cancel();
   });
 
   //this.item doesn't have the style attribute
   xit('mousedown emits "cloned" for mirrors', function() {
-    let drake = dragula([this.div]);
+    let drake = createDragula([this.div]);
 
     drake.on('cloned', (copy, original, type) => {
       if (type === 'mirror') {
@@ -188,7 +188,7 @@ describe('events', function() {
   });
 
   it('mousedown emits "cloned" for copies', function() {
-    let drake = dragula([this.div], { copy: true });
+    let drake = createDragula([this.div], { copy: true });
 
     drake.on('cloned', (copy, original, type) => {
       if (type === 'copy') {
@@ -203,7 +203,7 @@ describe('events', function() {
   });
 
   it('mousedown emits "drag" for items', function() {
-    let drake = dragula([this.div]);
+    let drake = createDragula([this.div]);
 
     drake.on('drag', (original, container) => {
       expect(original).toBe(this.item, 'item is a reference to moving target');

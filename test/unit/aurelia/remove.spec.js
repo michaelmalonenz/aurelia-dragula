@@ -1,12 +1,12 @@
-import {dragula} from '../../src/dragula';
-import {raise} from './lib/events';
+import {raise} from '../lib/events';
+import {createDragula} from '../lib/create-dragula';
 
 describe('when dragging and remove is called', function() {
 
   describe('does not throw', function() {
 
     beforeEach(function() {
-      this.drake = dragula();
+      this.drake = createDragula();
     });
 
     it('a single time', function() {
@@ -29,14 +29,14 @@ describe('when dragging and remove is called', function() {
   beforeEach(function() {
     this.div = document.createElement('div');
     this.item = document.createElement('div');
-  });  
+  });
 
   it('when dragging and remove gets called, element is removed', function() {
     //arrange
-    let drake = dragula([this.div]);
+    let drake = createDragula([this.div]);
     this.div.appendChild(this.item);
     document.body.appendChild(this.div);
-    drake.start(this.item);
+    drake.manualStart(this.item);
 
     //act
     drake.remove();
@@ -49,10 +49,12 @@ describe('when dragging and remove is called', function() {
   it('when dragging and remove gets called, remove event is emitted', function() {
     //arrange
     let dragendCalled = false;
-    let drake = dragula([this.div]);
+    let drake = createDragula([this.div]);
     this.div.appendChild(this.item);
     document.body.appendChild(this.div);
-    drake.start(this.item);
+
+    drake.manualStart(this.item);
+
     drake.on('remove', (target, container) => {
       expect(target).toBe(this.item);
       expect(container).toBe(this.div);
@@ -69,7 +71,7 @@ describe('when dragging and remove is called', function() {
 
   it('cancel event is emitted', function() {
     let dragendCalled = false;
-    let drake = dragula([this.div], { copy: true });
+    let drake = createDragula([this.div], { copy: true });
     this.div.appendChild(this.item);
     document.body.appendChild(this.div);
     raise(this.item, 'mousedown', { which: 1 });

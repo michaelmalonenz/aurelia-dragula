@@ -113,9 +113,9 @@ export class Dragula {
       return;
     }
     this._grabbed = context;
-    eventualMovements();
+    this._eventualMovements();
     if (e.type === 'mousedown') {
-      if (this._isInput(item)) { // see also: https://github.com/bevacqua/dragula/issues/208
+      if (Util.isInput(item)) { // see also: https://github.com/bevacqua/dragula/issues/208
         item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
       } else {
         e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
@@ -133,7 +133,7 @@ export class Dragula {
       return; // when text is selected on an input and then dragged, mouseup doesn't fire. this is our only hope
     }
     // truthy check fixes #239, equality fixes #207
-    if (e.clientX !== void 0 && e.clientX === _moveX && e.clientY !== void 0 && e.clientY === _moveY) {
+    if (e.clientX !== void 0 && e.clientX === this._moveX && e.clientY !== void 0 && e.clientY === this._moveY) {
       return;
     }
     if (this.options.ignoreInputTextSelection) {
@@ -151,12 +151,12 @@ export class Dragula {
     this.end();
     this.start(grabbed);
 
-    let offset = getOffset(_item);
-    _offsetX = getCoord('pageX', e) - offset.left;
-    _offsetY = getCoord('pageY', e) - offset.top;
+    let offset = Util.getOffset(this._item);
+    this._offsetX = Util.getCoord('pageX', e) - offset.left;
+    this._offsetY = Util.getCoord('pageY', e) - offset.top;
 
-    classes.add(_copy || _item, 'gu-transit');
-    this._renderMirrorImage();
+    classes.add(this._copy || this._item, 'gu-transit');
+    this.renderMirrorImage();
     this.drag(e);
   }
 
@@ -361,6 +361,10 @@ export class Dragula {
     }
     e.preventDefault();
 
+    let moved = (type) => { this.drake.emit(type, item, this._lastDropTarget, this._source); }
+    let over = () => { if (changed) { moved('over'); } }
+    let out = () => { if (this._lastDropTarget) { moved('out'); } }
+
     let clientX = Util.getCoord('clientX', e);
     let clientY = Util.getCoord('clientY', e);
     let x = clientX - this._offsetX;
@@ -370,8 +374,8 @@ export class Dragula {
     this._mirror.style.top = y + 'px';
 
     let item = this._copy || this._item;
-    let elementBehindCursor = Util.getElementBehindPoint(_mirror, clientX, clientY);
-    let dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
+    let elementBehindCursor = Util.getElementBehindPoint(this._mirror, clientX, clientY);
+    let dropTarget = this._findDropTarget(elementBehindCursor, clientX, clientY);
     let changed = dropTarget !== null && dropTarget !== this._lastDropTarget;
     if (changed || dropTarget === null) {
       out();
@@ -407,9 +411,6 @@ export class Dragula {
       dropTarget.insertBefore(item, reference);
       this.drake.emit('shadow', item, dropTarget, this._source);
     }
-    moved = (type) => { this.drake.emit(type, item, this._lastDropTarget, this._source); }
-    over = () => { if (changed) { moved('over'); } }
-    out = () => { if (this._lastDropTarget) { moved('out'); } }
   }
 
   spillOver(el) {
@@ -431,7 +432,7 @@ export class Dragula {
     classes.rm(this._mirror, 'gu-transit');
     classes.add(this._mirror, 'gu-mirror');
     this.options.mirrorContainer.appendChild(this._mirror);
-    touchy(document.documentElement, 'add', 'mousemove', drag);
+    touchy(document.documentElement, 'add', 'mousemove', ::this.drag);
     classes.add(this.options.mirrorContainer, 'gu-unselectable');
     this.drake.emit('cloned', this._mirror, this._item, 'mirror');
   }
@@ -439,7 +440,7 @@ export class Dragula {
   removeMirrorImage() {
     if (this._mirror) {
       classes.rm(this.options.mirrorContainer, 'gu-unselectable');
-      touchy(document.documentElement, 'remove', 'mousemove', drag);
+      touchy(document.documentElement, 'remove', 'mousemove', ::this.drag);
       Util.getParent(this._mirror).removeChild(this._mirror);
       this._mirror = null;
     }
