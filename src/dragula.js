@@ -2,8 +2,7 @@ import {inject} from 'aurelia-dependency-injection';
 import {touchy} from './touchy';
 import {GLOBAL_OPTIONS, Options} from './options';
 import {Util} from './util';
-import {emitter} from 'contra';
-import * as crossvent from 'crossvent';
+import {Emitter} from './emitter';
 import * as classes from './classes';
 
 
@@ -76,9 +75,8 @@ export class Dragula {
   }
 
   _movements(remove) {
-    let op = remove ? 'remove' : 'add';
-    crossvent[op](document.documentElement, 'selectstart', this._preventGrabbed); // IE8
-    crossvent[op](document.documentElement, 'click', this._preventGrabbed);
+    let op = remove ? 'removeEventListener' : 'addEventListener';
+    document.documentElement[op]('click', this._preventGrabbed);
   }
 
   destroy() {
@@ -436,11 +434,7 @@ export class Dragula {
   }
 
   getReference(dropTarget, target, x, y) {
-    let horizontal = this.options.direction === 'horizontal';
-    let reference = target !== dropTarget ? inside() : outside();
-    return reference;
-
-    outside = () => { // slower, but able to figure out any position
+    let outside = () => { // slower, but able to figure out any position
       let len = dropTarget.children.length;
       let i;
       let el;
@@ -454,17 +448,22 @@ export class Dragula {
       return null;
     }
 
-    inside = () => { // faster, but only available if dropped inside a child element
-      let rect = target.getBoundingClientRect();
-      if (horizontal) {
-        return resolve(x > rect.left + getRectWidth(rect) / 2);
-      }
-      return resolve(y > rect.top + getRectHeight(rect) / 2);
-    }
-
-    resolve = (after) => {
+    let resolve = (after) => {
       return after ? Util.nextEl(target) : target;
     }
+
+    let inside = () => { // faster, but only available if dropped inside a child element
+      let rect = target.getBoundingClientRect();
+      if (horizontal) {
+        return resolve(x > rect.left + Util.getRectWidth(rect) / 2);
+      }
+      return resolve(y > rect.top + Util.getRectHeight(rect) / 2);
+    }
+
+
+    let horizontal = this.options.direction === 'horizontal';
+    let reference = target !== dropTarget ? inside() : outside();
+    return reference;
   }
 
   _isCopy(item, container) {
