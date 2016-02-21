@@ -1,14 +1,9 @@
-define(['exports'], function (exports) {
+define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/class-call-check'], function (exports, _babelRuntimeHelpersCreateClass, _babelRuntimeHelpersClassCallCheck) {
   'use strict';
 
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-
-  var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
   var GLOBAL_OPTIONS = 'GlobalOptions';
 
   exports.GLOBAL_OPTIONS = GLOBAL_OPTIONS;
@@ -21,7 +16,7 @@ define(['exports'], function (exports) {
 
   var Options = (function () {
     function Options() {
-      _classCallCheck(this, Options);
+      (0, _babelRuntimeHelpersClassCallCheck['default'])(this, Options);
 
       this.moves = this.always;
       this.accepts = this.always;
@@ -36,7 +31,7 @@ define(['exports'], function (exports) {
       this.mirrorContainer = document.body;
     }
 
-    _createClass(Options, [{
+    (0, _babelRuntimeHelpersCreateClass['default'])(Options, [{
       key: 'always',
       value: function always() {
         return true;
@@ -52,7 +47,6 @@ define(['exports'], function (exports) {
         return false;
       }
     }]);
-
     return Options;
   })();
 

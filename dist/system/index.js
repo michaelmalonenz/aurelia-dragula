@@ -1,7 +1,7 @@
-System.register(['./aurelia/options', './dragula'], function (_export) {
+System.register(['./options', './dragula'], function (_export) {
   'use strict';
 
-  var Options, GLOBAL_OPTIONS, dragula;
+  var Options, GLOBAL_OPTIONS, Dragula;
 
   _export('configure', configure);
 
@@ -15,14 +15,14 @@ System.register(['./aurelia/options', './dragula'], function (_export) {
   }
 
   return {
-    setters: [function (_aureliaOptions) {
-      Options = _aureliaOptions.Options;
-      GLOBAL_OPTIONS = _aureliaOptions.GLOBAL_OPTIONS;
+    setters: [function (_options) {
+      Options = _options.Options;
+      GLOBAL_OPTIONS = _options.GLOBAL_OPTIONS;
     }, function (_dragula) {
-      dragula = _dragula.dragula;
+      Dragula = _dragula.Dragula;
     }],
     execute: function () {
-      _export('dragula', dragula);
+      _export('Dragula', Dragula);
     }
   };
 });

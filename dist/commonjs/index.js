@@ -5,15 +5,15 @@ Object.defineProperty(exports, '__esModule', {
 });
 exports.configure = configure;
 
-var _aureliaOptions = require('./aurelia/options');
+var _options = require('./options');
 
 var _dragula = require('./dragula');
 
-exports.dragula = _dragula.dragula;
+exports.Dragula = _dragula.Dragula;
 
 function configure(config, callback) {
-  var defaults = new _aureliaOptions.Options();
-  config.container.registerInstance(_aureliaOptions.GLOBAL_OPTIONS, defaults);
+  var defaults = new _options.Options();
+  config.container.registerInstance(_options.GLOBAL_OPTIONS, defaults);
 
   if (callback !== undefined && typeof callback === 'function') {
     callback(defaults);

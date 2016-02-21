@@ -1,667 +1,524 @@
-define(['exports', 'contra', 'crossvent', './classes'], function (exports, _contra, _crossvent, _classes) {
+define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/class-call-check', 'aurelia-dependency-injection', './touchy', './options', './util', 'contra', 'crossvent', './classes'], function (exports, _babelRuntimeHelpersCreateClass, _babelRuntimeHelpersClassCallCheck, _aureliaDependencyInjection, _touchy, _options, _util, _contra, _crossvent, _classes) {
   'use strict';
 
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  exports.dragula = dragula;
 
-  var doc = document;
-  var documentElement = doc.documentElement;
+  var Dragula = (function () {
+    function Dragula(options) {
+      (0, _babelRuntimeHelpersClassCallCheck['default'])(this, _Dragula);
 
-  function dragula(initialContainers, options) {
-    var len = arguments.length;
-    if (len === 1 && Array.isArray(initialContainers) === false) {
-      options = initialContainers;
-      initialContainers = [];
-    }
-    var _mirror;
-    var _source;
-    var _item;
-    var _offsetX;
-    var _offsetY;
-    var _moveX;
-    var _moveY;
-    var _initialSibling;
-    var _currentSibling;
-    var _copy;
-    var _renderTimer;
-    var _lastDropTarget = null;
-    var _grabbed;
+      var len = arguments.length;
+      this.options = options || new _options.Options();
+      this.drake = (0, _contra.emitter)({
+        containers: this.options.containers,
+        start: this.manualStart.bind(this),
+        end: this.end.bind(this),
+        cancel: this.cancel.bind(this),
+        remove: this.remove.bind(this),
+        destroy: this.destroy.bind(this),
+        dragging: false
+      });
 
-    var o = options || {};
-    if (o.moves === void 0) {
-      o.moves = always;
-    }
-    if (o.accepts === void 0) {
-      o.accepts = always;
-    }
-    if (o.invalid === void 0) {
-      o.invalid = invalidTarget;
-    }
-    if (o.containers === void 0) {
-      o.containers = initialContainers || [];
-    }
-    if (o.isContainer === void 0) {
-      o.isContainer = never;
-    }
-    if (o.copy === void 0) {
-      o.copy = false;
-    }
-    if (o.copySortSource === void 0) {
-      o.copySortSource = false;
-    }
-    if (o.revertOnSpill === void 0) {
-      o.revertOnSpill = false;
-    }
-    if (o.removeOnSpill === void 0) {
-      o.removeOnSpill = false;
-    }
-    if (o.direction === void 0) {
-      o.direction = 'vertical';
-    }
-    if (o.ignoreInputTextSelection === void 0) {
-      o.ignoreInputTextSelection = true;
-    }
-    if (o.mirrorContainer === void 0) {
-      o.mirrorContainer = doc.body;
-    }
-
-    var drake = (0, _contra.emitter)({
-      containers: o.containers,
-      start: manualStart,
-      end: end,
-      cancel: cancel,
-      remove: remove,
-      destroy: destroy,
-      dragging: false
-    });
-
-    if (o.removeOnSpill === true) {
-      drake.on('over', spillOver).on('out', spillOut);
-    }
-
-    events();
-
-    return drake;
-
-    function isContainer(el) {
-      return drake.containers.indexOf(el) !== -1 || o.isContainer(el);
-    }
-
-    function events(remove) {
-      var op = remove ? 'remove' : 'add';
-      touchy(documentElement, op, 'mousedown', grab);
-      touchy(documentElement, op, 'mouseup', release);
-    }
-
-    function eventualMovements(remove) {
-      var op = remove ? 'remove' : 'add';
-      touchy(documentElement, op, 'mousemove', startBecauseMouseMoved);
-    }
-
-    function movements(remove) {
-      var op = remove ? 'remove' : 'add';
-      _crossvent[op](documentElement, 'selectstart', preventGrabbed);
-      _crossvent[op](documentElement, 'click', preventGrabbed);
-    }
-
-    function destroy() {
-      events(true);
-      release({});
-    }
-
-    function preventGrabbed(e) {
-      if (_grabbed) {
-        e.preventDefault();
+      if (this.options.removeOnSpill === true) {
+        this.drake.on('over', spillOver).on('out', spillOut);
       }
+
+      this._events();
+
+      this._mirror;
+      this._source;
+      this._item;
+      this._offsetX;
+      this._offsetY;
+      this._moveX;
+      this._moveY;
+      this._initialSibling;
+      this._currentSibling;
+      this._copy;
+      this._renderTimer;
+      this._lastDropTarget = null;
+      this._grabbed;
     }
 
-    function grab(e) {
-      _moveX = e.clientX;
-      _moveY = e.clientY;
+    (0, _babelRuntimeHelpersCreateClass['default'])(Dragula, [{
+      key: 'on',
+      value: function on(eventName, callback) {
+        this.drake.on(eventName, callback);
+      }
+    }, {
+      key: 'isContainer',
+      value: function isContainer(el) {
+        return this.drake.containers.indexOf(el) !== -1 || this.options.isContainer(el);
+      }
+    }, {
+      key: '_events',
+      value: function _events(remove) {
+        var op = remove ? 'remove' : 'add';
+        (0, _touchy.touchy)(document.documentElement, op, 'mousedown', this._grab.bind(this));
+        (0, _touchy.touchy)(document.documentElement, op, 'mouseup', this._release.bind(this));
+      }
+    }, {
+      key: '_eventualMovements',
+      value: function _eventualMovements(remove) {
+        var op = remove ? 'remove' : 'add';
+        (0, _touchy.touchy)(document.documentElement, op, 'mousemove', this._startBecauseMouseMoved.bind(this));
+      }
+    }, {
+      key: '_movements',
+      value: function _movements(remove) {
+        var op = remove ? 'remove' : 'add';
+        _crossvent[op](document.documentElement, 'selectstart', this._preventGrabbed);
+        _crossvent[op](document.documentElement, 'click', this._preventGrabbed);
+      }
+    }, {
+      key: 'destroy',
+      value: function destroy() {
+        this._events(true);
+        this._release({});
+      }
+    }, {
+      key: '_preventGrabbed',
+      value: function _preventGrabbed(e) {
+        if (this._grabbed) {
+          e.preventDefault();
+        }
+      }
+    }, {
+      key: '_grab',
+      value: function _grab(e) {
+        this._moveX = e.clientX;
+        this._moveY = e.clientY;
 
-      var ignore = whichMouseButton(e) !== 1 || e.metaKey || e.ctrlKey;
-      if (ignore) {
-        return;
+        var ignore = _util.Util.whichMouseButton(e) !== 1 || e.metaKey || e.ctrlKey;
+        if (ignore) {
+          return;
+        }
+        var item = e.target;
+        var context = this._canStart(item);
+        if (!context) {
+          return;
+        }
+        this._grabbed = context;
+        this._eventualMovements();
+        if (e.type === 'mousedown') {
+          if (_util.Util.isInput(item)) {
+            item.focus();
+          } else {
+              e.preventDefault();
+            }
+        }
       }
-      var item = e.target;
-      var context = canStart(item);
-      if (!context) {
-        return;
-      }
-      _grabbed = context;
-      eventualMovements();
-      if (e.type === 'mousedown') {
-        if (isInput(item)) {
-          item.focus();
-        } else {
-            e.preventDefault();
+    }, {
+      key: '_startBecauseMouseMoved',
+      value: function _startBecauseMouseMoved(e) {
+        if (!this._grabbed) {
+          return;
+        }
+        if (_util.Util.whichMouseButton(e) === 0) {
+          this._release({});
+          return;
+        }
+
+        if (e.clientX !== void 0 && e.clientX === this._moveX && e.clientY !== void 0 && e.clientY === this._moveY) {
+          return;
+        }
+        if (this.options.ignoreInputTextSelection) {
+          var clientX = _util.Util.getCoord('clientX', e);
+          var clientY = _util.Util.getCoord('clientY', e);
+          var elementBehindCursor = document.elementFromPoint(clientX, clientY);
+          if (_util.Util.isInput(elementBehindCursor)) {
+            return;
           }
-      }
-    }
+        }
 
-    function startBecauseMouseMoved(e) {
-      if (!_grabbed) {
-        return;
-      }
-      if (whichMouseButton(e) === 0) {
-        release({});
-        return;
-      }
+        var grabbed = this._grabbed;
+        this._eventualMovements(true);
+        this._movements();
+        this.end();
+        this.start(grabbed);
 
-      if (e.clientX !== void 0 && e.clientX === _moveX && e.clientY !== void 0 && e.clientY === _moveY) {
-        return;
+        var offset = _util.Util.getOffset(this._item);
+        this._offsetX = _util.Util.getCoord('pageX', e) - offset.left;
+        this._offsetY = _util.Util.getCoord('pageY', e) - offset.top;
+
+        _classes.add(this._copy || this._item, 'gu-transit');
+        this.renderMirrorImage();
+        this.drag(e);
       }
-      if (o.ignoreInputTextSelection) {
-        var clientX = getCoord('clientX', e);
-        var clientY = getCoord('clientY', e);
-        var elementBehindCursor = doc.elementFromPoint(clientX, clientY);
-        if (isInput(elementBehindCursor)) {
+    }, {
+      key: '_canStart',
+      value: function _canStart(item) {
+        if (this.drake.dragging && this._mirror) {
           return;
         }
-      }
-
-      var grabbed = _grabbed;
-      eventualMovements(true);
-      movements();
-      end();
-      start(grabbed);
-
-      var offset = getOffset(_item);
-      _offsetX = getCoord('pageX', e) - offset.left;
-      _offsetY = getCoord('pageY', e) - offset.top;
-
-      _classes.add(_copy || _item, 'gu-transit');
-      renderMirrorImage();
-      drag(e);
-    }
-
-    function canStart(item) {
-      if (drake.dragging && _mirror) {
-        return;
-      }
-      if (isContainer(item)) {
-        return;
-      }
-      var handle = item;
-      while (getParent(item) && isContainer(getParent(item)) === false) {
-        if (o.invalid(item, handle)) {
+        if (this.isContainer(item)) {
           return;
         }
-        item = getParent(item);
-        if (!item) {
+        var handle = item;
+        while (_util.Util.getParent(item) && this.isContainer(_util.Util.getParent(item)) === false) {
+          if (this.options.invalid(item, handle)) {
+            return;
+          }
+          item = _util.Util.getParent(item);
+          if (!item) {
+            return;
+          }
+        }
+        var source = _util.Util.getParent(item);
+        if (!source) {
           return;
         }
-      }
-      var source = getParent(item);
-      if (!source) {
-        return;
-      }
-      if (o.invalid(item, handle)) {
-        return;
-      }
-
-      var movable = o.moves(item, source, handle, nextEl(item));
-      if (!movable) {
-        return;
-      }
-
-      return {
-        item: item,
-        source: source
-      };
-    }
-
-    function manualStart(item) {
-      var context = canStart(item);
-      if (context) {
-        start(context);
-      }
-    }
-
-    function start(context) {
-      if (isCopy(context.item, context.source)) {
-        _copy = context.item.cloneNode(true);
-        drake.emit('cloned', _copy, context.item, 'copy');
-      }
-
-      _source = context.source;
-      _item = context.item;
-      _initialSibling = context.item.nextElement;
-      _currentSibling = nextEl(context.item);
-
-      drake.dragging = true;
-      drake.emit('drag', _item, _source);
-    }
-
-    function invalidTarget() {
-      return false;
-    }
-
-    function end() {
-      if (!drake.dragging) {
-        return;
-      }
-      var item = _copy || _item;
-      drop(item, getParent(item));
-    }
-
-    function ungrab() {
-      _grabbed = false;
-      eventualMovements(true);
-      movements(true);
-    }
-
-    function release(e) {
-      ungrab();
-
-      if (!drake.dragging) {
-        return;
-      }
-      var item = _copy || _item;
-      var clientX = getCoord('clientX', e);
-      var clientY = getCoord('clientY', e);
-      var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY);
-      var dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
-      if (dropTarget && (_copy && o.copySortSource || !_copy || dropTarget !== _source)) {
-        drop(item, dropTarget);
-      } else if (o.removeOnSpill) {
-        remove();
-      } else {
-        cancel();
-      }
-    }
-
-    function drop(item, target) {
-      var parent = getParent(item);
-      if (_copy && o.copySortSource && target === _source) {
-        parent.removeChild(_item);
-      }
-      if (isInitialPlacement(target)) {
-        drake.emit('cancel', item, _source, _source);
-      } else {
-        drake.emit('drop', item, target, _source, _currentSibling);
-      }
-      cleanup();
-    }
-
-    function remove() {
-      if (!drake.dragging) {
-        return;
-      }
-      var item = _copy || _item;
-      var parent = getParent(item);
-      if (parent) {
-        parent.removeChild(item);
-      }
-      drake.emit(_copy ? 'cancel' : 'remove', item, parent, _source);
-      cleanup();
-    }
-
-    function cancel(revert) {
-      if (!drake.dragging) {
-        return;
-      }
-      var reverts = arguments.length > 0 ? revert : o.revertOnSpill;
-      var item = _copy || _item;
-      var parent = getParent(item);
-      if (parent === _source && _copy) {
-        parent.removeChild(_copy);
-      }
-      var initial = isInitialPlacement(parent);
-      if (initial === false && !_copy && reverts) {
-        _source.insertBefore(item, _initialSibling);
-      }
-      if (initial || reverts) {
-        drake.emit('cancel', item, _source, _source);
-      } else {
-        drake.emit('drop', item, parent, _source, _currentSibling);
-      }
-      cleanup();
-    }
-
-    function cleanup() {
-      var item = _copy || _item;
-      ungrab();
-      removeMirrorImage();
-      if (item) {
-        _classes.rm(item, 'gu-transit');
-      }
-      if (_renderTimer) {
-        clearTimeout(_renderTimer);
-      }
-      drake.dragging = false;
-      if (_lastDropTarget) {
-        drake.emit('out', item, _lastDropTarget, _source);
-      }
-      drake.emit('dragend', item);
-      _source = _item = _copy = _initialSibling = _currentSibling = _renderTimer = _lastDropTarget = null;
-    }
-
-    function isInitialPlacement(target, s) {
-      var sibling;
-      if (s !== void 0) {
-        sibling = s;
-      } else if (_mirror) {
-        sibling = _currentSibling;
-      } else {
-        sibling = nextEl(_copy || _item);
-      }
-      return target === _source && sibling === _initialSibling;
-    }
-
-    function findDropTarget(elementBehindCursor, clientX, clientY) {
-      var target = elementBehindCursor;
-      while (target && !accepted()) {
-        target = getParent(target);
-      }
-      return target;
-
-      function accepted() {
-        var droppable = isContainer(target);
-        if (droppable === false) {
-          return false;
+        if (this.options.invalid(item, handle)) {
+          return;
         }
 
-        var immediate = getImmediateChild(target, elementBehindCursor);
-        var reference = getReference(target, immediate, clientX, clientY);
-        var initial = isInitialPlacement(target, reference);
-        if (initial) {
-          return true;
+        var movable = this.options.moves(item, source, handle, _util.Util.nextEl(item));
+        if (!movable) {
+          return;
         }
-        return o.accepts(_item, target, _source, reference);
+
+        return {
+          item: item,
+          source: source
+        };
       }
-    }
-
-    function drag(e) {
-      if (!_mirror) {
-        return;
+    }, {
+      key: 'manualStart',
+      value: function manualStart(item) {
+        var context = this._canStart(item);
+        if (context) {
+          this.start(context);
+        }
       }
-      e.preventDefault();
+    }, {
+      key: 'start',
+      value: function start(context) {
+        if (this._isCopy(context.item, context.source)) {
+          this._copy = context.item.cloneNode(true);
+          this.drake.emit('cloned', this._copy, context.item, 'copy');
+        }
 
-      var clientX = getCoord('clientX', e);
-      var clientY = getCoord('clientY', e);
-      var x = clientX - _offsetX;
-      var y = clientY - _offsetY;
+        this._source = context.source;
+        this._item = context.item;
+        this._initialSibling = this._currentSibling = _util.Util.nextEl(context.item);
 
-      _mirror.style.left = x + 'px';
-      _mirror.style.top = y + 'px';
-
-      var item = _copy || _item;
-      var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY);
-      var dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
-      var changed = dropTarget !== null && dropTarget !== _lastDropTarget;
-      if (changed || dropTarget === null) {
-        out();
-        _lastDropTarget = dropTarget;
-        over();
+        this.drake.dragging = true;
+        this.drake.emit('drag', this._item, this._source);
       }
-      var parent = getParent(item);
-      if (dropTarget === _source && _copy && !o.copySortSource) {
+    }, {
+      key: 'end',
+      value: function end() {
+        if (!this.drake.dragging) {
+          return;
+        }
+        var item = this._copy || this._item;
+        this.drop(item, _util.Util.getParent(item));
+      }
+    }, {
+      key: '_ungrab',
+      value: function _ungrab() {
+        this._grabbed = false;
+        this._eventualMovements(true);
+        this._movements(true);
+      }
+    }, {
+      key: '_release',
+      value: function _release(e) {
+        this._ungrab();
+
+        if (!this.drake.dragging) {
+          return;
+        }
+        var item = this._copy || this._item;
+        var clientX = _util.Util.getCoord('clientX', e);
+        var clientY = _util.Util.getCoord('clientY', e);
+        var elementBehindCursor = _util.Util.getElementBehindPoint(this._mirror, clientX, clientY);
+        var dropTarget = this._findDropTarget(elementBehindCursor, clientX, clientY);
+        if (dropTarget && (this._copy && this.options.copySortSource || !this._copy || dropTarget !== this._source)) {
+          this.drop(item, dropTarget);
+        } else if (this.options.removeOnSpill) {
+          this.remove();
+        } else {
+          this.cancel();
+        }
+      }
+    }, {
+      key: 'drop',
+      value: function drop(item, target) {
+        var parent = _util.Util.getParent(item);
+        if (this._copy && this.options.copySortSource && target === this._source) {
+          parent.removeChild(_item);
+        }
+        if (this._isInitialPlacement(target)) {
+          this.drake.emit('cancel', item, this._source, this._source);
+        } else {
+          this.drake.emit('drop', item, target, this._source, this._currentSibling);
+        }
+        this._cleanup();
+      }
+    }, {
+      key: 'remove',
+      value: function remove() {
+        if (!this.drake.dragging) {
+          return;
+        }
+        var item = this._copy || this._item;
+        var parent = _util.Util.getParent(item);
         if (parent) {
           parent.removeChild(item);
         }
-        return;
+        this.drake.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
+        this._cleanup();
       }
-      var reference;
-      var immediate = getImmediateChild(dropTarget, elementBehindCursor);
-      if (immediate !== null) {
-        reference = getReference(dropTarget, immediate, clientX, clientY);
-      } else if (o.revertOnSpill === true && !_copy) {
-        reference = _initialSibling;
-        dropTarget = _source;
-      } else {
-        if (_copy && parent) {
-          parent.removeChild(item);
+    }, {
+      key: 'cancel',
+      value: function cancel(revert) {
+        if (!this.drake.dragging) {
+          return;
         }
-        return;
-      }
-      if (reference === null && changed || reference !== item && reference !== nextEl(item)) {
-        _currentSibling = reference;
-        dropTarget.insertBefore(item, reference);
-        drake.emit('shadow', item, dropTarget, _source);
-      }
-      function moved(type) {
-        drake.emit(type, item, _lastDropTarget, _source);
-      }
-      function over() {
-        if (changed) {
-          moved('over');
+        var reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
+        var item = this._copy || this._item;
+        var parent = _util.Util.getParent(item);
+        if (parent === this._source && this._copy) {
+          parent.removeChild(this._copy);
         }
-      }
-      function out() {
-        if (_lastDropTarget) {
-          moved('out');
+        var initial = this._isInitialPlacement(parent);
+        if (initial === false && !this._copy && reverts) {
+          this._source.insertBefore(item, this._initialSibling);
         }
+        if (initial || reverts) {
+          this.drake.emit('cancel', item, this._source, this._source);
+        } else {
+          this.drake.emit('drop', item, parent, this._source, this._currentSibling);
+        }
+        this._cleanup();
       }
-    }
-
-    function spillOver(el) {
-      _classes.rm(el, 'gu-hide');
-    }
-
-    function spillOut(el) {
-      if (drake.dragging) {
-        _classes.add(el, 'gu-hide');
+    }, {
+      key: '_cleanup',
+      value: function _cleanup() {
+        var item = this._copy || this._item;
+        this._ungrab();
+        this.removeMirrorImage();
+        if (item) {
+          _classes.rm(item, 'gu-transit');
+        }
+        if (this._renderTimer) {
+          clearTimeout(this._renderTimer);
+        }
+        this.drake.dragging = false;
+        if (this._lastDropTarget) {
+          this.drake.emit('out', item, this._lastDropTarget, this._source);
+        }
+        this.drake.emit('dragend', item);
+        this._source = this._item = this._copy = this._initialSibling = this._currentSibling = this._renderTimer = this._lastDropTarget = null;
       }
-    }
-
-    function renderMirrorImage() {
-      if (_mirror) {
-        return;
+    }, {
+      key: '_isInitialPlacement',
+      value: function _isInitialPlacement(target, s) {
+        var sibling = undefined;
+        if (s !== void 0) {
+          sibling = s;
+        } else if (this._mirror) {
+          sibling = this._currentSibling;
+        } else {
+          sibling = _util.Util.nextEl(this._copy || this._item);
+        }
+        return target === this._source && sibling === this._initialSibling;
       }
-      var rect = _item.getBoundingClientRect();
-      _mirror = _item.cloneNode(true);
-      _mirror.style.width = getRectWidth(rect) + 'px';
-      _mirror.style.height = getRectHeight(rect) + 'px';
-      _classes.rm(_mirror, 'gu-transit');
-      _classes.add(_mirror, 'gu-mirror');
-      o.mirrorContainer.appendChild(_mirror);
-      touchy(documentElement, 'add', 'mousemove', drag);
-      _classes.add(o.mirrorContainer, 'gu-unselectable');
-      drake.emit('cloned', _mirror, _item, 'mirror');
-    }
+    }, {
+      key: '_findDropTarget',
+      value: function _findDropTarget(elementBehindCursor, clientX, clientY) {
+        var _this = this;
 
-    function removeMirrorImage() {
-      if (_mirror) {
-        _classes.rm(o.mirrorContainer, 'gu-unselectable');
-        touchy(documentElement, 'remove', 'mousemove', drag);
-        getParent(_mirror).removeChild(_mirror);
-        _mirror = null;
-      }
-    }
-
-    function getImmediateChild(dropTarget, target) {
-      var immediate = target;
-      while (immediate !== dropTarget && getParent(immediate) !== dropTarget) {
-        immediate = getParent(immediate);
-      }
-      if (immediate === documentElement) {
-        return null;
-      }
-      return immediate;
-    }
-
-    function getReference(dropTarget, target, x, y) {
-      var horizontal = o.direction === 'horizontal';
-      var reference = target !== dropTarget ? inside() : outside();
-      return reference;
-
-      function outside() {
-        var len = dropTarget.children.length;
-        var i;
-        var el;
-        var rect;
-        for (i = 0; i < len; i++) {
-          el = dropTarget.children[i];
-          rect = el.getBoundingClientRect();
-          if (horizontal && rect.left > x) {
-            return el;
+        var accepted = function accepted() {
+          var droppable = _this.isContainer(target);
+          if (droppable === false) {
+            return false;
           }
-          if (!horizontal && rect.top > y) {
-            return el;
+
+          var immediate = _util.Util.getImmediateChild(target, elementBehindCursor);
+          var reference = _this.getReference(target, immediate, clientX, clientY);
+          var initial = _this._isInitialPlacement(target, reference);
+          if (initial) {
+            return true;
           }
+          return _this.options.accepts(_this._item, target, _this._source, reference);
+        };
+
+        var target = elementBehindCursor;
+        while (target && !accepted()) {
+          target = _util.Util.getParent(target);
         }
-        return null;
+        return target;
       }
+    }, {
+      key: 'drag',
+      value: function drag(e) {
+        var _this2 = this;
 
-      function inside() {
-        var rect = target.getBoundingClientRect();
-        if (horizontal) {
-          return resolve(x > rect.left + getRectWidth(rect) / 2);
+        if (!this._mirror) {
+          return;
         }
-        return resolve(y > rect.top + getRectHeight(rect) / 2);
+        e.preventDefault();
+
+        var moved = function moved(type) {
+          _this2.drake.emit(type, item, _this2._lastDropTarget, _this2._source);
+        };
+        var over = function over() {
+          if (changed) {
+            moved('over');
+          }
+        };
+        var out = function out() {
+          if (_this2._lastDropTarget) {
+            moved('out');
+          }
+        };
+
+        var clientX = _util.Util.getCoord('clientX', e);
+        var clientY = _util.Util.getCoord('clientY', e);
+        var x = clientX - this._offsetX;
+        var y = clientY - this._offsetY;
+
+        this._mirror.style.left = x + 'px';
+        this._mirror.style.top = y + 'px';
+
+        var item = this._copy || this._item;
+        var elementBehindCursor = _util.Util.getElementBehindPoint(this._mirror, clientX, clientY);
+        var dropTarget = this._findDropTarget(elementBehindCursor, clientX, clientY);
+        var changed = dropTarget !== null && dropTarget !== this._lastDropTarget;
+        if (changed || dropTarget === null) {
+          out();
+          this._lastDropTarget = dropTarget;
+          over();
+        }
+        var parent = _util.Util.getParent(item);
+        if (dropTarget === this._source && this._copy && !this.options.copySortSource) {
+          if (parent) {
+            parent.removeChild(item);
+          }
+          return;
+        }
+        var reference = undefined;
+        var immediate = _util.Util.getImmediateChild(dropTarget, elementBehindCursor);
+        if (immediate !== null) {
+          reference = this.getReference(dropTarget, immediate, clientX, clientY);
+        } else if (this.options.revertOnSpill === true && !this._copy) {
+          reference = this._initialSibling;
+          dropTarget = this._source;
+        } else {
+          if (this._copy && parent) {
+            parent.removeChild(item);
+          }
+          return;
+        }
+        if (reference === null && changed || reference !== item && reference !== _util.Util.nextEl(item)) {
+          this._currentSibling = reference;
+          dropTarget.insertBefore(item, reference);
+          this.drake.emit('shadow', item, dropTarget, this._source);
+        }
       }
-
-      function resolve(after) {
-        return after ? nextEl(target) : target;
+    }, {
+      key: 'spillOver',
+      value: function spillOver(el) {
+        _classes.rm(el, 'gu-hide');
       }
-    }
-
-    function isCopy(item, container) {
-      return typeof o.copy === 'boolean' ? o.copy : o.copy(item, container);
-    }
-  }
-
-  function touchy(el, op, type, fn) {
-    var touch = {
-      mouseup: 'touchend',
-      mousedown: 'touchstart',
-      mousemove: 'touchmove'
-    };
-    var pointers = {
-      mouseup: 'pointerup',
-      mousedown: 'pointerdown',
-      mousemove: 'pointermove'
-    };
-    var microsoft = {
-      mouseup: 'MSPointerUp',
-      mousedown: 'MSPointerDown',
-      mousemove: 'MSPointerMove'
-    };
-    if (window.navigator.pointerEnabled) {
-      _crossvent[op](el, pointers[type], fn);
-    } else if (window.navigator.msPointerEnabled) {
-      _crossvent[op](el, microsoft[type], fn);
-    } else {
-      _crossvent[op](el, touch[type], fn);
-      _crossvent[op](el, type, fn);
-    }
-  }
-
-  function whichMouseButton(e) {
-    if (e.touches !== void 0) {
-      return e.touches.length;
-    }
-    if (e.which !== void 0 && e.which !== 0) {
-      return e.which;
-    }
-    if (e.buttons !== void 0) {
-      return e.buttons;
-    }
-    var button = e.button;
-    if (button !== void 0) {
-      return button & 1 ? 1 : button & 2 ? 3 : button & 4 ? 2 : 0;
-    }
-  }
-
-  function getOffset(el) {
-    var rect = el.getBoundingClientRect();
-    return {
-      left: rect.left + getScroll('scrollLeft', 'pageXOffset'),
-      top: rect.top + getScroll('scrollTop', 'pageYOffset')
-    };
-  }
-
-  function getScroll(scrollProp, offsetProp) {
-    if (typeof window[offsetProp] !== 'undefined') {
-      return window[offsetProp];
-    }
-    if (documentElement.clientHeight) {
-      return documentElement[scrollProp];
-    }
-    return doc.body[scrollProp];
-  }
-
-  function getElementBehindPoint(point, x, y) {
-    var p = point || {};
-    var state = p.className;
-    var el;
-    p.className += ' gu-hide';
-    el = doc.elementFromPoint(x, y);
-    p.className = state;
-    return el;
-  }
-
-  function never() {
-    return false;
-  }
-  function always() {
-    return true;
-  }
-  function getRectWidth(rect) {
-    return rect.width || rect.right - rect.left;
-  }
-  function getRectHeight(rect) {
-    return rect.height || rect.bottom - rect.top;
-  }
-  function getParent(el) {
-    return el.parentNode === doc ? null : el.parentNode;
-  }
-  function isInput(el) {
-    return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || isEditable(el);
-  }
-  function isEditable(_x) {
-    var _again = true;
-
-    _function: while (_again) {
-      var el = _x;
-      _again = false;
-
-      if (!el) {
-        return false;
+    }, {
+      key: 'spillOut',
+      value: function spillOut(el) {
+        if (this.drake.dragging) {
+          _classes.add(el, 'gu-hide');
+        }
       }
-      if (el.contentEditable === 'false') {
-        return false;
+    }, {
+      key: 'renderMirrorImage',
+      value: function renderMirrorImage() {
+        if (this._mirror) {
+          return;
+        }
+        var rect = this._item.getBoundingClientRect();
+        this._mirror = this._item.cloneNode(true);
+        this._mirror.style.width = _util.Util.getRectWidth(rect) + 'px';
+        this._mirror.style.height = _util.Util.getRectHeight(rect) + 'px';
+        _classes.rm(this._mirror, 'gu-transit');
+        _classes.add(this._mirror, 'gu-mirror');
+        this.options.mirrorContainer.appendChild(this._mirror);
+        (0, _touchy.touchy)(document.documentElement, 'add', 'mousemove', this.drag.bind(this));
+        _classes.add(this.options.mirrorContainer, 'gu-unselectable');
+        this.drake.emit('cloned', this._mirror, this._item, 'mirror');
       }
-      if (el.contentEditable === 'true') {
-        return true;
-      }_x = getParent(el);
-      _again = true;
-      continue _function;
-    }
-  }
+    }, {
+      key: 'removeMirrorImage',
+      value: function removeMirrorImage() {
+        if (this._mirror) {
+          _classes.rm(this.options.mirrorContainer, 'gu-unselectable');
+          (0, _touchy.touchy)(document.documentElement, 'remove', 'mousemove', this.drag.bind(this));
+          _util.Util.getParent(this._mirror).removeChild(this._mirror);
+          this._mirror = null;
+        }
+      }
+    }, {
+      key: 'getReference',
+      value: function getReference(dropTarget, target, x, y) {
+        var horizontal = this.options.direction === 'horizontal';
+        var reference = target !== dropTarget ? inside() : outside();
+        return reference;
 
-  function nextEl(el) {
-    return el.nextElementSibling || manually();
-    function manually() {
-      var sibling = el;
-      do {
-        sibling = sibling.nextSibling;
-      } while (sibling && sibling.nodeType !== 1);
-      return sibling;
-    }
-  }
+        outside = function () {
+          var len = dropTarget.children.length;
+          var i = undefined;
+          var el = undefined;
+          var rect = undefined;
+          for (i = 0; i < len; i++) {
+            el = dropTarget.children[i];
+            rect = el.getBoundingClientRect();
+            if (horizontal && rect.left > x) {
+              return el;
+            }
+            if (!horizontal && rect.top > y) {
+              return el;
+            }
+          }
+          return null;
+        };
 
-  function getEventHost(e) {
-    if (e.targetTouches && e.targetTouches.length) {
-      return e.targetTouches[0];
-    }
-    if (e.changedTouches && e.changedTouches.length) {
-      return e.changedTouches[0];
-    }
-    return e;
-  }
+        inside = function () {
+          var rect = target.getBoundingClientRect();
+          if (horizontal) {
+            return resolve(x > rect.left + getRectWidth(rect) / 2);
+          }
+          return resolve(y > rect.top + getRectHeight(rect) / 2);
+        };
 
-  function getCoord(coord, e) {
-    var host = getEventHost(e);
-    var missMap = {
-      pageX: 'clientX',
-      pageY: 'clientY' };
-    if (coord in missMap && !(coord in host) && missMap[coord] in host) {
-      coord = missMap[coord];
-    }
-    return host[coord];
-  }
+        resolve = function (after) {
+          return after ? _util.Util.nextEl(target) : target;
+        };
+      }
+    }, {
+      key: '_isCopy',
+      value: function _isCopy(item, container) {
+        return typeof this.options.copy === 'boolean' ? this.options.copy : this.options.copy(item, container);
+      }
+    }, {
+      key: 'containers',
+      get: function get() {
+        return this.options.containers;
+      },
+      set: function set(value) {
+        this.options.containers = value;
+      }
+    }, {
+      key: 'dragging',
+      get: function get() {
+        return this.drake.dragging;
+      }
+    }]);
+    var _Dragula = Dragula;
+    Dragula = (0, _aureliaDependencyInjection.inject)(_options.GLOBAL_OPTIONS)(Dragula) || Dragula;
+    return Dragula;
+  })();
+
+  exports.Dragula = Dragula;
 });

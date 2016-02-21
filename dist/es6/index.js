@@ -1,7 +1,7 @@
-import {Options, GLOBAL_OPTIONS} from './aurelia/options';
+import {Options, GLOBAL_OPTIONS} from './options';
 
-import {dragula} from './dragula';
-export {dragula};
+import {Dragula} from './dragula';
+export {Dragula};
 
 export function configure(config, callback) {
   let defaults = new Options();
