@@ -42,8 +42,6 @@ export class Dragula {
     this._renderTimer; // timer for setTimeout renderMirrorImage
     this._lastDropTarget = null; // last container item was over
     this._grabbed; // holds mousedown context until first mousemove
-
-   // return drake;
   }
 
   on(eventName, callback) {
@@ -66,21 +64,18 @@ export class Dragula {
     return this.drake.containers.indexOf(el) !== -1 || this.options.isContainer(el);
   }
 
-  //events
   _events(remove) {
     let op = remove ? 'remove' : 'add';
     touchy(document.documentElement, op, 'mousedown', ::this._grab);
     touchy(document.documentElement, op, 'mouseup', ::this._release);
   }
 
-  //eventualMovements
   _eventualMovements(remove) {
     let op = remove ? 'remove' : 'add';
     touchy(document.documentElement, op, 'mousemove', ::this._startBecauseMouseMoved);
   }
 
-  //movements
-  _movements (remove) {
+  _movements(remove) {
     let op = remove ? 'remove' : 'add';
     crossvent[op](document.documentElement, 'selectstart', this._preventGrabbed); // IE8
     crossvent[op](document.documentElement, 'click', this._preventGrabbed);
@@ -91,14 +86,12 @@ export class Dragula {
     this._release({});
   }
 
-  //preventGrabbed
   _preventGrabbed(e) {
     if (this._grabbed) {
       e.preventDefault();
     }
   }
 
-  //grab
   _grab(e) {
     this._moveX = e.clientX;
     this._moveY = e.clientY;
@@ -123,7 +116,6 @@ export class Dragula {
     }
   }
 
-  //startBecauseMouseMoved
   _startBecauseMouseMoved (e) {
     if (!this._grabbed) {
       return;
@@ -160,7 +152,6 @@ export class Dragula {
     this.drag(e);
   }
 
-  //canStart
   _canStart(item) {
     if (this.drake.dragging && this._mirror) {
       return;
@@ -226,7 +217,6 @@ export class Dragula {
     this.drop(item, Util.getParent(item));
   }
 
-  //ungrab
   _ungrab() {
     this._grabbed = false;
     this._eventualMovements(true);
@@ -301,7 +291,6 @@ export class Dragula {
     this._cleanup();
   }
 
-  //cleanup
   _cleanup () {
     let item = this._copy || this._item;
     this._ungrab();
@@ -478,7 +467,6 @@ export class Dragula {
     }
   }
 
-  //isCopy
   _isCopy(item, container) {
     return typeof this.options.copy === 'boolean' ? this.options.copy : this.options.copy(item, container);
   }

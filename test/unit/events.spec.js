@@ -91,15 +91,15 @@ describe('events', function() {
     drake.remove();
   });
 
-  //this.item does not have the 'gu-transit' class, so this fails...
-  xit('.remove() emits "cancel" for copies', function() {
+  it('.remove() emits "cancel" for copies', function() {
     let dragendCalled = false;
     let drake = createDragula([this.div], { copy: true });
+    let copiedItem;
+    this.item.classList.add('test');
 
     drake.on('dragend', () => dragendCalled = true);
     drake.on('cancel', (copy, container) => {
-      expect(copy).not.toBe(this.item, 'copy is not a reference to item');
-      expect(copy).toEqual(this.item, 'item is a copy of item');
+      copiedItem = copy;
       expect(container).toBe(null, 'container matches expectation');
     });
 
@@ -109,6 +109,8 @@ describe('events', function() {
     drake.remove();
 
     expect(dragendCalled).toBeTruthy();
+    expect(copiedItem).not.toBe(this.item, 'copy is not a reference to item');
+    expect(copiedItem.isEqualNode(this.item)).toBeTruthy('item is a copy of item');
   });
 
   it('.cancel() emits "cancel" when not moved', function() {
@@ -172,19 +174,29 @@ describe('events', function() {
   });
 
   //this.item doesn't have the style attribute
-  xit('mousedown emits "cloned" for mirrors', function() {
+  it('mousedown emits "cloned" for mirrors', function() {
     let drake = createDragula([this.div]);
+    this.item.classList.add('test');
+    this.item.style['width'] = '250px';
+    this.item.style['height'] = '22px';
+    let mirror;
 
     drake.on('cloned', (copy, original, type) => {
       if (type === 'mirror') {
-        expect(copy).not.toBe(this.item, 'mirror is not a reference to item');
-        expect(copy).toEqual(this.item, 'mirror of original is provided');
+        mirror = copy;
         expect(original).toBe(this.item, 'original item is provided');
       }
     });
 
     raise(this.item, 'mousedown', { which: 1 });
     raise(this.item, 'mousemove', { which: 1 });
+
+    expect(mirror).not.toBe(this.item, 'mirror is not a reference to item');
+    expect(mirror.style).toEqual(this.item.style);
+    expect(this.item.classList.contains('gu-transit')).toBeTruthy();
+    expect(mirror.classList.contains('gu-mirror')).toBeTruthy();
+    expect(this.item.classList.contains('test')).toBeTruthy();
+    expect(mirror.classList.contains('test')).toBeTruthy();
   });
 
   it('mousedown emits "cloned" for copies', function() {
