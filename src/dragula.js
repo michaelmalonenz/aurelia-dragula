@@ -12,7 +12,8 @@ export class Dragula {
   constructor(options) {
     let len = arguments.length;
     this.options = options || new Options();
-    this.drake = emitter({
+    this.emitter = new Emitter();
+    this.drake = {
       containers: this.options.containers,
       start: ::this.manualStart,
       end: ::this.end,
@@ -20,10 +21,11 @@ export class Dragula {
       remove: ::this.remove,
       destroy: ::this.destroy,
       dragging: false
-    });
+    };
 
     if (this.options.removeOnSpill === true) {
-      this.drake.on('over', spillOver).on('out', spillOut);
+      this.emitter.on('over', ::this.spillOver);
+      this.emitter.on('out', ::this.spillOut);
     }
 
     this._events();
@@ -44,7 +46,7 @@ export class Dragula {
   }
 
   on(eventName, callback) {
-    this.drake.on(eventName, callback);
+    this.emitter.on(eventName, callback);
   }
 
   get containers() {
@@ -64,13 +66,13 @@ export class Dragula {
   }
 
   _events(remove) {
-    let op = remove ? 'remove' : 'add';
+    let op = remove ? 'removeEventListener' : 'addEventListener';
     touchy(document.documentElement, op, 'mousedown', ::this._grab);
     touchy(document.documentElement, op, 'mouseup', ::this._release);
   }
 
   _eventualMovements(remove) {
-    let op = remove ? 'remove' : 'add';
+    let op = remove ? 'removeEventListener' : 'addEventListener';
     touchy(document.documentElement, op, 'mousemove', ::this._startBecauseMouseMoved);
   }
 
@@ -196,7 +198,7 @@ export class Dragula {
   start(context) {
     if (this._isCopy(context.item, context.source)) {
       this._copy = context.item.cloneNode(true);
-      this.drake.emit('cloned', this._copy, context.item, 'copy');
+      this.emitter.emit('cloned', this._copy, context.item, 'copy');
     }
 
     this._source = context.source;
@@ -204,7 +206,7 @@ export class Dragula {
     this._initialSibling = this._currentSibling = Util.nextEl(context.item);
 
     this.drake.dragging = true;
-    this.drake.emit('drag', this._item, this._source);
+    this.emitter.emit('drag', this._item, this._source);
   }
 
   end() {
@@ -247,9 +249,9 @@ export class Dragula {
       parent.removeChild(_item);
     }
     if (this._isInitialPlacement(target)) {
-      this.drake.emit('cancel', item, this._source, this._source);
+      this.emitter.emit('cancel', item, this._source, this._source);
     } else {
-      this.drake.emit('drop', item, target, this._source, this._currentSibling);
+      this.emitter.emit('drop', item, target, this._source, this._currentSibling);
     }
     this._cleanup();
   }
@@ -263,7 +265,7 @@ export class Dragula {
     if (parent) {
       parent.removeChild(item);
     }
-    this.drake.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
+    this.emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
     this._cleanup();
   }
 
@@ -282,9 +284,9 @@ export class Dragula {
       this._source.insertBefore(item, this._initialSibling);
     }
     if (initial || reverts) {
-      this.drake.emit('cancel', item, this._source, this._source);
+      this.emitter.emit('cancel', item, this._source, this._source);
     } else {
-      this.drake.emit('drop', item, parent, this._source, this._currentSibling);
+      this.emitter.emit('drop', item, parent, this._source, this._currentSibling);
     }
     this._cleanup();
   }
@@ -301,9 +303,9 @@ export class Dragula {
     }
     this.drake.dragging = false;
     if (this._lastDropTarget) {
-      this.drake.emit('out', item, this._lastDropTarget, this._source);
+      this.emitter.emit('out', item, this._lastDropTarget, this._source);
     }
-    this.drake.emit('dragend', item);
+    this.emitter.emit('dragend', item);
     this._source = this._item = this._copy = this._initialSibling = this._currentSibling = this._renderTimer = this._lastDropTarget = null;
   }
 
@@ -348,7 +350,7 @@ export class Dragula {
     }
     e.preventDefault();
 
-    let moved = (type) => { this.drake.emit(type, item, this._lastDropTarget, this._source); }
+    let moved = (type) => { this.emitter.emit(type, item, this._lastDropTarget, this._source); }
     let over = () => { if (changed) { moved('over'); } }
     let out = () => { if (this._lastDropTarget) { moved('out'); } }
 
@@ -396,7 +398,7 @@ export class Dragula {
     ) {
       this._currentSibling = reference;
       dropTarget.insertBefore(item, reference);
-      this.drake.emit('shadow', item, dropTarget, this._source);
+      this.emitter.emit('shadow', item, dropTarget, this._source);
     }
   }
 
@@ -419,15 +421,15 @@ export class Dragula {
     classes.rm(this._mirror, 'gu-transit');
     classes.add(this._mirror, 'gu-mirror');
     this.options.mirrorContainer.appendChild(this._mirror);
-    touchy(document.documentElement, 'add', 'mousemove', ::this.drag);
+    touchy(document.documentElement, 'addEventListener', 'mousemove', ::this.drag);
     classes.add(this.options.mirrorContainer, 'gu-unselectable');
-    this.drake.emit('cloned', this._mirror, this._item, 'mirror');
+    this.emitter.emit('cloned', this._mirror, this._item, 'mirror');
   }
 
   removeMirrorImage() {
     if (this._mirror) {
       classes.rm(this.options.mirrorContainer, 'gu-unselectable');
-      touchy(document.documentElement, 'remove', 'mousemove', ::this.drag);
+      touchy(document.documentElement, 'removeEventListener', 'mousemove', ::this.drag);
       Util.getParent(this._mirror).removeChild(this._mirror);
       this._mirror = null;
     }

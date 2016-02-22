@@ -24,7 +24,7 @@ export class Emitter {
   }
 
   once(type, fn) {
-    thing.on(type, fn, true);
+    this.on(type, fn, true);
   }
 
   off(type, fn) {
@@ -46,23 +46,23 @@ export class Emitter {
 
   emit() {
     let args = [...arguments];
-    return this._emitterSnapshot(args.shift()).func(...args);
+    return this._emitterSnapshot(args.shift()).apply(this, args);
   }
 
   _emitterSnapshot(type) {
     let et = (this.events[type] || []).slice(0);
     return function() {
-      let args = [...arguments];
+      let args = arguments ? [...arguments] : [];
       if (type === 'error' && this.options.throws !== false && !et.length) { throw args.length === 1 ? args[0] : args; }
       et.forEach(listener => {
         if (this.options.async) {
-          debounce(listener.func, args);
+          debounce(listener.func, ...args);
         }
         else {
           listener.func(...args);
         }
         if (listener.once) {
-          thing.off(type, listener);
+          this.off(type, listener);
         }
       });
     }
