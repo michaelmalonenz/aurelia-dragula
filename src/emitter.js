@@ -1,61 +1,68 @@
-let debounce = require('./debounce');
+//let debounce = require('./debounce');
+
+class EventListener {
+
+  constructor(func, once = false) {
+    this.func = func;
+    this.once = once;
+  }
+}
 
 export class Emitter {
 
-  constructor(thing, options) {
+  constructor(options) {
     this.options = options || {};
     this.events = {};
-    if (thing === undefined) { thing = {}; }
-    this.thing = thing;
   }
 
-  on(type, fn) {
-    if (!this.events[type]) {
-      this.events[type] = fn;
+  on(type, fn, once = false) {
+    let newEvent = new EventListener(fn, once);
+    if (this.events[type] === undefined) {
+      this.events[type] = [];
     }
-    else {
-      this.events[type] = fn;
-    }
+    this.events[type].push(newEvent);
   }
 
   once(type, fn) {
-    fn._once = true; // thing.off(fn) still works!
-    thing.on(type, fn);
+    thing.on(type, fn, true);
   }
 
   off(type, fn) {
-    let c = arguments.length;
-    if (c === 1) {
+    if (arguments.length === 1) {
       delete this.events[type];
-    } else if (c === 0) {
+    }
+    else if (arguments.length === 0) {
       this.events = {};
-    } else {
-      let et = this.events[type];
-      if (!et) { return; }
-      et.splice(et.indexOf(fn), 1);
+    }
+    else {
+      let eventList = this.events[type];
+      if (eventList) {
+        let index = eventList.findIndex(x => x.func === fn);
+        if (index >= 0)
+          eventList.splice(index, 1);
+      }
     }
   }
 
   emit() {
     let args = [...arguments];
-    return this._emitterSnapshot(args.shift()).apply(this.thing, args);
+    return this._emitterSnapshot(args.shift()).func(...args);
   }
 
   _emitterSnapshot(type) {
     let et = (this.events[type] || []).slice(0);
     return function() {
       let args = [...arguments];
-      let context = this.thing;
       if (type === 'error' && this.options.throws !== false && !et.length) { throw args.length === 1 ? args[0] : args; }
-      et.forEach(listen => {
+      et.forEach(listener => {
         if (this.options.async) {
-          debounce(listen, args, context);
+          debounce(listener.func, args);
         }
         else {
-          listen.apply(context, args);
+          listener.func(...args);
         }
-        if (listen._once) {
-          thing.off(type, listen);
+        if (listener.once) {
+          thing.off(type, listener);
         }
       });
     }
