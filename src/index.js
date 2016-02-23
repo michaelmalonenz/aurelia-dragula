@@ -1,7 +1,7 @@
 import {Options, GLOBAL_OPTIONS} from './options';
 
 import {Dragula} from './dragula';
-export {Dragula};
+export {Dragula, Options};
 
 export function configure(config, callback) {
   let defaults = new Options();
