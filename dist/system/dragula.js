@@ -1,5 +1,5 @@
-System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/class-call-check', 'aurelia-dependency-injection', './touchy', './options', './util', 'contra', 'crossvent', './classes'], function (_export) {
-  var _createClass, _classCallCheck, inject, touchy, GLOBAL_OPTIONS, Options, Util, emitter, crossvent, classes, Dragula;
+System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/class-call-check', 'aurelia-dependency-injection', './touchy', './options', './util', './emitter', './classes'], function (_export) {
+  var _createClass, _classCallCheck, inject, touchy, GLOBAL_OPTIONS, Options, Util, Emitter, classes, Dragula;
 
   return {
     setters: [function (_babelRuntimeHelpersCreateClass) {
@@ -15,10 +15,8 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
       Options = _options.Options;
     }, function (_util) {
       Util = _util.Util;
-    }, function (_contra) {
-      emitter = _contra.emitter;
-    }, function (_crossvent) {
-      crossvent = _crossvent;
+    }, function (_emitter) {
+      Emitter = _emitter.Emitter;
     }, function (_classes) {
       classes = _classes;
     }],
@@ -31,7 +29,8 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
 
           var len = arguments.length;
           this.options = options || new Options();
-          this.drake = emitter({
+          this.emitter = new Emitter();
+          this.drake = {
             containers: this.options.containers,
             start: this.manualStart.bind(this),
             end: this.end.bind(this),
@@ -39,10 +38,11 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
             remove: this.remove.bind(this),
             destroy: this.destroy.bind(this),
             dragging: false
-          });
+          };
 
           if (this.options.removeOnSpill === true) {
-            this.drake.on('over', spillOver).on('out', spillOut);
+            this.emitter.on('over', this.spillOver.bind(this));
+            this.emitter.on('out', this.spillOut.bind(this));
           }
 
           this._events();
@@ -65,7 +65,7 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
         _createClass(Dragula, [{
           key: 'on',
           value: function on(eventName, callback) {
-            this.drake.on(eventName, callback);
+            this.emitter.on(eventName, callback);
           }
         }, {
           key: 'isContainer',
@@ -75,22 +75,21 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
         }, {
           key: '_events',
           value: function _events(remove) {
-            var op = remove ? 'remove' : 'add';
+            var op = remove ? 'removeEventListener' : 'addEventListener';
             touchy(document.documentElement, op, 'mousedown', this._grab.bind(this));
             touchy(document.documentElement, op, 'mouseup', this._release.bind(this));
           }
         }, {
           key: '_eventualMovements',
           value: function _eventualMovements(remove) {
-            var op = remove ? 'remove' : 'add';
+            var op = remove ? 'removeEventListener' : 'addEventListener';
             touchy(document.documentElement, op, 'mousemove', this._startBecauseMouseMoved.bind(this));
           }
         }, {
           key: '_movements',
           value: function _movements(remove) {
-            var op = remove ? 'remove' : 'add';
-            crossvent[op](document.documentElement, 'selectstart', this._preventGrabbed);
-            crossvent[op](document.documentElement, 'click', this._preventGrabbed);
+            var op = remove ? 'removeEventListener' : 'addEventListener';
+            document.documentElement[op]('click', this._preventGrabbed);
           }
         }, {
           key: 'destroy',
@@ -217,7 +216,7 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
           value: function start(context) {
             if (this._isCopy(context.item, context.source)) {
               this._copy = context.item.cloneNode(true);
-              this.drake.emit('cloned', this._copy, context.item, 'copy');
+              this.emitter.emit('cloned', this._copy, context.item, 'copy');
             }
 
             this._source = context.source;
@@ -225,7 +224,7 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
             this._initialSibling = this._currentSibling = Util.nextEl(context.item);
 
             this.drake.dragging = true;
-            this.drake.emit('drag', this._item, this._source);
+            this.emitter.emit('drag', this._item, this._source);
           }
         }, {
           key: 'end',
@@ -272,9 +271,9 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
               parent.removeChild(_item);
             }
             if (this._isInitialPlacement(target)) {
-              this.drake.emit('cancel', item, this._source, this._source);
+              this.emitter.emit('cancel', item, this._source, this._source);
             } else {
-              this.drake.emit('drop', item, target, this._source, this._currentSibling);
+              this.emitter.emit('drop', item, target, this._source, this._currentSibling);
             }
             this._cleanup();
           }
@@ -289,7 +288,7 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
             if (parent) {
               parent.removeChild(item);
             }
-            this.drake.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
+            this.emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
             this._cleanup();
           }
         }, {
@@ -309,9 +308,9 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
               this._source.insertBefore(item, this._initialSibling);
             }
             if (initial || reverts) {
-              this.drake.emit('cancel', item, this._source, this._source);
+              this.emitter.emit('cancel', item, this._source, this._source);
             } else {
-              this.drake.emit('drop', item, parent, this._source, this._currentSibling);
+              this.emitter.emit('drop', item, parent, this._source, this._currentSibling);
             }
             this._cleanup();
           }
@@ -329,9 +328,9 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
             }
             this.drake.dragging = false;
             if (this._lastDropTarget) {
-              this.drake.emit('out', item, this._lastDropTarget, this._source);
+              this.emitter.emit('out', item, this._lastDropTarget, this._source);
             }
-            this.drake.emit('dragend', item);
+            this.emitter.emit('dragend', item);
             this._source = this._item = this._copy = this._initialSibling = this._currentSibling = this._renderTimer = this._lastDropTarget = null;
           }
         }, {
@@ -384,7 +383,7 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
             e.preventDefault();
 
             var moved = function moved(type) {
-              _this2.drake.emit(type, item, _this2._lastDropTarget, _this2._source);
+              _this2.emitter.emit(type, item, _this2._lastDropTarget, _this2._source);
             };
             var over = function over() {
               if (changed) {
@@ -437,7 +436,7 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
             if (reference === null && changed || reference !== item && reference !== Util.nextEl(item)) {
               this._currentSibling = reference;
               dropTarget.insertBefore(item, reference);
-              this.drake.emit('shadow', item, dropTarget, this._source);
+              this.emitter.emit('shadow', item, dropTarget, this._source);
             }
           }
         }, {
@@ -465,16 +464,16 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
             classes.rm(this._mirror, 'gu-transit');
             classes.add(this._mirror, 'gu-mirror');
             this.options.mirrorContainer.appendChild(this._mirror);
-            touchy(document.documentElement, 'add', 'mousemove', this.drag.bind(this));
+            touchy(document.documentElement, 'addEventListener', 'mousemove', this.drag.bind(this));
             classes.add(this.options.mirrorContainer, 'gu-unselectable');
-            this.drake.emit('cloned', this._mirror, this._item, 'mirror');
+            this.emitter.emit('cloned', this._mirror, this._item, 'mirror');
           }
         }, {
           key: 'removeMirrorImage',
           value: function removeMirrorImage() {
             if (this._mirror) {
               classes.rm(this.options.mirrorContainer, 'gu-unselectable');
-              touchy(document.documentElement, 'remove', 'mousemove', this.drag.bind(this));
+              touchy(document.documentElement, 'removeEventListener', 'mousemove', this.drag.bind(this));
               Util.getParent(this._mirror).removeChild(this._mirror);
               this._mirror = null;
             }
@@ -482,11 +481,7 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
         }, {
           key: 'getReference',
           value: function getReference(dropTarget, target, x, y) {
-            var horizontal = this.options.direction === 'horizontal';
-            var reference = target !== dropTarget ? inside() : outside();
-            return reference;
-
-            outside = function () {
+            var outside = function outside() {
               var len = dropTarget.children.length;
               var i = undefined;
               var el = undefined;
@@ -504,17 +499,21 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
               return null;
             };
 
-            inside = function () {
-              var rect = target.getBoundingClientRect();
-              if (horizontal) {
-                return resolve(x > rect.left + getRectWidth(rect) / 2);
-              }
-              return resolve(y > rect.top + getRectHeight(rect) / 2);
-            };
-
-            resolve = function (after) {
+            var resolve = function resolve(after) {
               return after ? Util.nextEl(target) : target;
             };
+
+            var inside = function inside() {
+              var rect = target.getBoundingClientRect();
+              if (horizontal) {
+                return resolve(x > rect.left + Util.getRectWidth(rect) / 2);
+              }
+              return resolve(y > rect.top + Util.getRectHeight(rect) / 2);
+            };
+
+            var horizontal = this.options.direction === 'horizontal';
+            var reference = target !== dropTarget ? inside() : outside();
+            return reference;
           }
         }, {
           key: '_isCopy',

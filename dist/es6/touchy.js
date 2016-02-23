@@ -1,5 +1,3 @@
-import * as crossvent from 'crossvent';
-
 const touch = {
   mouseup: 'touchend',
   mousedown: 'touchstart',
@@ -18,11 +16,11 @@ const microsoft = {
 
 export function touchy(el, op, type, fn) {
   if (window.navigator.pointerEnabled) {
-    crossvent[op](el, pointers[type], fn);
+    el[op](pointers[type], fn);
   } else if (window.navigator.msPointerEnabled) {
-    crossvent[op](el, microsoft[type], fn);
+    el[op](microsoft[type], fn);
   } else {
-    crossvent[op](el, touch[type], fn);
-    crossvent[op](el, type, fn);
+    el[op](touch[type], fn);
+    el[op](type, fn);
   }
 }

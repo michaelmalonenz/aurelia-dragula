@@ -6,6 +6,7 @@ define(['exports', './options', './dragula'], function (exports, _options, _drag
   });
   exports.configure = configure;
   exports.Dragula = _dragula.Dragula;
+  exports.Options = _options.Options;
 
   function configure(config, callback) {
     var defaults = new _options.Options();

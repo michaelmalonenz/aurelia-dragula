@@ -23,6 +23,8 @@ System.register(['./options', './dragula'], function (_export) {
     }],
     execute: function () {
       _export('Dragula', Dragula);
+
+      _export('Options', Options);
     }
   };
 });

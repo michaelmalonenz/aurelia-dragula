@@ -1,4 +1,4 @@
-define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/class-call-check', 'aurelia-dependency-injection', './touchy', './options', './util', 'contra', 'crossvent', './classes'], function (exports, _babelRuntimeHelpersCreateClass, _babelRuntimeHelpersClassCallCheck, _aureliaDependencyInjection, _touchy, _options, _util, _contra, _crossvent, _classes) {
+define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/class-call-check', 'aurelia-dependency-injection', './touchy', './options', './util', './emitter', './classes'], function (exports, _babelRuntimeHelpersCreateClass, _babelRuntimeHelpersClassCallCheck, _aureliaDependencyInjection, _touchy, _options, _util, _emitter, _classes) {
   'use strict';
 
   Object.defineProperty(exports, '__esModule', {
@@ -11,7 +11,8 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
 
       var len = arguments.length;
       this.options = options || new _options.Options();
-      this.drake = (0, _contra.emitter)({
+      this.emitter = new _emitter.Emitter();
+      this.drake = {
         containers: this.options.containers,
         start: this.manualStart.bind(this),
         end: this.end.bind(this),
@@ -19,10 +20,11 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         remove: this.remove.bind(this),
         destroy: this.destroy.bind(this),
         dragging: false
-      });
+      };
 
       if (this.options.removeOnSpill === true) {
-        this.drake.on('over', spillOver).on('out', spillOut);
+        this.emitter.on('over', this.spillOver.bind(this));
+        this.emitter.on('out', this.spillOut.bind(this));
       }
 
       this._events();
@@ -45,7 +47,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
     (0, _babelRuntimeHelpersCreateClass['default'])(Dragula, [{
       key: 'on',
       value: function on(eventName, callback) {
-        this.drake.on(eventName, callback);
+        this.emitter.on(eventName, callback);
       }
     }, {
       key: 'isContainer',
@@ -55,22 +57,21 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
     }, {
       key: '_events',
       value: function _events(remove) {
-        var op = remove ? 'remove' : 'add';
+        var op = remove ? 'removeEventListener' : 'addEventListener';
         (0, _touchy.touchy)(document.documentElement, op, 'mousedown', this._grab.bind(this));
         (0, _touchy.touchy)(document.documentElement, op, 'mouseup', this._release.bind(this));
       }
     }, {
       key: '_eventualMovements',
       value: function _eventualMovements(remove) {
-        var op = remove ? 'remove' : 'add';
+        var op = remove ? 'removeEventListener' : 'addEventListener';
         (0, _touchy.touchy)(document.documentElement, op, 'mousemove', this._startBecauseMouseMoved.bind(this));
       }
     }, {
       key: '_movements',
       value: function _movements(remove) {
-        var op = remove ? 'remove' : 'add';
-        _crossvent[op](document.documentElement, 'selectstart', this._preventGrabbed);
-        _crossvent[op](document.documentElement, 'click', this._preventGrabbed);
+        var op = remove ? 'removeEventListener' : 'addEventListener';
+        document.documentElement[op]('click', this._preventGrabbed);
       }
     }, {
       key: 'destroy',
@@ -197,7 +198,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
       value: function start(context) {
         if (this._isCopy(context.item, context.source)) {
           this._copy = context.item.cloneNode(true);
-          this.drake.emit('cloned', this._copy, context.item, 'copy');
+          this.emitter.emit('cloned', this._copy, context.item, 'copy');
         }
 
         this._source = context.source;
@@ -205,7 +206,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         this._initialSibling = this._currentSibling = _util.Util.nextEl(context.item);
 
         this.drake.dragging = true;
-        this.drake.emit('drag', this._item, this._source);
+        this.emitter.emit('drag', this._item, this._source);
       }
     }, {
       key: 'end',
@@ -252,9 +253,9 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
           parent.removeChild(_item);
         }
         if (this._isInitialPlacement(target)) {
-          this.drake.emit('cancel', item, this._source, this._source);
+          this.emitter.emit('cancel', item, this._source, this._source);
         } else {
-          this.drake.emit('drop', item, target, this._source, this._currentSibling);
+          this.emitter.emit('drop', item, target, this._source, this._currentSibling);
         }
         this._cleanup();
       }
@@ -269,7 +270,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         if (parent) {
           parent.removeChild(item);
         }
-        this.drake.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
+        this.emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
         this._cleanup();
       }
     }, {
@@ -289,9 +290,9 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
           this._source.insertBefore(item, this._initialSibling);
         }
         if (initial || reverts) {
-          this.drake.emit('cancel', item, this._source, this._source);
+          this.emitter.emit('cancel', item, this._source, this._source);
         } else {
-          this.drake.emit('drop', item, parent, this._source, this._currentSibling);
+          this.emitter.emit('drop', item, parent, this._source, this._currentSibling);
         }
         this._cleanup();
       }
@@ -309,9 +310,9 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         }
         this.drake.dragging = false;
         if (this._lastDropTarget) {
-          this.drake.emit('out', item, this._lastDropTarget, this._source);
+          this.emitter.emit('out', item, this._lastDropTarget, this._source);
         }
-        this.drake.emit('dragend', item);
+        this.emitter.emit('dragend', item);
         this._source = this._item = this._copy = this._initialSibling = this._currentSibling = this._renderTimer = this._lastDropTarget = null;
       }
     }, {
@@ -364,7 +365,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         e.preventDefault();
 
         var moved = function moved(type) {
-          _this2.drake.emit(type, item, _this2._lastDropTarget, _this2._source);
+          _this2.emitter.emit(type, item, _this2._lastDropTarget, _this2._source);
         };
         var over = function over() {
           if (changed) {
@@ -417,7 +418,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         if (reference === null && changed || reference !== item && reference !== _util.Util.nextEl(item)) {
           this._currentSibling = reference;
           dropTarget.insertBefore(item, reference);
-          this.drake.emit('shadow', item, dropTarget, this._source);
+          this.emitter.emit('shadow', item, dropTarget, this._source);
         }
       }
     }, {
@@ -445,16 +446,16 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         _classes.rm(this._mirror, 'gu-transit');
         _classes.add(this._mirror, 'gu-mirror');
         this.options.mirrorContainer.appendChild(this._mirror);
-        (0, _touchy.touchy)(document.documentElement, 'add', 'mousemove', this.drag.bind(this));
+        (0, _touchy.touchy)(document.documentElement, 'addEventListener', 'mousemove', this.drag.bind(this));
         _classes.add(this.options.mirrorContainer, 'gu-unselectable');
-        this.drake.emit('cloned', this._mirror, this._item, 'mirror');
+        this.emitter.emit('cloned', this._mirror, this._item, 'mirror');
       }
     }, {
       key: 'removeMirrorImage',
       value: function removeMirrorImage() {
         if (this._mirror) {
           _classes.rm(this.options.mirrorContainer, 'gu-unselectable');
-          (0, _touchy.touchy)(document.documentElement, 'remove', 'mousemove', this.drag.bind(this));
+          (0, _touchy.touchy)(document.documentElement, 'removeEventListener', 'mousemove', this.drag.bind(this));
           _util.Util.getParent(this._mirror).removeChild(this._mirror);
           this._mirror = null;
         }
@@ -462,11 +463,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
     }, {
       key: 'getReference',
       value: function getReference(dropTarget, target, x, y) {
-        var horizontal = this.options.direction === 'horizontal';
-        var reference = target !== dropTarget ? inside() : outside();
-        return reference;
-
-        outside = function () {
+        var outside = function outside() {
           var len = dropTarget.children.length;
           var i = undefined;
           var el = undefined;
@@ -484,17 +481,21 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
           return null;
         };
 
-        inside = function () {
-          var rect = target.getBoundingClientRect();
-          if (horizontal) {
-            return resolve(x > rect.left + getRectWidth(rect) / 2);
-          }
-          return resolve(y > rect.top + getRectHeight(rect) / 2);
-        };
-
-        resolve = function (after) {
+        var resolve = function resolve(after) {
           return after ? _util.Util.nextEl(target) : target;
         };
+
+        var inside = function inside() {
+          var rect = target.getBoundingClientRect();
+          if (horizontal) {
+            return resolve(x > rect.left + _util.Util.getRectWidth(rect) / 2);
+          }
+          return resolve(y > rect.top + _util.Util.getRectHeight(rect) / 2);
+        };
+
+        var horizontal = this.options.direction === 'horizontal';
+        var reference = target !== dropTarget ? inside() : outside();
+        return reference;
       }
     }, {
       key: '_isCopy',

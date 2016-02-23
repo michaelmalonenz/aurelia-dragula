@@ -1,16 +1,9 @@
 'use strict';
 
-var _interopRequireWildcard = require('babel-runtime/helpers/interop-require-wildcard')['default'];
-
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
 exports.touchy = touchy;
-
-var _crossvent = require('crossvent');
-
-var crossvent = _interopRequireWildcard(_crossvent);
-
 var touch = {
   mouseup: 'touchend',
   mousedown: 'touchstart',
@@ -29,11 +22,11 @@ var microsoft = {
 
 function touchy(el, op, type, fn) {
   if (window.navigator.pointerEnabled) {
-    crossvent[op](el, pointers[type], fn);
+    el[op](pointers[type], fn);
   } else if (window.navigator.msPointerEnabled) {
-    crossvent[op](el, microsoft[type], fn);
+    el[op](microsoft[type], fn);
   } else {
-    crossvent[op](el, touch[type], fn);
-    crossvent[op](el, type, fn);
+    el[op](touch[type], fn);
+    el[op](type, fn);
   }
 }

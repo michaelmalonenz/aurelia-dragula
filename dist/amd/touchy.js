@@ -1,11 +1,10 @@
-define(['exports', 'crossvent'], function (exports, _crossvent) {
+define(['exports'], function (exports) {
   'use strict';
 
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
   exports.touchy = touchy;
-
   var touch = {
     mouseup: 'touchend',
     mousedown: 'touchstart',
@@ -24,12 +23,12 @@ define(['exports', 'crossvent'], function (exports, _crossvent) {
 
   function touchy(el, op, type, fn) {
     if (window.navigator.pointerEnabled) {
-      _crossvent[op](el, pointers[type], fn);
+      el[op](pointers[type], fn);
     } else if (window.navigator.msPointerEnabled) {
-      _crossvent[op](el, microsoft[type], fn);
+      el[op](microsoft[type], fn);
     } else {
-      _crossvent[op](el, touch[type], fn);
-      _crossvent[op](el, type, fn);
+      el[op](touch[type], fn);
+      el[op](type, fn);
     }
   }
 });

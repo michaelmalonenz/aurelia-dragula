@@ -1,25 +1,23 @@
-System.register(['crossvent'], function (_export) {
+System.register([], function (_export) {
   'use strict';
 
-  var crossvent, touch, pointers, microsoft;
+  var touch, pointers, microsoft;
 
   _export('touchy', touchy);
 
   function touchy(el, op, type, fn) {
     if (window.navigator.pointerEnabled) {
-      crossvent[op](el, pointers[type], fn);
+      el[op](pointers[type], fn);
     } else if (window.navigator.msPointerEnabled) {
-      crossvent[op](el, microsoft[type], fn);
+      el[op](microsoft[type], fn);
     } else {
-      crossvent[op](el, touch[type], fn);
-      crossvent[op](el, type, fn);
+      el[op](touch[type], fn);
+      el[op](type, fn);
     }
   }
 
   return {
-    setters: [function (_crossvent) {
-      crossvent = _crossvent;
-    }],
+    setters: [],
     execute: function () {
       touch = {
         mouseup: 'touchend',
