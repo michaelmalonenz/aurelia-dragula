@@ -54,6 +54,7 @@ export class Emitter {
     return function() {
       let args = arguments ? [...arguments] : [];
       if (type === 'error' && this.options.throws !== false && !et.length) { throw args.length === 1 ? args[0] : args; }
+      let toDeregister = [];
       et.forEach(listener => {
         if (this.options.async) {
           debounce(listener.func, ...args);
@@ -62,9 +63,12 @@ export class Emitter {
           listener.func(...args);
         }
         if (listener.once) {
-          this.off(type, listener);
+          toDeregister.push(listener);
         }
       });
+      toDeregister.forEach(listener => {
+        this.off(type, listener.func);
+      })
     }
   }
 }

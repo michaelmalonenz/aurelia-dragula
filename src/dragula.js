@@ -13,15 +13,7 @@ export class Dragula {
     let len = arguments.length;
     this.options = options || new Options();
     this.emitter = new Emitter();
-    this.drake = {
-      containers: this.options.containers,
-      start: ::this.manualStart,
-      end: ::this.end,
-      cancel: ::this.cancel,
-      remove: ::this.remove,
-      destroy: ::this.destroy,
-      dragging: false
-    };
+    this.dragging = false;
 
     if (this.options.removeOnSpill === true) {
       this.emitter.on('over', ::this.spillOver);
@@ -57,12 +49,8 @@ export class Dragula {
     this.options.containers = value;
   }
 
-  get dragging() {
-    return this.drake.dragging;
-  }
-
   isContainer(el) {
-    return this.drake.containers.indexOf(el) !== -1 || this.options.isContainer(el);
+    return this.options.containers.indexOf(el) !== -1 || this.options.isContainer(el);
   }
 
   _events(remove) {
@@ -153,7 +141,7 @@ export class Dragula {
   }
 
   _canStart(item) {
-    if (this.drake.dragging && this._mirror) {
+    if (this.dragging && this._mirror) {
       return;
     }
     if (this.isContainer(item)) {
@@ -205,12 +193,12 @@ export class Dragula {
     this._item = context.item;
     this._initialSibling = this._currentSibling = Util.nextEl(context.item);
 
-    this.drake.dragging = true;
+    this.dragging = true;
     this.emitter.emit('drag', this._item, this._source);
   }
 
   end() {
-    if (!this.drake.dragging) {
+    if (!this.dragging) {
       return;
     }
     let item = this._copy || this._item;
@@ -226,7 +214,7 @@ export class Dragula {
   _release(e) {
     this._ungrab();
 
-    if (!this.drake.dragging) {
+    if (!this.dragging) {
       return;
     }
     let item = this._copy || this._item;
@@ -257,7 +245,7 @@ export class Dragula {
   }
 
   remove() {
-    if (!this.drake.dragging) {
+    if (!this.dragging) {
       return;
     }
     let item = this._copy || this._item;
@@ -270,7 +258,7 @@ export class Dragula {
   }
 
   cancel(revert) {
-    if (!this.drake.dragging) {
+    if (!this.dragging) {
       return;
     }
     let reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
@@ -301,7 +289,7 @@ export class Dragula {
     if (this._renderTimer) {
       clearTimeout(this._renderTimer);
     }
-    this.drake.dragging = false;
+    this.dragging = false;
     if (this._lastDropTarget) {
       this.emitter.emit('out', item, this._lastDropTarget, this._source);
     }
@@ -407,7 +395,7 @@ export class Dragula {
   }
 
   spillOut(el) {
-    if (this.drake.dragging) { classes.add(el, 'gu-hide'); }
+    if (this.dragging) { classes.add(el, 'gu-hide'); }
   }
 
   renderMirrorImage() {
