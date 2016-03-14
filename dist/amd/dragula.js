@@ -195,7 +195,8 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
 
         this._source = context.source;
         this._item = context.item;
-        this._initialSibling = this._currentSibling = _util.Util.nextEl(context.item);
+        this._initialSibling = context.item.nextSibling;
+        this._currentSibling = _util.Util.nextEl(context.item);
 
         this.dragging = true;
         this.emitter.emit('drag', this._item, this._source);
@@ -316,7 +317,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         } else if (this._mirror) {
           sibling = this._currentSibling;
         } else {
-          sibling = _util.Util.nextEl(this._copy || this._item);
+          sibling = (this._copy || this._item).nextSibling;
         }
         return target === this._source && sibling === this._initialSibling;
       }
