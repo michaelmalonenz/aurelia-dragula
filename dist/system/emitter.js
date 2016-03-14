@@ -67,31 +67,28 @@ System.register(['babel-runtime/helpers/class-call-check', 'babel-runtime/helper
         }, {
           key: 'emit',
           value: function emit() {
-            var args = [].concat(_slice.call(arguments));
-            return this._emitterSnapshot(args.shift()).apply(this, args);
-          }
-        }, {
-          key: '_emitterSnapshot',
-          value: function _emitterSnapshot(type) {
-            var et = (this.events[type] || []).slice(0);
-            return function () {
-              var _this = this;
+            var _this = this;
 
-              var args = arguments ? [].concat(_slice.call(arguments)) : [];
-              if (type === 'error' && this.options.throws !== false && !et.length) {
-                throw args.length === 1 ? args[0] : args;
+            var args = arguments ? [].concat(_slice.call(arguments)) : [];
+            var type = args.shift();
+            var et = (this.events[type] || []).slice(0);
+            if (type === 'error' && this.options.throws !== false && !et.length) {
+              throw args.length === 1 ? args[0] : args;
+            }
+            var toDeregister = [];
+            et.forEach(function (listener) {
+              if (_this.options.async) {
+                debounce.apply(undefined, [listener.func].concat(_toConsumableArray(args)));
+              } else {
+                listener.func.apply(listener, _toConsumableArray(args));
               }
-              et.forEach(function (listener) {
-                if (_this.options.async) {
-                  debounce.apply(undefined, [listener.func].concat(_toConsumableArray(args)));
-                } else {
-                  listener.func.apply(listener, _toConsumableArray(args));
-                }
-                if (listener.once) {
-                  _this.off(type, listener);
-                }
-              });
-            };
+              if (listener.once) {
+                toDeregister.push(listener);
+              }
+            });
+            toDeregister.forEach(function (listener) {
+              _this.off(type, listener.func);
+            });
           }
         }]);
 

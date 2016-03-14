@@ -18,11 +18,11 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
     function Options() {
       (0, _babelRuntimeHelpersClassCallCheck['default'])(this, Options);
 
-      this.moves = this.always;
-      this.accepts = this.always;
-      this.invalid = this.invalidTarget;
+      this.moves = Options.always;
+      this.accepts = Options.always;
+      this.invalid = Options.invalidTarget;
       this.containers = [];
-      this.isContainer = this.never;
+      this.isContainer = Options.never;
       this.copy = false;
       this.copySortSource = false;
       this.revertOnSpill = false;
@@ -31,7 +31,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
       this.mirrorContainer = document.body;
     }
 
-    (0, _babelRuntimeHelpersCreateClass['default'])(Options, [{
+    (0, _babelRuntimeHelpersCreateClass['default'])(Options, null, [{
       key: 'always',
       value: function always() {
         return true;

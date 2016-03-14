@@ -8,11 +8,11 @@ export const DIRECTION = {
 export class Options {
 
   constructor() {
-    this.moves = this.always;
-    this.accepts = this.always;
-    this.invalid = this.invalidTarget;
+    this.moves = Options.always;
+    this.accepts = Options.always;
+    this.invalid = Options.invalidTarget;
     this.containers = [];
-    this.isContainer = this.never;
+    this.isContainer = Options.never;
     this.copy = false;
     this.copySortSource = false;
     this.revertOnSpill = false;
@@ -22,15 +22,15 @@ export class Options {
     this.mirrorContainer = document.body;
   }
 
-  always() {
+  static always() {
     return true;
   }
 
-  never() {
+  static never() {
     return false;
   }
 
-  invalidTarget() {
+  static invalidTarget() {
     return false;
   }
 }

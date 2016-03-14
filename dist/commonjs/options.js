@@ -21,11 +21,11 @@ var Options = (function () {
   function Options() {
     _classCallCheck(this, Options);
 
-    this.moves = this.always;
-    this.accepts = this.always;
-    this.invalid = this.invalidTarget;
+    this.moves = Options.always;
+    this.accepts = Options.always;
+    this.invalid = Options.invalidTarget;
     this.containers = [];
-    this.isContainer = this.never;
+    this.isContainer = Options.never;
     this.copy = false;
     this.copySortSource = false;
     this.revertOnSpill = false;
@@ -34,7 +34,7 @@ var Options = (function () {
     this.mirrorContainer = document.body;
   }
 
-  _createClass(Options, [{
+  _createClass(Options, null, [{
     key: 'always',
     value: function always() {
       return true;

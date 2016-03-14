@@ -12,15 +12,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
       var len = arguments.length;
       this.options = options || new _options.Options();
       this.emitter = new _emitter.Emitter();
-      this.drake = {
-        containers: this.options.containers,
-        start: this.manualStart.bind(this),
-        end: this.end.bind(this),
-        cancel: this.cancel.bind(this),
-        remove: this.remove.bind(this),
-        destroy: this.destroy.bind(this),
-        dragging: false
-      };
+      this.dragging = false;
 
       if (this.options.removeOnSpill === true) {
         this.emitter.on('over', this.spillOver.bind(this));
@@ -52,7 +44,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
     }, {
       key: 'isContainer',
       value: function isContainer(el) {
-        return this.drake.containers.indexOf(el) !== -1 || this.options.isContainer(el);
+        return this.options.containers.indexOf(el) !== -1 || this.options.isContainer(el);
       }
     }, {
       key: '_events',
@@ -151,7 +143,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
     }, {
       key: '_canStart',
       value: function _canStart(item) {
-        if (this.drake.dragging && this._mirror) {
+        if (this.dragging && this._mirror) {
           return;
         }
         if (this.isContainer(item)) {
@@ -205,13 +197,13 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         this._item = context.item;
         this._initialSibling = this._currentSibling = _util.Util.nextEl(context.item);
 
-        this.drake.dragging = true;
+        this.dragging = true;
         this.emitter.emit('drag', this._item, this._source);
       }
     }, {
       key: 'end',
       value: function end() {
-        if (!this.drake.dragging) {
+        if (!this.dragging) {
           return;
         }
         var item = this._copy || this._item;
@@ -229,7 +221,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
       value: function _release(e) {
         this._ungrab();
 
-        if (!this.drake.dragging) {
+        if (!this.dragging) {
           return;
         }
         var item = this._copy || this._item;
@@ -262,7 +254,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
     }, {
       key: 'remove',
       value: function remove() {
-        if (!this.drake.dragging) {
+        if (!this.dragging) {
           return;
         }
         var item = this._copy || this._item;
@@ -276,7 +268,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
     }, {
       key: 'cancel',
       value: function cancel(revert) {
-        if (!this.drake.dragging) {
+        if (!this.dragging) {
           return;
         }
         var reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
@@ -308,7 +300,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         if (this._renderTimer) {
           clearTimeout(this._renderTimer);
         }
-        this.drake.dragging = false;
+        this.dragging = false;
         if (this._lastDropTarget) {
           this.emitter.emit('out', item, this._lastDropTarget, this._source);
         }
@@ -429,7 +421,7 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
     }, {
       key: 'spillOut',
       value: function spillOut(el) {
-        if (this.drake.dragging) {
+        if (this.dragging) {
           _classes.add(el, 'gu-hide');
         }
       }
@@ -471,10 +463,10 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
           for (i = 0; i < len; i++) {
             el = dropTarget.children[i];
             rect = el.getBoundingClientRect();
-            if (horizontal && rect.left > x) {
+            if (horizontal && rect.left + rect.width / 2 > x) {
               return el;
             }
-            if (!horizontal && rect.top > y) {
+            if (!horizontal && rect.top + rect.height / 2 > y) {
               return el;
             }
           }
@@ -509,11 +501,6 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
       },
       set: function set(value) {
         this.options.containers = value;
-      }
-    }, {
-      key: 'dragging',
-      get: function get() {
-        return this.drake.dragging;
       }
     }]);
     var _Dragula = Dragula;

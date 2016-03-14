@@ -107,12 +107,11 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
     }, {
       key: 'getElementBehindPoint',
       value: function getElementBehindPoint(point, x, y) {
-        var p = point || {};
-        var state = p.className;
-        var el = undefined;
-        p.className += ' gu-hide';
-        el = document.elementFromPoint(x, y);
-        p.className = state;
+        if (point) point.classList.add('gu-hide');
+
+        var el = document.elementFromPoint(x, y);
+
+        if (point) point.classList.remove('gu-hide');
         return el;
       }
     }, {
@@ -130,12 +129,6 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
       key: 'getCoord',
       value: function getCoord(coord, e) {
         var host = Util.getEventHost(e);
-        var missMap = {
-          pageX: 'clientX',
-          pageY: 'clientY' };
-        if (coord in missMap && !(coord in host) && missMap[coord] in host) {
-          coord = missMap[coord];
-        }
         return host[coord];
       }
     }, {
