@@ -34,8 +34,8 @@ export class Util {
   }
 
   static getParent(el) { return el.parentNode === document ? null : el.parentNode; }
-  static getRectWidth (rect) { return rect.width || (rect.right - rect.left); }
-  static getRectHeight (rect) { return rect.height || (rect.bottom - rect.top); }
+  static getRectWidth(rect) { return rect.width || (rect.right - rect.left); }
+  static getRectHeight(rect) { return rect.height || (rect.bottom - rect.top); }
   static isInput(el) { return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || Util.isEditable(el); }
   static isEditable(el) {
     if (!el) { return false; } // no parents were editable
@@ -44,7 +44,7 @@ export class Util {
     return Util.isEditable(Util.getParent(el)); // contentEditable is set to 'inherit'
   }
 
-  static getOffset (el) {
+  static getOffset(el) {
     let rect = el.getBoundingClientRect();
     return {
       left: rect.left + Util.getScroll('scrollLeft', 'pageXOffset'),
@@ -52,7 +52,7 @@ export class Util {
     };
   }
 
-  static getScroll (scrollProp, offsetProp) {
+  static getScroll(scrollProp, offsetProp) {
     if (typeof window[offsetProp] !== 'undefined') {
       return window[offsetProp];
     }
@@ -62,17 +62,18 @@ export class Util {
     return document.body[scrollProp];
   }
 
-  static getElementBehindPoint (point, x, y) {
-    let p = point || {};
-    let state = p.className;
-    let el;
-    p.className += ' gu-hide';
-    el = document.elementFromPoint(x, y);
-    p.className = state;
+  static getElementBehindPoint(point, x, y) {
+    if (point)
+      point.classList.add('gu-hide');
+
+    let el = document.elementFromPoint(x, y);
+
+    if (point)
+      point.classList.remove('gu-hide');
     return el;
   }
 
-  static getEventHost (e) {
+  static getEventHost(e) {
     // on touchend event, we have to use `e.changedTouches`
     // see http://stackoverflow.com/questions/7192563/touchend-event-properties
     // see https://github.com/bevacqua/dragula/issues/34
@@ -85,15 +86,8 @@ export class Util {
     return e;
   }
 
-  static getCoord (coord, e) {
+  static getCoord(coord, e) {
     let host = Util.getEventHost(e);
-    let missMap = {
-      pageX: 'clientX', // IE8
-      pageY: 'clientY' // IE8
-    };
-    if (coord in missMap && !(coord in host) && missMap[coord] in host) {
-      coord = missMap[coord];
-    }
     return host[coord];
   }
 

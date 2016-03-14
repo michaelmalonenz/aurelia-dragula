@@ -45,30 +45,24 @@ export class Emitter {
   }
 
   emit() {
-    let args = [...arguments];
-    return this._emitterSnapshot(args.shift()).apply(this, args);
-  }
-
-  _emitterSnapshot(type) {
+    let args = arguments ? [...arguments] : [];
+    let type = args.shift();
     let et = (this.events[type] || []).slice(0);
-    return function() {
-      let args = arguments ? [...arguments] : [];
-      if (type === 'error' && this.options.throws !== false && !et.length) { throw args.length === 1 ? args[0] : args; }
-      let toDeregister = [];
-      et.forEach(listener => {
-        if (this.options.async) {
-          debounce(listener.func, ...args);
-        }
-        else {
-          listener.func(...args);
-        }
-        if (listener.once) {
-          toDeregister.push(listener);
-        }
-      });
-      toDeregister.forEach(listener => {
-        this.off(type, listener.func);
-      })
-    }
+    if (type === 'error' && this.options.throws !== false && !et.length) { throw args.length === 1 ? args[0] : args; }
+    let toDeregister = [];
+    et.forEach(listener => {
+      if (this.options.async) {
+        debounce(listener.func, ...args);
+      }
+      else {
+        listener.func(...args);
+      }
+      if (listener.once) {
+        toDeregister.push(listener);
+      }
+    });
+    toDeregister.forEach(listener => {
+      this.off(type, listener.func);
+    });
   }
 }
