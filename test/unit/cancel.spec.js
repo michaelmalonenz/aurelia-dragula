@@ -119,20 +119,28 @@ describe('cancelling a drag operation', function() {
 
   it('returns the item to original position, including comment nodes', function() {
     //arrange
-    let siblingInnerHtml = '<!--<view>--><div class="testDiv"></div><!--</view>-->'
-    let sibling = document.createElement('div');
-    sibling.innerHTML = siblingInnerHtml;
+    let container = document.createElement('div');
+
+    let testNode = document.createElement('div');
+    testNode.classList.add('testDiv');
+    let commentBegin = document.createComment('<view>');
+    let commentEnd = document.createComment('</view>');
+
+    container.appendChild(commentBegin);
+    container.appendChild(testNode);
+    container.appendChild(commentEnd);
+
+    document.body.appendChild(container);
+
+
     let drake = new createDragula();
-    document.body.appendChild(sibling);
-    let item = sibling.querySelector('.testDiv');
-    expect(item).not.toBeNull();
 
     //act
-    drake.manualStart(item);
+    drake.manualStart(testNode);
     drake.cancel();
 
     //assert
-    expect(sibling.innerHTML).toBe(siblingInnerHtml, 'nothing happens');
+    expect(commentBegin.nextSibling).toBe(testNode, 'nothing happens');
     expect(drake.dragging).toBeFalsy('drake has stopped dragging');
   });
 });
