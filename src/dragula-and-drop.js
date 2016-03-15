@@ -1,4 +1,4 @@
-import {customElement, bindable} from 'aurelia-templating';
+import {customElement, bindable, noView} from 'aurelia-templating';
 import {bindingMode} from 'aurelia-binding';
 import {inject} from 'aurelia-dependency-injection';
 
@@ -12,13 +12,14 @@ import {Dragula} from './dragula';
 @bindable({ name: 'isContainer', attribute: 'is-container', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'copy', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'copySortSource', defaultBindingMode: bindingMode.oneTime })
-@bindable({ name: 'revertOnSpill', defaultBindingMode: bindingMode.oneTime })
-@bindable({ name: 'removeOnSpill', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'revertOnSpill', attribute: 'revert-on-spill', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'removeOnSpill', attribute: 'remove-on-spill', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'direction', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'ignoreInputTextSelection', attribute: 'ingore-input-text-selection', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'mirrorContainer', attribute: 'mirror-container', defaultBindingMode: bindingMode.oneTime })
 @customElement('dragula-and-drop')
 @inject(GLOBAL_OPTIONS)
+@noView()
 export class DragulaAndDrop {
 
   constructor(globalOptions) {

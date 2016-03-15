@@ -12,6 +12,8 @@ System.register(['./options', './dragula'], function (_export) {
     if (callback !== undefined && typeof callback === 'function') {
       callback(defaults);
     }
+
+    config.globalResources(['./dragula-and-drop']);
   }
 
   return {

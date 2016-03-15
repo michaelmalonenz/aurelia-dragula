@@ -14,7 +14,7 @@ var argv = require('yargs')
 /**
  * Add the files to test, always beginning with the source files!
  */
-var filesToLoad = ['src/**/*.js', 'test/unit/initialize.spec.js', 'test/unit/lib/*.js'];
+var filesToLoad = ['test/unit/initialize.js', 'src/**/*.js', 'test/unit/lib/*.js'];
 filesToLoad.push(path.join('test/unit/**', argv.t));
 
 /**
