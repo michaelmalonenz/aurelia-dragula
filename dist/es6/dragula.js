@@ -5,6 +5,7 @@ import {Util} from './util';
 import {Emitter} from './emitter';
 import * as classes from './classes';
 
+const MIN_TIME_BETWEEN_REDRAWS_MS = 20;
 
 @inject(GLOBAL_OPTIONS)
 export class Dragula {
@@ -194,6 +195,8 @@ export class Dragula {
     this._initialSibling = context.item.nextSibling;
     this._currentSibling = Util.nextEl(context.item);
 
+    this._timeSinceLastMove = Date.now() + MIN_TIME_BETWEEN_REDRAWS_MS; //ensure that the first frame draws...
+
     this.dragging = true;
     this.emitter.emit('drag', this._item, this._source);
   }
@@ -337,6 +340,11 @@ export class Dragula {
     if (!this._mirror) {
       return;
     }
+
+    if (Date.now() - this._timeSinceLastMove <= MIN_TIME_BETWEEN_REDRAWS_MS) {
+      return;
+    }
+    this._timeSinceLastMove = Date.now();
     e.preventDefault();
 
     let moved = (type) => { this.emitter.emit(type, item, this._lastDropTarget, this._source); }

@@ -24,6 +24,8 @@ var _classes = require('./classes');
 
 var classes = _interopRequireWildcard(_classes);
 
+var MIN_TIME_BETWEEN_REDRAWS_MS = 20;
+
 var Dragula = (function () {
   function Dragula(options) {
     _classCallCheck(this, _Dragula);
@@ -217,6 +219,8 @@ var Dragula = (function () {
       this._initialSibling = context.item.nextSibling;
       this._currentSibling = _util.Util.nextEl(context.item);
 
+      this._timeSinceLastMove = Date.now() + MIN_TIME_BETWEEN_REDRAWS_MS;
+
       this.dragging = true;
       this.emitter.emit('drag', this._item, this._source);
     }
@@ -374,6 +378,11 @@ var Dragula = (function () {
       if (!this._mirror) {
         return;
       }
+
+      if (Date.now() - this._timeSinceLastMove <= MIN_TIME_BETWEEN_REDRAWS_MS) {
+        return;
+      }
+      this._timeSinceLastMove = Date.now();
       e.preventDefault();
 
       var moved = function moved(type) {

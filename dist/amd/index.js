@@ -15,5 +15,7 @@ define(['exports', './options', './dragula'], function (exports, _options, _drag
     if (callback !== undefined && typeof callback === 'function') {
       callback(defaults);
     }
+
+    config.globalResources(['./dragula-and-drop']);
   }
 });

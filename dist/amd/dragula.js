@@ -5,6 +5,8 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
     value: true
   });
 
+  var MIN_TIME_BETWEEN_REDRAWS_MS = 20;
+
   var Dragula = (function () {
     function Dragula(options) {
       (0, _babelRuntimeHelpersClassCallCheck['default'])(this, _Dragula);
@@ -198,6 +200,8 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         this._initialSibling = context.item.nextSibling;
         this._currentSibling = _util.Util.nextEl(context.item);
 
+        this._timeSinceLastMove = Date.now() + MIN_TIME_BETWEEN_REDRAWS_MS;
+
         this.dragging = true;
         this.emitter.emit('drag', this._item, this._source);
       }
@@ -355,6 +359,11 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         if (!this._mirror) {
           return;
         }
+
+        if (Date.now() - this._timeSinceLastMove <= MIN_TIME_BETWEEN_REDRAWS_MS) {
+          return;
+        }
+        this._timeSinceLastMove = Date.now();
         e.preventDefault();
 
         var moved = function moved(type) {

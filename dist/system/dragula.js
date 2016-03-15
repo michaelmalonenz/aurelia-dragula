@@ -1,5 +1,5 @@
 System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/class-call-check', 'aurelia-dependency-injection', './touchy', './options', './util', './emitter', './classes'], function (_export) {
-  var _createClass, _classCallCheck, inject, touchy, GLOBAL_OPTIONS, Options, Util, Emitter, classes, Dragula;
+  var _createClass, _classCallCheck, inject, touchy, GLOBAL_OPTIONS, Options, Util, Emitter, classes, MIN_TIME_BETWEEN_REDRAWS_MS, Dragula;
 
   return {
     setters: [function (_babelRuntimeHelpersCreateClass) {
@@ -22,6 +22,8 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
     }],
     execute: function () {
       'use strict';
+
+      MIN_TIME_BETWEEN_REDRAWS_MS = 20;
 
       Dragula = (function () {
         function Dragula(options) {
@@ -216,6 +218,8 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
             this._initialSibling = context.item.nextSibling;
             this._currentSibling = Util.nextEl(context.item);
 
+            this._timeSinceLastMove = Date.now() + MIN_TIME_BETWEEN_REDRAWS_MS;
+
             this.dragging = true;
             this.emitter.emit('drag', this._item, this._source);
           }
@@ -373,6 +377,11 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
             if (!this._mirror) {
               return;
             }
+
+            if (Date.now() - this._timeSinceLastMove <= MIN_TIME_BETWEEN_REDRAWS_MS) {
+              return;
+            }
+            this._timeSinceLastMove = Date.now();
             e.preventDefault();
 
             var moved = function moved(type) {
