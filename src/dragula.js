@@ -195,8 +195,6 @@ export class Dragula {
     this._initialSibling = context.item.nextSibling;
     this._currentSibling = Util.nextEl(context.item);
 
-    this._timeSinceLastMove = Date.now() + MIN_TIME_BETWEEN_REDRAWS_MS; //ensure that the first frame draws...
-
     this.dragging = true;
     this.emitter.emit('drag', this._item, this._source);
   }
