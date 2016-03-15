@@ -33,7 +33,7 @@ export class Dragula {
     this._initialSibling; // reference sibling when grabbed
     this._currentSibling; // reference sibling now
     this._copy; // item used for copying
-    this._renderTimer; // timer for setTimeout renderMirrorImage
+    this._lastRenderTime = null; // last time we rendered the mirror
     this._lastDropTarget = null; // last container item was over
     this._grabbed; // holds mousedown context until first mousemove
   }
@@ -290,15 +290,12 @@ export class Dragula {
     if (item) {
       classes.rm(item, 'gu-transit');
     }
-    if (this._renderTimer) {
-      clearTimeout(this._renderTimer);
-    }
     this.dragging = false;
     if (this._lastDropTarget) {
       this.emitter.emit('out', item, this._lastDropTarget, this._source);
     }
     this.emitter.emit('dragend', item);
-    this._source = this._item = this._copy = this._initialSibling = this._currentSibling = this._renderTimer = this._lastDropTarget = null;
+    this._source = this._item = this._copy = this._initialSibling = this._currentSibling = this._lastRenderTime = this._lastDropTarget = null;
   }
 
   _isInitialPlacement(target, s) {
@@ -341,10 +338,10 @@ export class Dragula {
       return;
     }
 
-    if (Date.now() - this._timeSinceLastMove <= MIN_TIME_BETWEEN_REDRAWS_MS) {
+    if (this._lastRenderTime !== null && Date.now() - this._lastRenderTime < MIN_TIME_BETWEEN_REDRAWS_MS) {
       return;
     }
-    this._timeSinceLastMove = Date.now();
+    this._lastRenderTime = Date.now();
     e.preventDefault();
 
     let moved = (type) => { this.emitter.emit(type, item, this._lastDropTarget, this._source); }
