@@ -1,4 +1,6 @@
-# Aurelia-Dragula is intended to be an [Aurelia](https://aurelia.io) plugin
+# Aurelia-Dragula 
+
+aurelia-dragula is an [Aurelia](https://aurelia.io) plugin which provides a simple (but not simplistic) library to add drag and drop functionality.
 
 Because of the way Aurelia works, I have decided to fork [Dragula](https://github.com/bevacqua/dragula) and make it a bit more friendly to the framework.
 
@@ -17,6 +19,8 @@ import {Dragula} from 'aurelia-dragula';
 
 let dragula = new Dragula();
 ```
+
+Because of the way aurelia works, it is recommended that the `dragend` event is subscribed to and `cancel` is then called, doing the manipulation of the view-models in JavaScript and letting aurelia re-render the changes.  This is not only recommended, but vital inside of a `repeat.for`.
 
 ###Options
 `import {Options} from 'aurelia-dragula;`
