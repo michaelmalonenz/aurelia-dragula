@@ -20,6 +20,8 @@ import {Dragula} from 'aurelia-dragula';
 let dragula = new Dragula();
 ```
 
+Because of the way aurelia works, it is recommended that the `dragend` event is subscribed to and `cancel` is then called, doing the manipulation of the view-models in JavaScript and letting aurelia re-render the changes.  This is not only recommended, but vital inside of a `repeat.for`.
+
 ###Options
 `import {Options} from 'aurelia-dragula;`
 
