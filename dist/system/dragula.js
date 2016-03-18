@@ -1,13 +1,16 @@
-System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/class-call-check', 'aurelia-dependency-injection', './touchy', './options', './util', './emitter', './classes'], function (_export) {
-  var _createClass, _classCallCheck, inject, touchy, GLOBAL_OPTIONS, Options, Util, Emitter, classes, MIN_TIME_BETWEEN_REDRAWS_MS, Dragula;
+System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/class-call-check', 'babel-runtime/core-js/object/assign', 'aurelia-dependency-injection', './touchy', './options', './util', './emitter', './classes'], function (_export) {
+  var _createClass, _classCallCheck, _Object$assign, inject, Container, touchy, GLOBAL_OPTIONS, Options, Util, Emitter, classes, MIN_TIME_BETWEEN_REDRAWS_MS, Dragula;
 
   return {
     setters: [function (_babelRuntimeHelpersCreateClass) {
       _createClass = _babelRuntimeHelpersCreateClass['default'];
     }, function (_babelRuntimeHelpersClassCallCheck) {
       _classCallCheck = _babelRuntimeHelpersClassCallCheck['default'];
+    }, function (_babelRuntimeCoreJsObjectAssign) {
+      _Object$assign = _babelRuntimeCoreJsObjectAssign['default'];
     }, function (_aureliaDependencyInjection) {
       inject = _aureliaDependencyInjection.inject;
+      Container = _aureliaDependencyInjection.Container;
     }, function (_touchy) {
       touchy = _touchy.touchy;
     }, function (_options) {
@@ -27,10 +30,11 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
 
       Dragula = (function () {
         function Dragula(options) {
-          _classCallCheck(this, _Dragula);
+          _classCallCheck(this, Dragula);
 
           var len = arguments.length;
-          this.options = options || new Options();
+          var globalOptions = Container.instance.get(GLOBAL_OPTIONS);
+          this.options = _Object$assign({}, globalOptions, options);
           this.emitter = new Emitter();
           this.dragging = false;
 
@@ -60,6 +64,16 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
           key: 'on',
           value: function on(eventName, callback) {
             this.emitter.on(eventName, callback);
+          }
+        }, {
+          key: 'once',
+          value: function once(eventName, callback) {
+            this.emitter.once(eventName, callback);
+          }
+        }, {
+          key: 'off',
+          value: function off(eventName, fn) {
+            this.emitter.off(eventName, fn);
           }
         }, {
           key: 'isContainer',
@@ -217,8 +231,6 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
             this._item = context.item;
             this._initialSibling = context.item.nextSibling;
             this._currentSibling = Util.nextEl(context.item);
-
-            this._timeSinceLastMove = Date.now() + MIN_TIME_BETWEEN_REDRAWS_MS;
 
             this.dragging = true;
             this.emitter.emit('drag', this._item, this._source);
@@ -529,8 +541,6 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
           }
         }]);
 
-        var _Dragula = Dragula;
-        Dragula = inject(GLOBAL_OPTIONS)(Dragula) || Dragula;
         return Dragula;
       })();
 

@@ -4,6 +4,8 @@ var _createClass = require('babel-runtime/helpers/create-class')['default'];
 
 var _classCallCheck = require('babel-runtime/helpers/class-call-check')['default'];
 
+var _Object$assign = require('babel-runtime/core-js/object/assign')['default'];
+
 var _interopRequireWildcard = require('babel-runtime/helpers/interop-require-wildcard')['default'];
 
 Object.defineProperty(exports, '__esModule', {
@@ -28,10 +30,11 @@ var MIN_TIME_BETWEEN_REDRAWS_MS = 20;
 
 var Dragula = (function () {
   function Dragula(options) {
-    _classCallCheck(this, _Dragula);
+    _classCallCheck(this, Dragula);
 
     var len = arguments.length;
-    this.options = options || new _options.Options();
+    var globalOptions = _aureliaDependencyInjection.Container.instance.get(_options.GLOBAL_OPTIONS);
+    this.options = _Object$assign({}, globalOptions, options);
     this.emitter = new _emitter.Emitter();
     this.dragging = false;
 
@@ -61,6 +64,16 @@ var Dragula = (function () {
     key: 'on',
     value: function on(eventName, callback) {
       this.emitter.on(eventName, callback);
+    }
+  }, {
+    key: 'once',
+    value: function once(eventName, callback) {
+      this.emitter.once(eventName, callback);
+    }
+  }, {
+    key: 'off',
+    value: function off(eventName, fn) {
+      this.emitter.off(eventName, fn);
     }
   }, {
     key: 'isContainer',
@@ -218,8 +231,6 @@ var Dragula = (function () {
       this._item = context.item;
       this._initialSibling = context.item.nextSibling;
       this._currentSibling = _util.Util.nextEl(context.item);
-
-      this._timeSinceLastMove = Date.now() + MIN_TIME_BETWEEN_REDRAWS_MS;
 
       this.dragging = true;
       this.emitter.emit('drag', this._item, this._source);
@@ -530,8 +541,6 @@ var Dragula = (function () {
     }
   }]);
 
-  var _Dragula = Dragula;
-  Dragula = (0, _aureliaDependencyInjection.inject)(_options.GLOBAL_OPTIONS)(Dragula) || Dragula;
   return Dragula;
 })();
 

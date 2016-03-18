@@ -1,4 +1,4 @@
-define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/class-call-check', 'aurelia-dependency-injection', './touchy', './options', './util', './emitter', './classes'], function (exports, _babelRuntimeHelpersCreateClass, _babelRuntimeHelpersClassCallCheck, _aureliaDependencyInjection, _touchy, _options, _util, _emitter, _classes) {
+define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/class-call-check', 'babel-runtime/core-js/object/assign', 'aurelia-dependency-injection', './touchy', './options', './util', './emitter', './classes'], function (exports, _babelRuntimeHelpersCreateClass, _babelRuntimeHelpersClassCallCheck, _babelRuntimeCoreJsObjectAssign, _aureliaDependencyInjection, _touchy, _options, _util, _emitter, _classes) {
   'use strict';
 
   Object.defineProperty(exports, '__esModule', {
@@ -9,10 +9,11 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
 
   var Dragula = (function () {
     function Dragula(options) {
-      (0, _babelRuntimeHelpersClassCallCheck['default'])(this, _Dragula);
+      (0, _babelRuntimeHelpersClassCallCheck['default'])(this, Dragula);
 
       var len = arguments.length;
-      this.options = options || new _options.Options();
+      var globalOptions = _aureliaDependencyInjection.Container.instance.get(_options.GLOBAL_OPTIONS);
+      this.options = (0, _babelRuntimeCoreJsObjectAssign['default'])({}, globalOptions, options);
       this.emitter = new _emitter.Emitter();
       this.dragging = false;
 
@@ -42,6 +43,16 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
       key: 'on',
       value: function on(eventName, callback) {
         this.emitter.on(eventName, callback);
+      }
+    }, {
+      key: 'once',
+      value: function once(eventName, callback) {
+        this.emitter.once(eventName, callback);
+      }
+    }, {
+      key: 'off',
+      value: function off(eventName, fn) {
+        this.emitter.off(eventName, fn);
       }
     }, {
       key: 'isContainer',
@@ -199,8 +210,6 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         this._item = context.item;
         this._initialSibling = context.item.nextSibling;
         this._currentSibling = _util.Util.nextEl(context.item);
-
-        this._timeSinceLastMove = Date.now() + MIN_TIME_BETWEEN_REDRAWS_MS;
 
         this.dragging = true;
         this.emitter.emit('drag', this._item, this._source);
@@ -510,8 +519,6 @@ define(['exports', 'babel-runtime/helpers/create-class', 'babel-runtime/helpers/
         this.options.containers = value;
       }
     }]);
-    var _Dragula = Dragula;
-    Dragula = (0, _aureliaDependencyInjection.inject)(_options.GLOBAL_OPTIONS)(Dragula) || Dragula;
     return Dragula;
   })();
 
