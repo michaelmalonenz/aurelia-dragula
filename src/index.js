@@ -7,7 +7,7 @@ export function configure(config, callback) {
   let defaults = new Options();
   config.container.registerInstance(GLOBAL_OPTIONS, defaults);
 
-  if (callback !== undefined && typeof(callback) === 'function') {
+  if (callback !== undefined && typeof callback === 'function') {
     callback(defaults);
   }
 
