@@ -1,4 +1,4 @@
-import {inject} from 'aurelia-dependency-injection';
+import {inject, Container} from 'aurelia-dependency-injection';
 import {touchy} from './touchy';
 import {GLOBAL_OPTIONS, Options} from './options';
 import {Util} from './util';
@@ -7,12 +7,12 @@ import * as classes from './classes';
 
 const MIN_TIME_BETWEEN_REDRAWS_MS = 20;
 
-@inject(GLOBAL_OPTIONS)
 export class Dragula {
 
   constructor(options) {
     let len = arguments.length;
-    this.options = options || new Options();
+    let globalOptions = Container.instance.get(GLOBAL_OPTIONS);
+    this.options = Object.assign({}, globalOptions, options);
     this.emitter = new Emitter();
     this.dragging = false;
 
