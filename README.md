@@ -51,3 +51,45 @@ removeOnSpill | `bool` | false | If the item is dropped outside of a valid conta
 direction | `DIRECTION` | DIRECTION.VERTICAL | `DIRECTION` can be imported from aurelia-dragula and the other valid option is `HORIZONTAL`.  This tells aurelia-dragula which direction the drag operations are expected to happen in.
 ignoreInputTextSelection | `bool` | true | If set to true, if the user clicks inside an input element, then the drag operations won't be started, allowing the user to select text inside an input without causing the element to drag.
 mirrorContainer | `Node` | document.body | This is the container to which the mirror elements are added.  The mirror element is element being moved around with the mouse (not the semi-transparent placeholder element).
+
+
+###Events
+Events can be subscribed to by calling `dragula.on` with the event name and a callback.  They can be registered for multiple times, with different callbacks.  
+
+```javascript
+dragula.on('drag', (el, source) => {
+  //do a thing here
+});
+```
+
+Events can be unsubscribed from by calling the `dragula.off` function.  If only an event type is passed, then all subscribers for that event will be unsubscribed.  If a function is also given, then only the subscriber with the matching callback will be unsubscribed:
+
+```javascript
+let fn = (el, source) => {
+  //do a thing here
+};
+dragula.on('drag', fn);
+
+dragula.off('drag', fn);
+dragula.off('dragend');
+```
+
+If you only want the event to fire exactly once, then instead of registering and de-registering manually, the `dragula.once` registration function may be used:
+
+```javascript
+dragula.once('drag', (el, source) => {
+  //do a thing here
+});
+```
+
+Event Name | Listener Arguments               | Event Description
+-----------|----------------------------------|-------------------------------------------------------------------------------------
+`drag`     | `el, source`                     | `el` was lifted from `source`
+`dragend`  | `el`                             | Dragging event for `el` ended with either `cancel`, `remove`, or `drop`
+`drop`     | `el, target, source, sibling`    | `el` was dropped into `target` before a `sibling` element, and originally came from `source`
+`cancel`   | `el, container, source`          | `el` was being dragged but it got nowhere and went back into `container`, its last stable parent; `el` originally came from `source`
+`remove`   | `el, container, source`          | `el` was being dragged but it got nowhere and it was removed from the DOM. Its last stable parent was `container`, and originally came from `source`
+`shadow`   | `el, container, source`          | `el`, _the visual aid shadow_, was moved into `container`. May trigger many times as the position of `el` changes, even within the same `container`; `el` originally came from `source`
+`over`     | `el, container, source`          | `el` is over `container`, and originally came from `source`
+`out`      | `el, container, source`          | `el` was dragged out of `container` or dropped, and originally came from `source`
+`cloned`   | `clone, original, type`          | DOM element `original` was cloned as `clone`, of `type` _(`'mirror'` or `'copy'`)_. Fired for mirror images and when `copy: true`
