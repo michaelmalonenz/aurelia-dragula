@@ -42,6 +42,14 @@ export class Dragula {
     this.emitter.on(eventName, callback);
   }
 
+  once(eventName, callback) {
+    this.emitter.once(eventName, callback);
+  }
+
+  off(eventName, fn) {
+    this.emitter.off(eventName, fn);
+  }
+
   get containers() {
     return this.options.containers;
   }
