@@ -1,4 +1,4 @@
-# Aurelia-Dragula 
+# Aurelia-Dragula
 
 aurelia-dragula is an [Aurelia](https://aurelia.io) plugin which provides a simple (but not simplistic) library to add drag and drop functionality.
 
@@ -8,7 +8,7 @@ I intend to make large structural and philosophical changes to the code (which i
 
 To develop for the library, run `npm install`, `jspm install`, `gulp build`, `gulp test`
 
-If installing in an aurelia application, `jspm install aurelia-dragula=github:michaelmalonenz/aurelia-dragula` and remember to `aurelia.use.plugin('aurelia-dragula')` in your initialisation code.
+If installing in an aurelia application, `jspm install npm:aurelia-dragula` and remember to `aurelia.use.plugin('aurelia-dragula')` in your initialisation code.
 
 As Aurelia doesn't support IE <= 9, Aurelia-Dragula won't, either.
 
@@ -44,7 +44,7 @@ They can be used in conjunction with one another, with the individually set sett
 Option | Type | Default Value | Description
 -------|------|---------------|-------------
 moves | `function(item, source, handle, sibling):bool` | Options.always | When the drag operation is set to begin, this function is called to see whether the `item`, just before `sibling` in the DOM, to be dragged from `source`, by clicking on `handle` is allowed to be dragged.  Returning true begins the drag operation, returning false stops the drag from happening.
-accepts | `function(item, target, source, currentSibling):bool` | Options.always | When the `item`, just before `currentSibling`, being dragged from `source` is dropped, this function is called to see whether the `target` container is allowed to accept the drop.  The resulting action depends on other options (`revertOnSpill` and `removeOnSpill`).  Returning true allows the drop, returning false causes the Spill action to complete.
+accepts | `function(item, target, source, sibling):bool` | Options.always | When the `item`, just before `sibling`, being dragged from `source` is dropped, this function is called to see whether the `target` container is allowed to accept the drop.  The resulting action depends on other options (`revertOnSpill` and `removeOnSpill`).  Returning true allows the drop, returning false causes the Spill action to complete.
 invalid | `function(item, handle):bool` | Options.invalidTarget | When starting to drag an item, by clicking on handle, this function can decide that it's not valid to drag that item after all.
 containers | `Array<HTMLElement>` | [] | Can pre-load an array of HTMLElements which are considered to be containers.  This list takes priority over the `isContainer` and `accepts` functions.  Containers are used to determine whether elements can be dragged and can be dropped.
 isContainer | `function(item):bool` | Options.never | This function returns whether the item can be considered a container.  This is lower precedence than the `containers` and `accepts` options, but higher precendence than the `moves` function.
@@ -58,7 +58,7 @@ mirrorContainer | `Node` | document.body | This is the container to which the mi
 
 
 ###Events
-Events can be subscribed to by calling `dragula.on` with the event name and a callback.  They can be registered for multiple times, with different callbacks.  
+Events can be subscribed to by calling `dragula.on` with the event name and a callback.  They can be registered for multiple times, with different callbacks.
 
 ```javascript
 dragula.on('drag', (el, source) => {

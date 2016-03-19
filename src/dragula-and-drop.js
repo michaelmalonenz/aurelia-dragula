@@ -1,7 +1,8 @@
 import {customElement, bindable, noView} from 'aurelia-templating';
 import {bindingMode} from 'aurelia-binding';
+import {Container} from 'aurelia-dependency-injection';
 
-import {Options} from './options';
+import {Options, GLOBAL_OPTIONS} from './options';
 import {Dragula} from './dragula';
 
 @bindable({ name: 'moves', defaultBindingMode: bindingMode.oneTime })
@@ -16,8 +17,8 @@ import {Dragula} from './dragula';
 @bindable({ name: 'direction', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'ignoreInputTextSelection', attribute: 'ingore-input-text-selection', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'mirrorContainer', attribute: 'mirror-container', defaultBindingMode: bindingMode.oneTime })
-@bindable({ name: 'targetClass', attribute: 'target-class', defaultValue: 'drop-target', defaultBindingMode: bindingMode.oneTime })
-@bindable({ name: 'sourceClass', attribute: 'source-class', defaultValue: 'drag-source', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'targetClass', attribute: 'target-class', defaultBindingMode: bindingMode.oneTime, defaultValue: 'drop-target' })
+@bindable({ name: 'sourceClass', attribute: 'source-class', defaultBindingMode: bindingMode.oneTime, defaultValue: 'drag-source' })
 @bindable({ name: 'dragFn', attribute: 'drag-fn', defaultBindingMode: bindingMode.oneTime, defaultValue: (item, source) => {}})
 @bindable({ name: 'dropFn', attribute: 'drop-fn', defaultBindingMode: bindingMode.oneTime, defaultValue: (item, target, source, sibling) => {}})
 @bindable({ name: 'dragEndFn', attribute: 'drag-end-fn', defaultBindingMode: bindingMode.oneTime, defaultValue: (item) => {}})
@@ -26,19 +27,21 @@ import {Dragula} from './dragula';
 export class DragulaAndDrop {
 
   constructor() {
-    this.drake;
+    this.dragula = {};
   }
 
   bind() {
+    let globalOptions = Container.instance.get(GLOBAL_OPTIONS);
+
     let boundOptions = {
-      containers: this.containers,
+      containers: this.containers || [],
       copy: this.copy,
       copySortSource: this.copySortSource,
       revertOnSpill: this.revertOnSpill,
       removeOnSpill: this.removeOnSpill,
       direction: this.direction,
       ignoreInputTextSelection: this.ignoreInputTextSelection,
-      mirrorContainer: this.mirrorContainer
+      mirrorContainer: this.mirrorContainer ,
     };
 
     let aureliaOptions = {
@@ -59,10 +62,16 @@ export class DragulaAndDrop {
         if (typeof this.moves === 'function') {
           return this.moves({ item: item, source: source, handle: handle, sibling: sibling });
         }
+        else {
+          return globalOptions.moves(item, source, handle, sibling);
+        }
       },
-      accepts: (item, target, source, currentSibling) => {
+      accepts: (item, target, source, sibling) => {
         if (typeof this.accepts === 'function') {
-          return this.accepts({ item: item, target: target, source: source, currentSibling });
+          return this.accepts({ item: item, target: target, source: source, sibling: sibling });
+        }
+        else {
+          return globalOptions.accepts(item, target, source, sibling);
         }
       },
       invalid: (item, handle) => {
