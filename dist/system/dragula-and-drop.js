@@ -51,7 +51,7 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
                   return false;
                 }
                 if (typeof _this.isContainer === 'function') {
-                  return _this.isContainer({ el: el });
+                  return _this.isContainer({ item: el });
                 }
 
                 if (_this.dragula.dragging) {
@@ -60,22 +60,36 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
                 return el.classList.contains(_this.sourceClass);
               },
               moves: function moves(item, source, handle, sibling) {
-                return _this.moves({ item: item, source: source, handle: handle, sibling: sibling });
+                if (typeof _this.moves === 'function') {
+                  return _this.moves({ item: item, source: source, handle: handle, sibling: sibling });
+                }
               },
               accepts: function accepts(item, target, source, currentSibling) {
-                return _this.accepts({ item: item, target: target, source: source, currentSibling: currentSibling });
+                if (typeof _this.accepts === 'function') {
+                  return _this.accepts({ item: item, target: target, source: source, currentSibling: currentSibling });
+                }
               },
               invalid: function invalid(item, handle) {
-                return _this.invalid({ item: item, handle: handle });
+                if (typeof _this.invalid === 'function') {
+                  return _this.invalid({ item: item, handle: handle });
+                }
               }
             };
 
             var options = _Object$assign(aureliaOptions, boundOptions);
             this.dragula = new Dragula(options);
 
-            this.dragula.on('drop', function (el, target, source, sibling) {
+            this.dragula.on('drop', function (item, target, source, sibling) {
               _this.dragula.cancel();
-              _this.dropFn({ el: el, target: target, source: source, sibling: sibling });
+              _this.dropFn({ item: item, target: target, source: source, sibling: sibling });
+            });
+
+            this.dragula.on('drag', function (item, source) {
+              _this.dragFn({ item: item, source: source });
+            });
+
+            this.dragula.on('dragend', function (item) {
+              _this.dragEndFn({ item: item });
             });
           }
         }, {
@@ -88,6 +102,9 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
         var _DragulaAndDrop = DragulaAndDrop;
         DragulaAndDrop = noView()(DragulaAndDrop) || DragulaAndDrop;
         DragulaAndDrop = customElement('dragula-and-drop')(DragulaAndDrop) || DragulaAndDrop;
+        DragulaAndDrop = bindable({ name: 'dragEndFn', attribute: 'drag-end-fn', defaultBindingMode: bindingMode.oneTime, defaultValue: function defaultValue(item) {} })(DragulaAndDrop) || DragulaAndDrop;
+        DragulaAndDrop = bindable({ name: 'dropFn', attribute: 'drop-fn', defaultBindingMode: bindingMode.oneTime, defaultValue: function defaultValue(item, target, source, sibling) {} })(DragulaAndDrop) || DragulaAndDrop;
+        DragulaAndDrop = bindable({ name: 'dragFn', attribute: 'drag-fn', defaultBindingMode: bindingMode.oneTime, defaultValue: function defaultValue(item, source) {} })(DragulaAndDrop) || DragulaAndDrop;
         DragulaAndDrop = bindable({ name: 'sourceClass', attribute: 'source-class', defaultValue: 'drag-source', defaultBindingMode: bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
         DragulaAndDrop = bindable({ name: 'targetClass', attribute: 'target-class', defaultValue: 'drop-target', defaultBindingMode: bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
         DragulaAndDrop = bindable({ name: 'mirrorContainer', attribute: 'mirror-container', defaultBindingMode: bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
@@ -99,9 +116,9 @@ System.register(['babel-runtime/helpers/create-class', 'babel-runtime/helpers/cl
         DragulaAndDrop = bindable({ name: 'copy', defaultBindingMode: bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
         DragulaAndDrop = bindable({ name: 'isContainer', attribute: 'is-container', defaultBindingMode: bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
         DragulaAndDrop = bindable({ name: 'containers', defaultBindingMode: bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
-        DragulaAndDrop = bindable({ name: 'invalid', defaultBindingMode: bindingMode.oneTime, defaultValue: Options.invalidTarget })(DragulaAndDrop) || DragulaAndDrop;
-        DragulaAndDrop = bindable({ name: 'accepts', defaultBindingMode: bindingMode.oneTime, defaultValue: Options.always })(DragulaAndDrop) || DragulaAndDrop;
-        DragulaAndDrop = bindable({ name: 'moves', defaultBindingMode: bindingMode.oneTime, defaultValue: Options.always })(DragulaAndDrop) || DragulaAndDrop;
+        DragulaAndDrop = bindable({ name: 'invalid', defaultBindingMode: bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
+        DragulaAndDrop = bindable({ name: 'accepts', defaultBindingMode: bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
+        DragulaAndDrop = bindable({ name: 'moves', defaultBindingMode: bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
         return DragulaAndDrop;
       })();
 

@@ -1,13 +1,13 @@
 {
   "name": "aurelia-dragula",
-  "version": "0.0.1",
+  "version": "0.9.0",
   "description": "An aurelia compatible version of Dragula",
   "keywords": [
     "aurelia",
     "plugin",
     "dragula"
   ],
-  "homepage": "http://aurelia.io",
+  "homepage": "https://github.com/michaelmalonenz/aurelia-dragula",
   "bugs": {
     "url": "https://github.com/michaelmalonenz/aurelia-dragula/issues"
   },

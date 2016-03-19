@@ -4,9 +4,9 @@ import {bindingMode} from 'aurelia-binding';
 import {Options} from './options';
 import {Dragula} from './dragula';
 
-@bindable({ name: 'moves', defaultBindingMode: bindingMode.oneTime, defaultValue: Options.always })
-@bindable({ name: 'accepts', defaultBindingMode: bindingMode.oneTime, defaultValue: Options.always })
-@bindable({ name: 'invalid', defaultBindingMode: bindingMode.oneTime, defaultValue: Options.invalidTarget })
+@bindable({ name: 'moves', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'accepts', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'invalid', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'containers', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'isContainer', attribute: 'is-container', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'copy', defaultBindingMode: bindingMode.oneTime })
@@ -18,6 +18,9 @@ import {Dragula} from './dragula';
 @bindable({ name: 'mirrorContainer', attribute: 'mirror-container', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'targetClass', attribute: 'target-class', defaultValue: 'drop-target', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'sourceClass', attribute: 'source-class', defaultValue: 'drag-source', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'dragFn', attribute: 'drag-fn', defaultBindingMode: bindingMode.oneTime, defaultValue: (item, source) => {}})
+@bindable({ name: 'dropFn', attribute: 'drop-fn', defaultBindingMode: bindingMode.oneTime, defaultValue: (item, target, source, sibling) => {}})
+@bindable({ name: 'dragEndFn', attribute: 'drag-end-fn', defaultBindingMode: bindingMode.oneTime, defaultValue: (item) => {}})
 @customElement('dragula-and-drop')
 @noView()
 export class DragulaAndDrop {
@@ -44,7 +47,7 @@ export class DragulaAndDrop {
           return false;
         }
         if (typeof this.isContainer === 'function') {
-          return this.isContainer({ el: el });
+          return this.isContainer({ item: el });
         }
 
         if (this.dragula.dragging) {
@@ -53,23 +56,37 @@ export class DragulaAndDrop {
         return el.classList.contains(this.sourceClass);
       },
       moves: (item, source, handle, sibling) => {
-        return this.moves({ item: item, source: source, handle: handle, sibling: sibling });
+        if (typeof this.moves === 'function') {
+          return this.moves({ item: item, source: source, handle: handle, sibling: sibling });
+        }
       },
       accepts: (item, target, source, currentSibling) => {
-        return this.accepts({ item: item, target: target, source: source, currentSibling });
+        if (typeof this.accepts === 'function') {
+          return this.accepts({ item: item, target: target, source: source, currentSibling });
+        }
       },
       invalid: (item, handle) => {
-        return this.invalid({ item: item, handle: handle });
+        if (typeof this.invalid === 'function') {
+          return this.invalid({ item: item, handle: handle });
+        }
       }
     };
 
     let options = Object.assign(aureliaOptions, boundOptions);
     this.dragula = new Dragula(options);
 
-    this.dragula.on('drop', (el, target, source, sibling) => {
+    this.dragula.on('drop', (item, target, source, sibling) => {
       this.dragula.cancel();
-      this.dropFn({ el: el, target: target, source: source, sibling: sibling });
+      this.dropFn({ item: item, target: target, source: source, sibling: sibling });
     });
+
+    this.dragula.on('drag', (item, source) => {
+      this.dragFn({ item: item, source: source});
+    });
+
+    this.dragula.on('dragend', (item) => {
+      this.dragEndFn({ item: item });
+    })
   }
 
   unbind() {
