@@ -17,18 +17,53 @@ describe('drake defaults', () => {
     expect(options.mirrorContainer).toBe(document.body);
   });
 
-  xit('still has sensible options when combined with dragula', () => {
+  it('still has sensible options when combined with dragula', () => {
     let options = new Options();
     let dragula = new Dragula(options);
 
-    expect(typeof dragula.moves).toBe('function', 'dragula.moves defaults to a method');
-    expect(typeof dragula.accepts).toBe('function');
-    expect(typeof dragula.invalid).toBe('function');
-    expect(typeof dragula.isContainer).toBe('function');
-    expect(dragula.copy).toBe(false);
-    expect(dragula.revertOnSpill).toBe(false);
-    expect(dragula.removeOnSpill).toBe(false);
-    expect(dragula.direction).toBe('vertical');
-    expect(dragula.mirrorContainer).toBe(document.body);
+    expect(typeof dragula.options.moves).toBe('function', 'dragula.moves defaults to a method');
+    expect(typeof dragula.options.accepts).toBe('function');
+    expect(typeof dragula.options.invalid).toBe('function');
+    expect(typeof dragula.options.isContainer).toBe('function');
+    expect(dragula.options.copy).toBe(false);
+    expect(dragula.options.revertOnSpill).toBe(false);
+    expect(dragula.options.removeOnSpill).toBe(false);
+    expect(dragula.options.direction).toBe('vertical');
+    expect(dragula.options.mirrorContainer).toBe(document.body);
+  });
+
+  it('combine with the supplied options correctly', function() {
+    //arrange
+    let div = document.createElement('div');
+    let opposite = new Options();
+    opposite.moves = Options.never;
+    opposite.accepts = Options.never;
+    opposite.invalid = Options.always;
+    opposite.containers = [div];
+    opposite.isContainer = Options.always;
+    opposite.copy = true;
+    opposite.copySortSource = true;
+    opposite.revertOnSpill = true;
+    opposite.removeOnSpill = true;
+    opposite.direction = DIRECTION.HORIZONTAL,
+    opposite.ignoreInputTextSelection = false;
+    opposite.mirrorContainer = div;
+
+    //act
+    let dragula = new Dragula(opposite);
+
+    //assert
+    expect(dragula.options.moves).toBe(Options.never);
+    expect(dragula.options.accepts).toBe(Options.never);
+    expect(dragula.options.invalid).toBe(Options.always);
+    expect(dragula.options.containers).toEqual([div]);
+    expect(dragula.options.isContainer).toBe(Options.always);
+    expect(dragula.options.copy).toBe(true);
+    expect(dragula.options.copySortSource).toBe(true);
+    expect(dragula.options.revertOnSpill).toBe(true);
+    expect(dragula.options.removeOnSpill).toBe(true);
+    expect(dragula.options.direction).toBe(DIRECTION.HORIZONTAL),
+    expect(dragula.options.ignoreInputTextSelection).toBe(false);
+    expect(dragula.options.mirrorContainer).toBe(div);
   });
 });
