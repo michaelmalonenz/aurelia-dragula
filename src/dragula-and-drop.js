@@ -31,47 +31,14 @@ export class DragulaAndDrop {
   }
 
   bind() {
-    let globalOptions = Container.instance.get(GLOBAL_OPTIONS);
-    let boundOptions = this._setupOptions(globalOptions);
+    this.globalOptions = Container.instance.get(GLOBAL_OPTIONS);
+    let boundOptions = this._setupOptions();
 
     let aureliaOptions = {
-      isContainer: el => {
-        if (!el) {
-          return false;
-        }
-        if (typeof this.isContainer === 'function') {
-          return this.isContainer({ item: el });
-        }
-
-        if (this.dragula.dragging) {
-          return el.classList.contains(this.targetClass);
-        }
-        return el.classList.contains(this.sourceClass);
-      },
-      moves: (item, source, handle, sibling) => {
-        if (typeof this.moves === 'function') {
-          return this.moves({ item: item, source: source, handle: handle, sibling: sibling });
-        }
-        else {
-          return globalOptions.moves(item, source, handle, sibling);
-        }
-      },
-      accepts: (item, target, source, sibling) => {
-        if (typeof this.accepts === 'function') {
-          return this.accepts({ item: item, target: target, source: source, sibling: sibling });
-        }
-        else {
-          return globalOptions.accepts(item, target, source, sibling);
-        }
-      },
-      invalid: (item, handle) => {
-        if (typeof this.invalid === 'function') {
-          return this.invalid({ item: item, handle: handle });
-        }
-        else {
-          return globalOptions.invalid(item, handle);
-        }
-      }
+      isContainer: ::this._isContainer,
+      moves: ::this._moves,
+      accepts: ::this._accepts,
+      invalid: ::this._invalid
     };
 
     let options = Object.assign(aureliaOptions, boundOptions);
@@ -95,23 +62,64 @@ export class DragulaAndDrop {
     this.dragula.destroy();
   }
 
-  _setupOptions(globalOptions) {
+  _isContainer(el) {
+    if (!el) {
+      return false;
+    }
+    if (typeof this.isContainer === 'function') {
+      return this.isContainer({ item: el });
+    }
+
+    if (this.dragula.dragging) {
+      return el.classList.contains(this.targetClass);
+    }
+    return el.classList.contains(this.sourceClass);
+  }
+
+  _moves(item, source, handle, sibling) {
+    if (typeof this.moves === 'function') {
+      return this.moves({ item: item, source: source, handle: handle, sibling: sibling });
+    }
+    else {
+      return this.globalOptions.moves(item, source, handle, sibling);
+    }
+  }
+
+  _accepts(item, target, source, sibling) {
+    if (typeof this.accepts === 'function') {
+      return this.accepts({ item: item, target: target, source: source, sibling: sibling });
+    }
+    else {
+      return this.globalOptions.accepts(item, target, source, sibling);
+    }
+  }
+
+  _invalid(item, handle) {
+    if (typeof this.invalid === 'function') {
+      return this.invalid({ item: item, handle: handle });
+    }
+    else {
+      return this.globalOptions.invalid(item, handle);
+    }
+  }
+
+  _setupOptions() {
     let result = {
-      containers: this._getOption('containers', globalOptions),
-      copy: this._getOption('copy', globalOptions),
-      copySortSource: this._getOption('copySortSource', globalOptions),
-      revertOnSpill: this._getOption('revertOnSpill', globalOptions),
-      removeOnSpill: this._getOption('removeOnSpill', globalOptions),
-      direction: this._getOption('direction', globalOptions),
-      ignoreInputTextSelection: this._getOption('ignoreInputTextSelection', globalOptions),
-      mirrorContainer: this._getOption('mirrorContainer', globalOptions)
+      containers: this._getOption('containers'),
+      copy: this._getOption('copy'),
+      copySortSource: this._getOption('copySortSource'),
+      revertOnSpill: this._getOption('revertOnSpill'),
+      removeOnSpill: this._getOption('removeOnSpill'),
+      direction: this._getOption('direction'),
+      ignoreInputTextSelection: this._getOption('ignoreInputTextSelection'),
+      mirrorContainer: this._getOption('mirrorContainer')
     };
     return result;
   }
 
-  _getOption(option, globalOptions) {
+  _getOption(option) {
     if (this[option] == null) {
-      return globalOptions[option];
+      return this.globalOptions[option];
     }
     return this[option];
   }

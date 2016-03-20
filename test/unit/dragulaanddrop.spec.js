@@ -46,7 +46,7 @@ describe('the Dragula and Drop Custom Element', function() {
     document.body.removeChild(this.container);
   });
 
-  it('should use the isContainer function if it is bound', function() {
+  xit('should use the isContainer function if it is bound', function() {
     //arrange
     let wasCalled = false;
     this.options.isContainer = (argsObj) => {
