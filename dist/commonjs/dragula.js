@@ -35,12 +35,12 @@ var Dragula = (function () {
     var len = arguments.length;
     var globalOptions = _aureliaDependencyInjection.Container.instance.get(_options.GLOBAL_OPTIONS);
     this.options = _Object$assign({}, globalOptions, options);
-    this.emitter = new _emitter.Emitter();
+    this._emitter = new _emitter.Emitter();
     this.dragging = false;
 
     if (this.options.removeOnSpill === true) {
-      this.emitter.on('over', this.spillOver.bind(this));
-      this.emitter.on('out', this.spillOut.bind(this));
+      this._emitter.on('over', this.spillOver.bind(this));
+      this._emitter.on('out', this.spillOut.bind(this));
     }
 
     this._events();
@@ -63,17 +63,17 @@ var Dragula = (function () {
   _createClass(Dragula, [{
     key: 'on',
     value: function on(eventName, callback) {
-      this.emitter.on(eventName, callback);
+      this._emitter.on(eventName, callback);
     }
   }, {
     key: 'once',
     value: function once(eventName, callback) {
-      this.emitter.once(eventName, callback);
+      this._emitter.once(eventName, callback);
     }
   }, {
     key: 'off',
     value: function off(eventName, fn) {
-      this.emitter.off(eventName, fn);
+      this._emitter.off(eventName, fn);
     }
   }, {
     key: 'isContainer',
@@ -224,7 +224,7 @@ var Dragula = (function () {
     value: function start(context) {
       if (this._isCopy(context.item, context.source)) {
         this._copy = context.item.cloneNode(true);
-        this.emitter.emit('cloned', this._copy, context.item, 'copy');
+        this._emitter.emit('cloned', this._copy, context.item, 'copy');
       }
 
       this._source = context.source;
@@ -233,7 +233,7 @@ var Dragula = (function () {
       this._currentSibling = _util.Util.nextEl(context.item);
 
       this.dragging = true;
-      this.emitter.emit('drag', this._item, this._source);
+      this._emitter.emit('drag', this._item, this._source);
     }
   }, {
     key: 'end',
@@ -280,9 +280,9 @@ var Dragula = (function () {
         parent.removeChild(_item);
       }
       if (this._isInitialPlacement(target)) {
-        this.emitter.emit('cancel', item, this._source, this._source);
+        this._emitter.emit('cancel', item, this._source, this._source);
       } else {
-        this.emitter.emit('drop', item, target, this._source, this._currentSibling);
+        this._emitter.emit('drop', item, target, this._source, this._currentSibling);
       }
       this._cleanup();
     }
@@ -297,7 +297,7 @@ var Dragula = (function () {
       if (parent) {
         parent.removeChild(item);
       }
-      this.emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
+      this._emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
       this._cleanup();
     }
   }, {
@@ -317,9 +317,9 @@ var Dragula = (function () {
         this._source.insertBefore(item, this._initialSibling);
       }
       if (initial || reverts) {
-        this.emitter.emit('cancel', item, this._source, this._source);
+        this._emitter.emit('cancel', item, this._source, this._source);
       } else {
-        this.emitter.emit('drop', item, parent, this._source, this._currentSibling);
+        this._emitter.emit('drop', item, parent, this._source, this._currentSibling);
       }
       this._cleanup();
     }
@@ -334,9 +334,9 @@ var Dragula = (function () {
       }
       this.dragging = false;
       if (this._lastDropTarget) {
-        this.emitter.emit('out', item, this._lastDropTarget, this._source);
+        this._emitter.emit('out', item, this._lastDropTarget, this._source);
       }
-      this.emitter.emit('dragend', item);
+      this._emitter.emit('dragend', item);
       this._source = this._item = this._copy = this._initialSibling = this._currentSibling = this._lastRenderTime = this._lastDropTarget = null;
     }
   }, {
@@ -394,7 +394,7 @@ var Dragula = (function () {
       e.preventDefault();
 
       var moved = function moved(type) {
-        _this2.emitter.emit(type, item, _this2._lastDropTarget, _this2._source);
+        _this2._emitter.emit(type, item, _this2._lastDropTarget, _this2._source);
       };
       var over = function over() {
         if (changed) {
@@ -447,7 +447,7 @@ var Dragula = (function () {
       if (reference === null && changed || reference !== item && reference !== _util.Util.nextEl(item)) {
         this._currentSibling = reference;
         dropTarget.insertBefore(item, reference);
-        this.emitter.emit('shadow', item, dropTarget, this._source);
+        this._emitter.emit('shadow', item, dropTarget, this._source);
       }
     }
   }, {
@@ -477,7 +477,7 @@ var Dragula = (function () {
       this.options.mirrorContainer.appendChild(this._mirror);
       (0, _touchy.touchy)(document.documentElement, 'addEventListener', 'mousemove', this.drag.bind(this));
       classes.add(this.options.mirrorContainer, 'gu-unselectable');
-      this.emitter.emit('cloned', this._mirror, this._item, 'mirror');
+      this._emitter.emit('cloned', this._mirror, this._item, 'mirror');
     }
   }, {
     key: 'removeMirrorImage',

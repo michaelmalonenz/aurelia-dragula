@@ -14,6 +14,8 @@ var _aureliaTemplating = require('aurelia-templating');
 
 var _aureliaBinding = require('aurelia-binding');
 
+var _aureliaDependencyInjection = require('aurelia-dependency-injection');
+
 var _options = require('./options');
 
 var _dragula = require('./dragula');
@@ -22,7 +24,7 @@ var DragulaAndDrop = (function () {
   function DragulaAndDrop() {
     _classCallCheck(this, _DragulaAndDrop);
 
-    this.drake;
+    this.dragula = {};
   }
 
   _createClass(DragulaAndDrop, [{
@@ -30,53 +32,21 @@ var DragulaAndDrop = (function () {
     value: function bind() {
       var _this = this;
 
-      var boundOptions = {
-        containers: this.containers,
-        copy: this.copy,
-        copySortSource: this.copySortSource,
-        revertOnSpill: this.revertOnSpill,
-        removeOnSpill: this.removeOnSpill,
-        direction: this.direction,
-        ignoreInputTextSelection: this.ignoreInputTextSelection,
-        mirrorContainer: this.mirrorContainer
-      };
+      this.globalOptions = _aureliaDependencyInjection.Container.instance.get(_options.GLOBAL_OPTIONS);
+      var boundOptions = this._setupOptions();
 
       var aureliaOptions = {
-        isContainer: function isContainer(el) {
-          if (!el) {
-            return false;
-          }
-          if (typeof _this.isContainer === 'function') {
-            return _this.isContainer({ item: el });
-          }
-
-          if (_this.dragula.dragging) {
-            return el.classList.contains(_this.targetClass);
-          }
-          return el.classList.contains(_this.sourceClass);
-        },
-        moves: function moves(item, source, handle, sibling) {
-          if (typeof _this.moves === 'function') {
-            return _this.moves({ item: item, source: source, handle: handle, sibling: sibling });
-          }
-        },
-        accepts: function accepts(item, target, source, currentSibling) {
-          if (typeof _this.accepts === 'function') {
-            return _this.accepts({ item: item, target: target, source: source, currentSibling: currentSibling });
-          }
-        },
-        invalid: function invalid(item, handle) {
-          if (typeof _this.invalid === 'function') {
-            return _this.invalid({ item: item, handle: handle });
-          }
-        }
+        isContainer: this._isContainer.bind(this),
+        moves: this._moves.bind(this),
+        accepts: this._accepts.bind(this),
+        invalid: this._invalid.bind(this)
       };
 
       var options = _Object$assign(aureliaOptions, boundOptions);
       this.dragula = new _dragula.Dragula(options);
 
       this.dragula.on('drop', function (item, target, source, sibling) {
-        _this.dragula.cancel();
+        _this.dragula.cancel(false);
         _this.dropFn({ item: item, target: target, source: source, sibling: sibling });
       });
 
@@ -93,6 +63,71 @@ var DragulaAndDrop = (function () {
     value: function unbind() {
       this.dragula.destroy();
     }
+  }, {
+    key: '_isContainer',
+    value: function _isContainer(el) {
+      if (!el) {
+        return false;
+      }
+      if (typeof this.isContainer === 'function') {
+        return this.isContainer({ item: el });
+      }
+
+      if (this.dragula.dragging) {
+        return el.classList.contains(this.targetClass);
+      }
+      return el.classList.contains(this.sourceClass);
+    }
+  }, {
+    key: '_moves',
+    value: function _moves(item, source, handle, sibling) {
+      if (typeof this.moves === 'function') {
+        return this.moves({ item: item, source: source, handle: handle, sibling: sibling });
+      } else {
+        return this.globalOptions.moves(item, source, handle, sibling);
+      }
+    }
+  }, {
+    key: '_accepts',
+    value: function _accepts(item, target, source, sibling) {
+      if (typeof this.accepts === 'function') {
+        return this.accepts({ item: item, target: target, source: source, sibling: sibling });
+      } else {
+        return this.globalOptions.accepts(item, target, source, sibling);
+      }
+    }
+  }, {
+    key: '_invalid',
+    value: function _invalid(item, handle) {
+      if (typeof this.invalid === 'function') {
+        return this.invalid({ item: item, handle: handle });
+      } else {
+        return this.globalOptions.invalid(item, handle);
+      }
+    }
+  }, {
+    key: '_setupOptions',
+    value: function _setupOptions() {
+      var result = {
+        containers: this._getOption('containers'),
+        copy: this._getOption('copy'),
+        copySortSource: this._getOption('copySortSource'),
+        revertOnSpill: this._getOption('revertOnSpill'),
+        removeOnSpill: this._getOption('removeOnSpill'),
+        direction: this._getOption('direction'),
+        ignoreInputTextSelection: this._getOption('ignoreInputTextSelection'),
+        mirrorContainer: this._getOption('mirrorContainer')
+      };
+      return result;
+    }
+  }, {
+    key: '_getOption',
+    value: function _getOption(option) {
+      if (this[option] == null) {
+        return this.globalOptions[option];
+      }
+      return this[option];
+    }
   }]);
 
   var _DragulaAndDrop = DragulaAndDrop;
@@ -101,13 +136,13 @@ var DragulaAndDrop = (function () {
   DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'dragEndFn', attribute: 'drag-end-fn', defaultBindingMode: _aureliaBinding.bindingMode.oneTime, defaultValue: function defaultValue(item) {} })(DragulaAndDrop) || DragulaAndDrop;
   DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'dropFn', attribute: 'drop-fn', defaultBindingMode: _aureliaBinding.bindingMode.oneTime, defaultValue: function defaultValue(item, target, source, sibling) {} })(DragulaAndDrop) || DragulaAndDrop;
   DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'dragFn', attribute: 'drag-fn', defaultBindingMode: _aureliaBinding.bindingMode.oneTime, defaultValue: function defaultValue(item, source) {} })(DragulaAndDrop) || DragulaAndDrop;
-  DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'sourceClass', attribute: 'source-class', defaultValue: 'drag-source', defaultBindingMode: _aureliaBinding.bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
-  DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'targetClass', attribute: 'target-class', defaultValue: 'drop-target', defaultBindingMode: _aureliaBinding.bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
+  DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'sourceClass', attribute: 'source-class', defaultBindingMode: _aureliaBinding.bindingMode.oneTime, defaultValue: 'drag-source' })(DragulaAndDrop) || DragulaAndDrop;
+  DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'targetClass', attribute: 'target-class', defaultBindingMode: _aureliaBinding.bindingMode.oneTime, defaultValue: 'drop-target' })(DragulaAndDrop) || DragulaAndDrop;
   DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'mirrorContainer', attribute: 'mirror-container', defaultBindingMode: _aureliaBinding.bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
   DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'ignoreInputTextSelection', attribute: 'ingore-input-text-selection', defaultBindingMode: _aureliaBinding.bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
   DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'direction', defaultBindingMode: _aureliaBinding.bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
   DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'removeOnSpill', attribute: 'remove-on-spill', defaultBindingMode: _aureliaBinding.bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
-  DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'revertOnSpill', attribute: 'revert-on-spill', defaultBindingMode: _aureliaBinding.bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
+  DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'revertOnSpill', attribute: 'revert-on-spill', defaultBindingMode: _aureliaBinding.bindingMode.oneTime, defaultValue: true })(DragulaAndDrop) || DragulaAndDrop;
   DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'copySortSource', defaultBindingMode: _aureliaBinding.bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
   DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'copy', defaultBindingMode: _aureliaBinding.bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
   DragulaAndDrop = (0, _aureliaTemplating.bindable)({ name: 'isContainer', attribute: 'is-container', defaultBindingMode: _aureliaBinding.bindingMode.oneTime })(DragulaAndDrop) || DragulaAndDrop;
