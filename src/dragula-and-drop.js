@@ -12,7 +12,7 @@ import {Dragula} from './dragula';
 @bindable({ name: 'isContainer', attribute: 'is-container', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'copy', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'copySortSource', defaultBindingMode: bindingMode.oneTime })
-@bindable({ name: 'revertOnSpill', attribute: 'revert-on-spill', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'revertOnSpill', attribute: 'revert-on-spill', defaultBindingMode: bindingMode.oneTime, defaultValue: true })
 @bindable({ name: 'removeOnSpill', attribute: 'remove-on-spill', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'direction', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'ignoreInputTextSelection', attribute: 'ingore-input-text-selection', defaultBindingMode: bindingMode.oneTime })
@@ -32,17 +32,7 @@ export class DragulaAndDrop {
 
   bind() {
     let globalOptions = Container.instance.get(GLOBAL_OPTIONS);
-
-    let boundOptions = {
-      containers: this.containers || [],
-      copy: this.copy,
-      copySortSource: this.copySortSource,
-      revertOnSpill: this.revertOnSpill,
-      removeOnSpill: this.removeOnSpill,
-      direction: this.direction,
-      ignoreInputTextSelection: this.ignoreInputTextSelection,
-      mirrorContainer: this.mirrorContainer ,
-    };
+    let boundOptions = this._setupOptions(globalOptions);
 
     let aureliaOptions = {
       isContainer: el => {
@@ -78,6 +68,9 @@ export class DragulaAndDrop {
         if (typeof this.invalid === 'function') {
           return this.invalid({ item: item, handle: handle });
         }
+        else {
+          return globalOptions.invalid(item, handle);
+        }
       }
     };
 
@@ -85,7 +78,7 @@ export class DragulaAndDrop {
     this.dragula = new Dragula(options);
 
     this.dragula.on('drop', (item, target, source, sibling) => {
-      this.dragula.cancel();
+      this.dragula.cancel(false);
       this.dropFn({ item: item, target: target, source: source, sibling: sibling });
     });
 
@@ -102,4 +95,24 @@ export class DragulaAndDrop {
     this.dragula.destroy();
   }
 
+  _setupOptions(globalOptions) {
+    let result = {
+      containers: this._getOption('containers', globalOptions),
+      copy: this._getOption('copy', globalOptions),
+      copySortSource: this._getOption('copySortSource', globalOptions),
+      revertOnSpill: this._getOption('revertOnSpill', globalOptions),
+      removeOnSpill: this._getOption('removeOnSpill', globalOptions),
+      direction: this._getOption('direction', globalOptions),
+      ignoreInputTextSelection: this._getOption('ignoreInputTextSelection', globalOptions),
+      mirrorContainer: this._getOption('mirrorContainer', globalOptions)
+    };
+    return result;
+  }
+
+  _getOption(option, globalOptions) {
+    if (this[option] == null) {
+      return globalOptions[option];
+    }
+    return this[option];
+  }
 }

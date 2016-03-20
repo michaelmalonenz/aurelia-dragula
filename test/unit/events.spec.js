@@ -10,6 +10,10 @@ describe('events', function() {
     document.body.appendChild(this.div);
   });
 
+  afterEach(function() {
+    document.body.removeChild(this.div);
+  });
+
   it('.start() emits "cloned" for copies', function() {
     //arrange
     let drake = createDragula([this.div], { copy: true });
@@ -23,6 +27,7 @@ describe('events', function() {
 
     //act
     drake.manualStart(this.item);
+    drake.destroy();
   });
 
   it('.start() emits "drag" for items', function() {
@@ -33,6 +38,8 @@ describe('events', function() {
     });
 
     drake.manualStart(this.item);
+
+    drake.destroy();
   });
 
   it('.end() emits "cancel" when not moved', function() {
@@ -50,6 +57,8 @@ describe('events', function() {
     raise(this.item, 'mousemove', { which: 1 });
 
     drake.end();
+
+    drake.destroy();
   });
 
   it('.end() emits "drop" when moved', function() {
@@ -71,6 +80,8 @@ describe('events', function() {
     div2.appendChild(this.item);
 
     drake.end();
+
+    drake.destroy();
   });
 
   it('.remove() emits "remove" for items', function() {
@@ -89,6 +100,8 @@ describe('events', function() {
     raise(this.item, 'mousemove', { which: 1 });
 
     drake.remove();
+
+    drake.destroy();
   });
 
   it('.remove() emits "cancel" for copies', function() {
@@ -111,6 +124,8 @@ describe('events', function() {
     expect(dragendCalled).toBeTruthy();
     expect(copiedItem).not.toBe(this.item, 'copy is not a reference to item');
     expect(copiedItem.isEqualNode(this.item)).toBeTruthy('item is a copy of item');
+
+    drake.destroy();
   });
 
   it('.cancel() emits "cancel" when not moved', function() {
@@ -128,6 +143,8 @@ describe('events', function() {
     raise(this.item, 'mousemove', { which: 1 });
 
     drake.cancel();
+
+    drake.destroy();
   });
 
   it('.cancel() emits "drop" when not reverted', function() {
@@ -150,6 +167,8 @@ describe('events', function() {
     div2.appendChild(this.item);
 
     drake.cancel();
+
+    drake.destroy();
   });
 
   it('.cancel() emits "cancel" when reverts', function() {
@@ -171,9 +190,10 @@ describe('events', function() {
     div2.appendChild(this.item);
 
     drake.cancel();
+
+    drake.destroy();
   });
 
-  //this.item doesn't have the style attribute
   it('mousedown emits "cloned" for mirrors', function() {
     let drake = createDragula([this.div]);
     this.item.classList.add('test');
@@ -197,6 +217,8 @@ describe('events', function() {
     expect(mirror.classList.contains('gu-mirror')).toBeTruthy();
     expect(this.item.classList.contains('test')).toBeTruthy();
     expect(mirror.classList.contains('test')).toBeTruthy();
+
+    drake.destroy();
   });
 
   it('mousedown emits "cloned" for copies', function() {
@@ -212,6 +234,8 @@ describe('events', function() {
 
     raise(this.item, 'mousedown', { which: 1 });
     raise(this.item, 'mousemove', { which: 1 });
+
+    drake.destroy();
   });
 
   it('mousedown emits "drag" for items', function() {
@@ -224,5 +248,7 @@ describe('events', function() {
 
     raise(this.item, 'mousedown', { which: 1 });
     raise(this.item, 'mousemove', { which: 1 });
+
+    drake.destroy();
   });
 });

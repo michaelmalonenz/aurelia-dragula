@@ -8,6 +8,10 @@ describe('end', function() {
       this.drake = createDragula();
     });
 
+    afterEach(function() {
+      this.drake.destroy();
+    });
+
     it('a single time', function() {
       let test = () => this.drake.end()
 
@@ -52,6 +56,8 @@ describe('end', function() {
     drake.end();
 
     expect(drake.dragging).toBeFalsy('final state is: drake is not dragging');
+
+    drake.destroy();
   });
 
   it('when already dragged, ends (drops) previous drag', function() {
@@ -75,5 +81,7 @@ describe('end', function() {
     drake.end();
 
     expect(drake.dragging).toBeFalsy('final state is: drake is not dragging');
+
+    drake.destroy();
   });
 });

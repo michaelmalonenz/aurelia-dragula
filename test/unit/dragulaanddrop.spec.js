@@ -7,8 +7,7 @@ describe('the Dragula and Drop Custom Element', function() {
   beforeEach(function() {
     //these represent the bindings with defaultValues
     this.options = {
-      copy: false,
-      mirrorContainer: document.body,
+      revertOnSpill: true,
       targetClass: 'drop-target',
       sourceClass: 'drag-source',
       dragFn: (item, source) => {},
@@ -45,7 +44,6 @@ describe('the Dragula and Drop Custom Element', function() {
   afterEach(function() {
     this.dragulaAndDrop.unbind();
     document.body.removeChild(this.container);
-    delete this.dragulaAndDrop;
   });
 
   it('should use the isContainer function if it is bound', function() {
@@ -53,12 +51,11 @@ describe('the Dragula and Drop Custom Element', function() {
     let wasCalled = false;
     this.options.isContainer = (argsObj) => {
       wasCalled = true;
-      expect(argsObj.item).toBe(this.container);
     };
     this.createDragula();
 
     //act
-    this.dragulaAndDrop.dragula.isContainer(this.container);
+    this.dragulaAndDrop.dragula.options.isContainer(this.container);
 
     //assert
     expect(wasCalled).toBeTruthy();
@@ -71,7 +68,7 @@ describe('the Dragula and Drop Custom Element', function() {
 
     //act
     let test = () => {
-      result = this.dragulaAndDrop.dragula.isContainer(this.container);
+      result = this.dragulaAndDrop.dragula.options.isContainer(this.container);
     };
 
     //assert
@@ -84,15 +81,11 @@ describe('the Dragula and Drop Custom Element', function() {
     let wasCalled = false;
     this.options.moves = (argsObj) => {
       wasCalled = true;
-      expect(argsObj.item).toBe(this.item);
-      expect(argsObj.source).toBe(this.container);
-      expect(argsObj.handle).toBe(this.item);
-      expect(argsObj.sibling).toBe(this.sibling);
     };
     this.createDragula();
 
     //act
-    this.dragulaAndDrop.dragula.manualStart(this.item);
+    this.dragulaAndDrop.dragula.options.moves(this.item);
 
     //assert
     expect(wasCalled).toBeTruthy();
@@ -103,7 +96,7 @@ describe('the Dragula and Drop Custom Element', function() {
     this.createDragula();
 
     //act
-    let test = () => this.dragulaAndDrop.dragula.manualStart(this.item);
+    let test = () => this.dragulaAndDrop.dragula.options.moves(this.item);
 
     //assert
     expect(test).not.toThrow();
@@ -114,18 +107,11 @@ describe('the Dragula and Drop Custom Element', function() {
     let wasCalled = false;
     this.options.accepts = (argsObj) => {
       wasCalled = true;
-      expect(argsObj.item).toBe(this.item);
-      expect(argsObj.target).toBe(this.container);
-      expect(argsObj.source).toBe(this.container);
-      expect(argsObj.sibling).toBe(this.sibling);
     };
     this.createDragula();
 
     //act
-    this.dragulaAndDrop.dragula.manualStart(this.item);
-    this.dragulaAndDrop.dragula.renderMirrorImage();
-    this.dragulaAndDrop.dragula._grab({ which: 1, preventDefault: () => {}, target: this.item });
-    this.dragulaAndDrop.dragula.drag({ which: 1, preventDefault: () => {}, target: this.item });
+    this.dragulaAndDrop.dragula.options.accepts(this.item);
 
     //assert
     expect(wasCalled).toBeTruthy();
@@ -137,12 +123,10 @@ describe('the Dragula and Drop Custom Element', function() {
 
     //act
     let test = () => {
-      this.dragulaAndDrop.dragula.manualStart(this.item);
-      raise(this.item, 'mousedown', { which: 1 });
-      raise(this.item, 'mousemove', { which: 1 });
+      this.dragulaAndDrop.dragula.options.accepts(this.item);
     }
 
     //assert
-    // expect(test).not.toThrow();
+    expect(test).not.toThrow();
   });
 });
