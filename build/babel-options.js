@@ -1,15 +1,46 @@
-module.exports = {
-  modules: 'system',
-  moduleIds: false,
-  comments: false,
-  compact: false,
-  stage:2,
-  optional: [
-    "runtime",
-    "optimisation.modules.system",
-    "es7.decorators",
-    "es7.classProperties",
-    "es7.asyncFunctions",
-    "es7.functionBind"
-  ]
+var path = require('path');
+
+exports.base = function() {
+  return {
+    filename: '',
+    filenameRelative: '',
+    sourceMap: true,
+    sourceRoot: '',
+    moduleRoot: path.resolve('src').replace(/\\/g, '/'),
+    moduleIds: false,
+    comments: false,
+    compact: false,
+    code:true,
+    presets: [ 'es2015-loose', 'stage-3'],
+    plugins: [
+      'syntax-flow',
+      'transform-decorators-legacy',
+      'transform-flow-strip-types',
+      'transform-async-to-generator'
+    ]
+  };
+};
+
+exports.commonjs = function() {
+  var options = exports.base();
+  options.plugins.push('transform-es2015-modules-commonjs');
+  return options;
+};
+
+exports.amd = function() {
+  var options = exports.base();
+  options.plugins.push('transform-es2015-modules-amd');
+  return options;
+};
+
+exports.system = function() {
+  var options = exports.base();
+  options.plugins.push('transform-es2015-modules-systemjs');
+  return options;
+};
+
+exports.es2015 = function() {
+  var options = exports.base();
+  options.presets = ['stage-1']
+  return options;
 };

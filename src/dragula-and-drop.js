@@ -35,10 +35,10 @@ export class DragulaAndDrop {
     let boundOptions = this._setupOptions();
 
     let aureliaOptions = {
-      isContainer: ::this._isContainer,
-      moves: ::this._moves,
-      accepts: ::this._accepts,
-      invalid: ::this._invalid
+      isContainer: this._isContainer.bind(this),
+      moves: this._moves.bind(this),
+      accepts: this._accepts.bind(this),
+      invalid: this._invalid.bind(this)
     };
 
     let options = Object.assign(aureliaOptions, boundOptions);

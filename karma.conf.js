@@ -36,15 +36,12 @@ module.exports = function(config) {
     'babelPreprocessor': {
       options: {
         sourceMap: 'inline',
-        modules: 'system',
-        moduleIds: false,
-        optional: [
-            "runtime",
-            "optimisation.modules.system",
-            "es7.decorators",
-            "es7.classProperties",
-            "es7.asyncFunctions",
-            "es7.functionBind"
+        presets: [ 'es2015-loose', 'stage-3'],
+        plugins: [
+          'syntax-flow',
+          'transform-decorators-legacy',
+          'transform-flow-strip-types',
+          'transform-async-to-generator'
         ]
       }
     },

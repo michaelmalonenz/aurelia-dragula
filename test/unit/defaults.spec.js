@@ -1,4 +1,4 @@
-import {Options} from '../../src/options';
+import {Options, DIRECTION} from '../../src/options';
 import {Dragula} from '../../src/dragula';
 
 
