@@ -13,7 +13,7 @@
   },
   "license": "MIT",
   "author": "Michael Malone",
-  "main": "dist/commonjs/index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/michaelmalonenz/aurelia-dragula.git"
@@ -62,10 +62,6 @@
   "jspm": {
     "registry": "npm",
     "main": "index",
-    "format": "amd",
-    "directories": {
-      "dist": "dist/amd"
-    },
     "dependencies": {
       "aurelia-binding": "^1.0.0-beta.1.2.2",
       "aurelia-dependency-injection": "^1.0.0-beta.1.1.5",

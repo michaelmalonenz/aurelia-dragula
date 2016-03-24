@@ -11,12 +11,11 @@ exports.base = function() {
     comments: false,
     compact: false,
     code:true,
-    presets: [ 'es2015-loose', 'stage-3'],
+    presets: [ 'es2015-loose', 'stage-1'],
     plugins: [
       'syntax-flow',
       'transform-decorators-legacy',
-      'transform-flow-strip-types',
-      'transform-async-to-generator'
+      'transform-flow-strip-types'
     ]
   };
 };
