@@ -6,3 +6,4 @@ bower_components
 build/reports
 *.sublime-project
 aurelia-dragula.sublime-workspace
+npm-debug.log
