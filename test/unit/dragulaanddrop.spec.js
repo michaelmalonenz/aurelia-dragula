@@ -1,6 +1,7 @@
 import {raise} from './lib/events';
 
 import {DragulaAndDrop} from '../../src/dragula-and-drop';
+import {Options} from '../../src/options';
 
 describe('the Dragula and Drop Custom Element', function() {
 
@@ -34,8 +35,10 @@ describe('the Dragula and Drop Custom Element', function() {
 
     document.body.appendChild(this.container);
 
+    this.globalOptions = new Options();
+
     this.createDragula = () => {
-      this.dragulaAndDrop = new DragulaAndDrop();
+      this.dragulaAndDrop = new DragulaAndDrop(this.globalOptions);
       Object.assign(this.dragulaAndDrop, this.options);
       this.dragulaAndDrop.bind();
     };
