@@ -1,6 +1,6 @@
 import {customElement,bindable,noView} from 'aurelia-templating';
 import {bindingMode} from 'aurelia-binding';
-import {Container,inject} from 'aurelia-dependency-injection';
+import {inject,Container} from 'aurelia-dependency-injection';
 
 /** This is purportedly necessary to support Internet Explorer (not Edge) properly (it doesn't support classList on SVG elements!) */
 
@@ -58,14 +58,15 @@ export function rm(el, className) {
 @bindable({ name: 'dragEndFn', attribute: 'drag-end-fn', defaultBindingMode: bindingMode.oneTime, defaultValue: (item) => {}})
 @customElement('dragula-and-drop')
 @noView()
+@inject(GLOBAL_OPTIONS)
 export class DragulaAndDrop {
 
-  constructor() {
+  constructor(globalOptions) {
     this.dragula = {};
+    this.globalOptions = globalOptions;
   }
 
   bind() {
-    this.globalOptions = Container.instance.get(GLOBAL_OPTIONS);
     let boundOptions = this._setupOptions();
 
     let aureliaOptions = {
@@ -79,7 +80,7 @@ export class DragulaAndDrop {
     this.dragula = new Dragula(options);
 
     this.dragula.on('drop', (item, target, source, sibling) => {
-      this.dragula.cancel(false);
+      this.dragula.cancel();
       this.dropFn({ item: item, target: target, source: source, sibling: sibling });
     });
 
