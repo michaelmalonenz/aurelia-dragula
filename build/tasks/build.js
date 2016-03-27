@@ -30,6 +30,7 @@ gulp.task('build', function(callback) {
     'clean',
     'build-index',
     ['build-es2015-temp', 'build-es2015', 'build-commonjs', 'build-amd', 'build-system'],
+    'copy-css',
     callback
   );
 });
@@ -82,4 +83,11 @@ gulp.task('build-system', function () {
   return gulp.src(paths.source)
     .pipe(to5(assign({}, compilerOptions.system())))
     .pipe(gulp.dest(paths.output + 'system'));
+});
+
+gulp.task('copy-css', function() {
+  [ 'es2015', 'commonjs', 'amd', 'system'].forEach(function(dir) {
+    return gulp.src(paths.style)
+      .pipe(gulp.dest(paths.output + dir));
+  });
 });
