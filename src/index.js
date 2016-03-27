@@ -1,7 +1,8 @@
-import {Options, GLOBAL_OPTIONS} from './options';
-
+import {Options, GLOBAL_OPTIONS, DIRECTION} from './options';
 import {Dragula} from './dragula';
-export {Dragula, Options};
+import {moveBefore} from './move-before';
+
+export {Dragula, Options, DIRECTION, moveBefore};
 
 export function configure(config, callback) {
   let defaults = new Options();
