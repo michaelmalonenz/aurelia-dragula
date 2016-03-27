@@ -1,13 +1,15 @@
-define(['exports', './options', './dragula'], function (exports, _options, _dragula) {
+define(['exports', './options', './dragula', './move-before'], function (exports, _options, _dragula, _moveBefore) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.Options = exports.Dragula = undefined;
+  exports.moveBefore = exports.DIRECTION = exports.Options = exports.Dragula = undefined;
   exports.configure = configure;
   exports.Dragula = _dragula.Dragula;
   exports.Options = _options.Options;
+  exports.DIRECTION = _options.DIRECTION;
+  exports.moveBefore = _moveBefore.moveBefore;
   function configure(config, callback) {
     var defaults = new _options.Options();
     config.container.registerInstance(_options.GLOBAL_OPTIONS, defaults);

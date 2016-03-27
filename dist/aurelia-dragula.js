@@ -53,9 +53,9 @@ export function rm(el, className) {
 @bindable({ name: 'mirrorContainer', attribute: 'mirror-container', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'targetClass', attribute: 'target-class', defaultBindingMode: bindingMode.oneTime, defaultValue: 'drop-target' })
 @bindable({ name: 'sourceClass', attribute: 'source-class', defaultBindingMode: bindingMode.oneTime, defaultValue: 'drag-source' })
-@bindable({ name: 'dragFn', attribute: 'drag-fn', defaultBindingMode: bindingMode.oneTime, defaultValue: (item, source) => {}})
-@bindable({ name: 'dropFn', attribute: 'drop-fn', defaultBindingMode: bindingMode.oneTime, defaultValue: (item, target, source, sibling) => {}})
-@bindable({ name: 'dragEndFn', attribute: 'drag-end-fn', defaultBindingMode: bindingMode.oneTime, defaultValue: (item) => {}})
+@bindable({ name: 'dragFn', attribute: 'drag-fn', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'dropFn', attribute: 'drop-fn', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'dragEndFn', attribute: 'drag-end-fn', defaultBindingMode: bindingMode.oneTime })
 @customElement('dragula-and-drop')
 @noView()
 @inject(GLOBAL_OPTIONS)
@@ -81,15 +81,18 @@ export class DragulaAndDrop {
 
     this.dragula.on('drop', (item, target, source, sibling) => {
       this.dragula.cancel();
-      this.dropFn({ item: item, target: target, source: source, sibling: sibling });
+      if (typeof this.dropFn === 'function')
+        this.dropFn({ item: item, target: target, source: source, sibling: sibling });
     });
 
     this.dragula.on('drag', (item, source) => {
-      this.dragFn({ item: item, source: source});
+      if (typeof this.dragFn === 'function')
+        this.dragFn({ item: item, source: source});
     });
 
     this.dragula.on('dragend', (item) => {
-      this.dragEndFn({ item: item });
+      if (typeof this.dragEndFn === 'function')
+        this.dragEndFn({ item: item });
     })
   }
 
@@ -699,6 +702,18 @@ export class Emitter {
   }
 }
 
+export function moveBefore(array, itemMatcherFn, siblingMatcherFn) {
+  let removedItem = remove(array, itemMatcherFn);
+  let nextIndex = array.findIndex(siblingMatcherFn);
+  array.splice(nextIndex >= 0 ? nextIndex : array.length, 0, removedItem);
+}
+
+function remove(array, matcherFn) {
+  let index = array.findIndex(matcherFn);
+  if (index >= 0) {
+    return array.splice(index, 1)[0];
+  }
+}
 export const GLOBAL_OPTIONS = 'GlobalOptions';
 
 export const DIRECTION = {
