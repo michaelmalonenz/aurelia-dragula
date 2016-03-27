@@ -10,7 +10,7 @@ To develop for the library, run `npm install`, `jspm install`, `gulp build`, `gu
 
 If installing in an aurelia application, `jspm install npm:aurelia-dragula` and remember to `aurelia.use.plugin('aurelia-dragula')` in your initialisation code.
 
-As Aurelia doesn't support IE <= 9, Aurelia-Dragula won't, either.
+As Aurelia doesn't support IE <= 9, Aurelia-Dragula won't, either.  Aurelia-dragula has zero external dependencies.  None. Nada. Keine. Not a one.
 
 ##Usage
 
@@ -21,6 +21,55 @@ let dragula = new Dragula();
 ```
 
 Because of the way aurelia works, it is recommended that the `dragend` event is subscribed to and `cancel` is then called, doing the manipulation of the view-models in JavaScript and letting aurelia re-render the changes.  This is not only recommended, but vital inside of a `repeat.for`.
+
+In fact, if you use the Aurelia Custom Element provided, instead of the raw Dragula object, then the `cancel`ling is done for you.
+
+###Custom Element
+The Custom Element is a convenience for Aurelia.  One can place an element on the page, set the selectors for the source and target containers and immediately get some Drag and Drop functionality.  It becomes a little more involved once actually moving things around on the page, but not a lot.  The main differences with this Element and using the raw API yourself, is that the `revertOnSpill` option is set to true by default and the drag operation is automatically cancelled.
+
+The element itself is called `dragula-and-drop` and you can bind all the options available for the main library (with camel-case converted to hyphenated attribute names in the standard way) to it as well as a couple of extras.  The functions are short-hand for binding to the equivalent events and should be bound with `.call` and if you want to receive arguments, they should be named the same as in the Type column below:
+
+Attribute | Type | Default Value | Description
+--------|------|---------------|------------
+target-class | `string` | 'drop-target' | The css class name describing any container element which can be a drop target.
+source-class | `string` | 'drag-source' | The css class name describing any container element which can be a drag source.
+drag-fn | `function(item, source)` | null | A function to be called when dragging begins
+drop-fn | `function(item, target, source, sibling)` | null | A function to be called when the item is dropped.
+drag-end-fn | `function(item)` | null | A function to be called when the drag operation has completed.
+
+E.g:
+viewmodel.html:
+```html
+<template>
+  <dragula-and-drop drop.call="itemDropped(item, target, source, sibling)"></dragula-and-drop>
+  <div class="drag-source drop-target">
+    <compose repeat.for="thing of things" view-model.bind="thing"></compose>
+  </div>
+</template>
+```
+viewmodel.js:
+```javascript
+export class ViewModel {
+
+  constructor() {
+    this.things = [];
+  }
+
+  itemDropped(item, target, source, sibling) {
+    //do things in here
+  }
+}
+```
+
+As an extra helping hand, I have also exposed a helper function for moving an item before the sibling in an array (for such bindings as the previous ones):
+`function moveBefore(array, itemMatcherFn, siblingMatcherFn)`
+Where `array` is the array in which to move the objects,
+`itemMatcherFn` is a function which takes one of the items in `array` as an argument and returns a boolean, to say whether the js Object matches the item HTMLElement being dragged or not.
+`siblingMatcherFn` is a function which takes one of the items in `array` as an argument and returns a boolean, to say whether the js Object matches the sibling HTMLElement.
+
+A more complete example is available [here](https://github.com/michaelmalonenz/aurelia-dragula-example).
+
+
 
 ###Options
 `import {Options} from 'aurelia-dragula;`
