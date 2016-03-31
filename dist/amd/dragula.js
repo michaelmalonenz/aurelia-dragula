@@ -151,7 +151,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
     };
 
     Dragula.prototype._startBecauseMouseMoved = function _startBecauseMouseMoved(e) {
-      if (!this._grabbed) {
+      if (!this._grabbed || this.dragging) {
         return;
       }
       if (_util.Util.whichMouseButton(e) === 0) {
@@ -183,7 +183,6 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
 
       classes.add(this._copy || this._item, 'gu-transit');
       this.renderMirrorImage();
-      this.drag(e);
     };
 
     Dragula.prototype._canStart = function _canStart(item) {

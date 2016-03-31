@@ -146,7 +146,7 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
         };
 
         Dragula.prototype._startBecauseMouseMoved = function _startBecauseMouseMoved(e) {
-          if (!this._grabbed) {
+          if (!this._grabbed || this.dragging) {
             return;
           }
           if (Util.whichMouseButton(e) === 0) {
@@ -178,7 +178,6 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
 
           classes.add(this._copy || this._item, 'gu-transit');
           this.renderMirrorImage();
-          this.drag(e);
         };
 
         Dragula.prototype._canStart = function _canStart(item) {

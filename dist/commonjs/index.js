@@ -18,7 +18,7 @@ exports.DIRECTION = _options.DIRECTION;
 exports.moveBefore = _moveBefore.moveBefore;
 function configure(config, callback) {
   var defaults = new _options.Options();
-  config.container.registerInstance(_options.GLOBAL_OPTIONS, defaults);
+  config.container.registerSingleton(_options.GLOBAL_OPTIONS, defaults);
 
   if (callback !== undefined && typeof callback === 'function') {
     callback(defaults);

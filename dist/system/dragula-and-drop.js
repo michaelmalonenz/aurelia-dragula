@@ -48,10 +48,7 @@ System.register(['aurelia-templating', 'aurelia-binding', 'aurelia-dependency-in
           var options = Object.assign(aureliaOptions, boundOptions);
           this.dragula = new Dragula(options);
 
-          this.dragula.on('drop', function (item, target, source, sibling) {
-            _this.dragula.cancel();
-            if (typeof _this.dropFn === 'function') _this.dropFn({ item: item, target: target, source: source, sibling: sibling });
-          });
+          this.dragula.on('drop', this._dropFunction.bind(this));
 
           this.dragula.on('drag', function (item, source) {
             if (typeof _this.dragFn === 'function') _this.dragFn({ item: item, source: source });
@@ -64,6 +61,11 @@ System.register(['aurelia-templating', 'aurelia-binding', 'aurelia-dependency-in
 
         DragulaAndDrop.prototype.unbind = function unbind() {
           this.dragula.destroy();
+        };
+
+        DragulaAndDrop.prototype._dropFunction = function _dropFunction(item, target, source, sibling) {
+          this.dragula.cancel();
+          if (typeof this.dropFn === 'function') this.dropFn({ item: item, target: target, source: source, sibling: sibling });
         };
 
         DragulaAndDrop.prototype._isContainer = function _isContainer(el) {

@@ -79,11 +79,7 @@ export class DragulaAndDrop {
     let options = Object.assign(aureliaOptions, boundOptions);
     this.dragula = new Dragula(options);
 
-    this.dragula.on('drop', (item, target, source, sibling) => {
-      this.dragula.cancel();
-      if (typeof this.dropFn === 'function')
-        this.dropFn({ item: item, target: target, source: source, sibling: sibling });
-    });
+    this.dragula.on('drop', this._dropFunction.bind(this));
 
     this.dragula.on('drag', (item, source) => {
       if (typeof this.dragFn === 'function')
@@ -98,6 +94,12 @@ export class DragulaAndDrop {
 
   unbind() {
     this.dragula.destroy();
+  }
+
+  _dropFunction(item, target, source, sibling) {
+    this.dragula.cancel();
+    if (typeof this.dropFn === 'function')
+      this.dropFn({ item: item, target: target, source: source, sibling: sibling });
   }
 
   _isContainer(el) {
@@ -274,7 +276,7 @@ export class Dragula {
   }
 
   _startBecauseMouseMoved (e) {
-    if (!this._grabbed) {
+    if (!this._grabbed || this.dragging) {
       return;
     }
     if (Util.whichMouseButton(e) === 0) {
@@ -306,7 +308,6 @@ export class Dragula {
 
     classes.add(this._copy || this._item, 'gu-transit');
     this.renderMirrorImage();
-    this.drag(e);
   }
 
   _canStart(item) {
