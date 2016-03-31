@@ -37,11 +37,11 @@ drag-fn | `function(item, source)` | null | A function to be called when draggin
 drop-fn | `function(item, target, source, sibling)` | null | A function to be called when the item is dropped.
 drag-end-fn | `function(item)` | null | A function to be called when the drag operation has completed.
 
-E.g:
+E.g:  
 viewmodel.html:
 ```html
 <template>
-  <dragula-and-drop drop.call="itemDropped(item, target, source, sibling)"></dragula-and-drop>
+  <dragula-and-drop drop-fn.call="itemDropped(item, target, source, sibling)"></dragula-and-drop>
   <div class="drag-source drop-target">
     <compose repeat.for="thing of things" view-model.bind="thing"></compose>
   </div>
