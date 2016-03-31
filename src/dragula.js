@@ -114,7 +114,7 @@ export class Dragula {
   }
 
   _startBecauseMouseMoved (e) {
-    if (!this._grabbed) {
+    if (!this._grabbed || this.dragging) {
       return;
     }
     if (Util.whichMouseButton(e) === 0) {
@@ -146,7 +146,6 @@ export class Dragula {
 
     classes.add(this._copy || this._item, 'gu-transit');
     this.renderMirrorImage();
-    this.drag(e);
   }
 
   _canStart(item) {
