@@ -81,6 +81,7 @@ export class Dragula {
   destroy() {
     this._events(true);
     this._release({});
+    this.emitter.destroy();
   }
 
   _preventGrabbed(e) {

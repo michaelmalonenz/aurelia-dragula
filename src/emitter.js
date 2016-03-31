@@ -44,6 +44,10 @@ export class Emitter {
     }
   }
 
+  destroy() {
+    this.events = {};
+  }
+
   emit() {
     let args = arguments ? [...arguments] : [];
     let type = args.shift();
