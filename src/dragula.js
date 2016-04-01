@@ -21,6 +21,12 @@ export class Dragula {
       this._emitter.on('out', this.spillOut.bind(this));
     }
 
+    this.boundStart = this._startBecauseMouseMoved.bind(this);
+    this.boundGrab = this._grab.bind(this);
+    this.boundRelease = this._release.bind(this);
+    this.boundPreventGrabbed = this._preventGrabbed.bind(this);
+    this.boundDrag = this.drag.bind(this);
+
     this._events();
 
     this._mirror; // mirror image
@@ -64,18 +70,18 @@ export class Dragula {
 
   _events(remove) {
     let op = remove ? 'removeEventListener' : 'addEventListener';
-    touchy(document.body, op, 'mousedown', this._grab.bind(this));
-    touchy(document.body, op, 'mouseup', this._release.bind(this));
+    touchy(document.body, op, 'mousedown', this.boundGrab);
+    touchy(document.body, op, 'mouseup', this.boundRelease);
   }
 
   _eventualMovements(remove) {
     let op = remove ? 'removeEventListener' : 'addEventListener';
-    touchy(document.body, op, 'mousemove', this._startBecauseMouseMoved.bind(this));
+    touchy(document.body, op, 'mousemove', this.boundStart);
   }
 
   _movements(remove) {
     let op = remove ? 'removeEventListener' : 'addEventListener';
-    touchy(document.body, op, 'click', this._preventGrabbed.bind(this));
+    touchy(document.body, op, 'click', this.boundPreventGrabbed);
   }
 
   destroy() {
@@ -422,7 +428,7 @@ export class Dragula {
     classes.rm(this._mirror, 'gu-transit');
     classes.add(this._mirror, 'gu-mirror');
     this.options.mirrorContainer.appendChild(this._mirror);
-    touchy(document.documentElement, 'addEventListener', 'mousemove', this.drag.bind(this));
+    touchy(document.documentElement, 'addEventListener', 'mousemove', this.boundDrag);
     classes.add(this.options.mirrorContainer, 'gu-unselectable');
     this._emitter.emit('cloned', this._mirror, this._item, 'mirror');
   }
@@ -430,7 +436,7 @@ export class Dragula {
   removeMirrorImage() {
     if (this._mirror) {
       classes.rm(this.options.mirrorContainer, 'gu-unselectable');
-      touchy(document.documentElement, 'removeEventListener', 'mousemove', this.drag.bind(this));
+      touchy(document.documentElement, 'removeEventListener', 'mousemove', this.boundDrag);
       Util.getParent(this._mirror).removeChild(this._mirror);
       this._mirror = null;
     }
