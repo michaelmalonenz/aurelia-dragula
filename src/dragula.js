@@ -147,6 +147,7 @@ export class Dragula {
 
     classes.add(this._copy || this._item, 'gu-transit');
     this.renderMirrorImage();
+    this.drag(e);
   }
 
   _canStart(item) {
