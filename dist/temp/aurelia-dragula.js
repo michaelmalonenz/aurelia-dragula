@@ -186,6 +186,12 @@ var Dragula = exports.Dragula = function () {
       this._emitter.on('out', this.spillOut.bind(this));
     }
 
+    this.boundStart = this._startBecauseMouseMoved.bind(this);
+    this.boundGrab = this._grab.bind(this);
+    this.boundRelease = this._release.bind(this);
+    this.boundPreventGrabbed = this._preventGrabbed.bind(this);
+    this.boundDrag = this.drag.bind(this);
+
     this._events();
 
     this._mirror;
@@ -221,18 +227,18 @@ var Dragula = exports.Dragula = function () {
 
   Dragula.prototype._events = function _events(remove) {
     var op = remove ? 'removeEventListener' : 'addEventListener';
-    touchy(document.body, op, 'mousedown', this._grab.bind(this));
-    touchy(document.body, op, 'mouseup', this._release.bind(this));
+    touchy(document.body, op, 'mousedown', this.boundGrab);
+    touchy(document.body, op, 'mouseup', this.boundRelease);
   };
 
   Dragula.prototype._eventualMovements = function _eventualMovements(remove) {
     var op = remove ? 'removeEventListener' : 'addEventListener';
-    touchy(document.body, op, 'mousemove', this._startBecauseMouseMoved.bind(this));
+    touchy(document.body, op, 'mousemove', this.boundStart);
   };
 
   Dragula.prototype._movements = function _movements(remove) {
     var op = remove ? 'removeEventListener' : 'addEventListener';
-    touchy(document.body, op, 'click', this._preventGrabbed.bind(this));
+    touchy(document.body, op, 'click', this.boundPreventGrabbed);
   };
 
   Dragula.prototype.destroy = function destroy() {
@@ -591,7 +597,7 @@ var Dragula = exports.Dragula = function () {
     classes.rm(this._mirror, 'gu-transit');
     classes.add(this._mirror, 'gu-mirror');
     this.options.mirrorContainer.appendChild(this._mirror);
-    touchy(document.documentElement, 'addEventListener', 'mousemove', this.drag.bind(this));
+    touchy(document.documentElement, 'addEventListener', 'mousemove', this.boundDrag);
     classes.add(this.options.mirrorContainer, 'gu-unselectable');
     this._emitter.emit('cloned', this._mirror, this._item, 'mirror');
   };
@@ -599,7 +605,7 @@ var Dragula = exports.Dragula = function () {
   Dragula.prototype.removeMirrorImage = function removeMirrorImage() {
     if (this._mirror) {
       classes.rm(this.options.mirrorContainer, 'gu-unselectable');
-      touchy(document.documentElement, 'removeEventListener', 'mousemove', this.drag.bind(this));
+      touchy(document.documentElement, 'removeEventListener', 'mousemove', this.boundDrag);
       Util.getParent(this._mirror).removeChild(this._mirror);
       this._mirror = null;
     }
