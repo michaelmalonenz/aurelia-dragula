@@ -81,6 +81,7 @@ export let Dragula = class Dragula {
   destroy() {
     this._events(true);
     this._release({});
+    this.emitter.destroy();
   }
 
   _preventGrabbed(e) {
@@ -146,6 +147,7 @@ export let Dragula = class Dragula {
 
     classes.add(this._copy || this._item, 'gu-transit');
     this.renderMirrorImage();
+    this.drag(e);
   }
 
   _canStart(item) {

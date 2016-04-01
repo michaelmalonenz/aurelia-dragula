@@ -238,6 +238,7 @@ var Dragula = exports.Dragula = function () {
   Dragula.prototype.destroy = function destroy() {
     this._events(true);
     this._release({});
+    this.emitter.destroy();
   };
 
   Dragula.prototype._preventGrabbed = function _preventGrabbed(e) {
@@ -303,6 +304,7 @@ var Dragula = exports.Dragula = function () {
 
     classes.add(this._copy || this._item, 'gu-transit');
     this.renderMirrorImage();
+    this.drag(e);
   };
 
   Dragula.prototype._canStart = function _canStart(item) {
@@ -701,6 +703,10 @@ var Emitter = exports.Emitter = function () {
         if (index >= 0) eventList.splice(index, 1);
       }
     }
+  };
+
+  Emitter.prototype.destroy = function destroy() {
+    this.events = {};
   };
 
   Emitter.prototype.emit = function emit() {

@@ -58,6 +58,10 @@ define(['exports'], function (exports) {
       }
     };
 
+    Emitter.prototype.destroy = function destroy() {
+      this.events = {};
+    };
+
     Emitter.prototype.emit = function emit() {
       var _this = this;
 

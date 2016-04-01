@@ -113,6 +113,7 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
         Dragula.prototype.destroy = function destroy() {
           this._events(true);
           this._release({});
+          this.emitter.destroy();
         };
 
         Dragula.prototype._preventGrabbed = function _preventGrabbed(e) {
@@ -178,6 +179,7 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
 
           classes.add(this._copy || this._item, 'gu-transit');
           this.renderMirrorImage();
+          this.drag(e);
         };
 
         Dragula.prototype._canStart = function _canStart(item) {

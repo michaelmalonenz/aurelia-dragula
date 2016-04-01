@@ -59,6 +59,10 @@ System.register([], function (_export, _context) {
           }
         };
 
+        Emitter.prototype.destroy = function destroy() {
+          this.events = {};
+        };
+
         Emitter.prototype.emit = function emit() {
           var _this = this;
 

@@ -6,7 +6,7 @@ export { Dragula, Options, DIRECTION, moveBefore };
 
 export function configure(config, callback) {
   let defaults = new Options();
-  config.container.registerSingleton(GLOBAL_OPTIONS, defaults);
+  config.container.registerInstance(GLOBAL_OPTIONS, defaults);
 
   if (callback !== undefined && typeof callback === 'function') {
     callback(defaults);

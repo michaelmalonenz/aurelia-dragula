@@ -53,6 +53,10 @@ var Emitter = exports.Emitter = function () {
     }
   };
 
+  Emitter.prototype.destroy = function destroy() {
+    this.events = {};
+  };
+
   Emitter.prototype.emit = function emit() {
     var _this = this;
 

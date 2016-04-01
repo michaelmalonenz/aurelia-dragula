@@ -243,6 +243,7 @@ export class Dragula {
   destroy() {
     this._events(true);
     this._release({});
+    this.emitter.destroy();
   }
 
   _preventGrabbed(e) {
@@ -308,6 +309,7 @@ export class Dragula {
 
     classes.add(this._copy || this._item, 'gu-transit');
     this.renderMirrorImage();
+    this.drag(e);
   }
 
   _canStart(item) {
@@ -678,6 +680,10 @@ export class Emitter {
           eventList.splice(index, 1);
       }
     }
+  }
+
+  destroy() {
+    this.events = {};
   }
 
   emit() {
