@@ -238,7 +238,7 @@ var Dragula = exports.Dragula = function () {
   Dragula.prototype.destroy = function destroy() {
     this._events(true);
     this._release({});
-    this.emitter.destroy();
+    this._emitter.destroy();
   };
 
   Dragula.prototype._preventGrabbed = function _preventGrabbed(e) {
@@ -668,10 +668,9 @@ var EventListener = function EventListener(func) {
 };
 
 var Emitter = exports.Emitter = function () {
-  function Emitter(options) {
+  function Emitter() {
     _classCallCheck(this, Emitter);
 
-    this.options = options || {};
     this.events = {};
   }
 
@@ -715,16 +714,12 @@ var Emitter = exports.Emitter = function () {
     var args = arguments ? [].concat(Array.prototype.slice.call(arguments)) : [];
     var type = args.shift();
     var et = (this.events[type] || []).slice(0);
-    if (type === 'error' && this.options.throws !== false && !et.length) {
+    if (type === 'error' && !et.length) {
       throw args.length === 1 ? args[0] : args;
     }
     var toDeregister = [];
     et.forEach(function (listener) {
-      if (_this4.options.async) {
-        debounce.apply(undefined, [listener.func].concat(args));
-      } else {
-        listener.func.apply(listener, args);
-      }
+      listener.func.apply(listener, args);
       if (listener.once) {
         toDeregister.push(listener);
       }

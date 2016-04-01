@@ -113,7 +113,7 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
         Dragula.prototype.destroy = function destroy() {
           this._events(true);
           this._release({});
-          this.emitter.destroy();
+          this._emitter.destroy();
         };
 
         Dragula.prototype._preventGrabbed = function _preventGrabbed(e) {
