@@ -10,8 +10,7 @@ class EventListener {
 
 export class Emitter {
 
-  constructor(options) {
-    this.options = options || {};
+  constructor() {
     this.events = {};
   }
 
@@ -52,15 +51,10 @@ export class Emitter {
     let args = arguments ? [...arguments] : [];
     let type = args.shift();
     let et = (this.events[type] || []).slice(0);
-    if (type === 'error' && this.options.throws !== false && !et.length) { throw args.length === 1 ? args[0] : args; }
+    if (type === 'error' && !et.length) { throw args.length === 1 ? args[0] : args; }
     let toDeregister = [];
     et.forEach(listener => {
-      if (this.options.async) {
-        debounce(listener.func, ...args);
-      }
-      else {
-        listener.func(...args);
-      }
+      listener.func(...args);
       if (listener.once) {
         toDeregister.push(listener);
       }

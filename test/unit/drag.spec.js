@@ -7,7 +7,17 @@ describe('drag', function() {
   beforeEach(function() {
     this.always = () => true;
     this.never = () => false;
+
+    this.initialContainers = [];
+    this.createDrake = () => {
+      this.drake = createDragula(this.initialContainers);
+    };
   })
+
+  afterEach(function() {
+    if (this.drake)
+      this.drake.destroy();
+  });
 
   it('drag event gets emitted when clicking an item', function() {
     testCase('works for left clicks', { which: 1 });
@@ -52,36 +62,35 @@ describe('drag', function() {
   it('when already dragging, mousedown/mousemove ends (cancels) previous drag', function() {
     let div = document.createElement('div');
     let item1 = document.createElement('div');
+    item1.classList.add('test');
     let item2 = document.createElement('div');
-    let drake = createDragula([div]);
+    this.initialContainers.push(div);
+
+    this.createDrake();
 
     div.appendChild(item1);
     div.appendChild(item2);
 
     document.body.appendChild(div);
 
-    drake.manualStart(item1);
+    this.drake.manualStart(item1);
 
-    drake.on('dragend', end);
-    drake.on('cancel', cancel);
-    drake.on('drag', drag);
+    this.drake.on('dragend', (item) => {
+      expect(item).toBe(item1, 'dragend invoked with correct item');
+    });
+    this.drake.on('cancel', (item, source) => {
+      expect(item).toEqual(item1, 'cancel invoked with correct item');
+      expect(source).toBe(div, 'cancel invoked with correct source');
+    });
+    this.drake.on('drag', (item, container) => {
+      expect(item).toBe(item2, 'first argument is selected item');
+      expect(container).toBe(div, 'second argument is container');
+    });
 
     raise(item2, 'mousedown', { which: 1 });
     raise(item2, 'mousemove', { which: 1 });
 
-    expect(drake.dragging).toBe(true, 'final state is drake is dragging');
-
-    function end (item) {
-      expect(item).toBe(item1, 'dragend invoked with correct item');
-    }
-    function cancel (item, source) {
-      expect(item).toBe(item1, 'cancel invoked with correct item');
-      expect(source).toBe(div, 'cancel invoked with correct source');
-    }
-    function drag (item, container) {
-      expect(item).toBe(item2, 'first argument is selected item');
-      expect(container).toBe(div, 'second argument is container');
-    }
+    expect(this.drake.dragging).toBe(true, 'final state is drake is dragging');
   });
 
   it('when already dragged, ends (drops) previous drag', function() {
@@ -280,5 +289,18 @@ describe('drag', function() {
       return true;
     }
     drake.end();
+  });
+
+  it('when dragging begins, drop should not be called', function() {
+    let div = document.createElement('div');
+    let item = document.createElement('div');
+    let drake = createDragula([div]);
+    div.appendChild(item);
+    document.body.appendChild(div);
+
+    drake.on('drop', () => fail());
+
+    raise(item, 'mousedown', { which: 1 });
+    raise(item, 'mousemove', { which: 1 });
   });
 });
