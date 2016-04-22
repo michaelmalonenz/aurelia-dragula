@@ -112,12 +112,12 @@ export class DragulaAndDrop {
   _setupOptions() {
     let result = {
       containers: this._getOption('containers'),
-      copy: this._getOption('copy'),
-      copySortSource: this._getOption('copySortSource'),
-      revertOnSpill: this._getOption('revertOnSpill'),
-      removeOnSpill: this._getOption('removeOnSpill'),
+      copy: this._convertToBooleanIfRequired(this._getOption('copy')),
+      copySortSource: this._convertToBooleanIfRequired(this._getOption('copySortSource')),
+      revertOnSpill: this._convertToBooleanIfRequired(this._getOption('revertOnSpill')),
+      removeOnSpill: this._convertToBooleanIfRequired(this._getOption('removeOnSpill')),
       direction: this._getOption('direction'),
-      ignoreInputTextSelection: this._getOption('ignoreInputTextSelection'),
+      ignoreInputTextSelection: this._convertToBooleanIfRequired(this._getOption('ignoreInputTextSelection')),
       mirrorContainer: this._getOption('mirrorContainer')
     };
     return result;
@@ -128,5 +128,15 @@ export class DragulaAndDrop {
       return this.globalOptions[option];
     }
     return this[option];
+  }
+
+  _convertToBooleanIfRequired(option) {
+    if (typeof option === 'function') {
+      return option;
+    }
+    if (typeof option === 'string') {
+      return option.toLowerCase() === 'true';
+    }
+    return new Boolean(option);
   }
 }
