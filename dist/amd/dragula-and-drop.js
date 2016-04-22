@@ -98,12 +98,12 @@ define(['exports', 'aurelia-templating', 'aurelia-binding', 'aurelia-dependency-
     DragulaAndDrop.prototype._setupOptions = function _setupOptions() {
       var result = {
         containers: this._getOption('containers'),
-        copy: this._getOption('copy'),
-        copySortSource: this._getOption('copySortSource'),
-        revertOnSpill: this._getOption('revertOnSpill'),
-        removeOnSpill: this._getOption('removeOnSpill'),
+        copy: this._convertToBooleanIfRequired(this._getOption('copy')),
+        copySortSource: this._convertToBooleanIfRequired(this._getOption('copySortSource')),
+        revertOnSpill: this._convertToBooleanIfRequired(this._getOption('revertOnSpill')),
+        removeOnSpill: this._convertToBooleanIfRequired(this._getOption('removeOnSpill')),
         direction: this._getOption('direction'),
-        ignoreInputTextSelection: this._getOption('ignoreInputTextSelection'),
+        ignoreInputTextSelection: this._convertToBooleanIfRequired(this._getOption('ignoreInputTextSelection')),
         mirrorContainer: this._getOption('mirrorContainer')
       };
       return result;
@@ -114,6 +114,16 @@ define(['exports', 'aurelia-templating', 'aurelia-binding', 'aurelia-dependency-
         return this.globalOptions[option];
       }
       return this[option];
+    };
+
+    DragulaAndDrop.prototype._convertToBooleanIfRequired = function _convertToBooleanIfRequired(option) {
+      if (typeof option === 'function') {
+        return option;
+      }
+      if (typeof option === 'string') {
+        return option.toLowerCase() === 'true';
+      }
+      return new Boolean(option);
     };
 
     return DragulaAndDrop;
