@@ -25,6 +25,12 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
     }
   }
 
+  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+    return typeof obj;
+  } : function (obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+  };
+
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
@@ -528,7 +534,8 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
     };
 
     Dragula.prototype._isCopy = function _isCopy(item, container) {
-      return typeof this.options.copy === 'boolean' ? this.options.copy : this.options.copy(item, container);
+      var isBoolean = typeof this.options.copy === 'boolean' || _typeof(this.options.copy) === 'object' && typeof this.options.copy.valueOf() === 'boolean';
+      return isBoolean ? this.options.copy : this.options.copy(item, container);
     };
 
     _createClass(Dragula, [{

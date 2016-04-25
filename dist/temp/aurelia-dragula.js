@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Util = exports.Options = exports.DIRECTION = exports.GLOBAL_OPTIONS = exports.Emitter = exports.Dragula = exports.DragulaAndDrop = undefined;
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _class;
@@ -147,12 +149,12 @@ var DragulaAndDrop = exports.DragulaAndDrop = (_dec = (0, _aureliaTemplating.bin
   DragulaAndDrop.prototype._setupOptions = function _setupOptions() {
     var result = {
       containers: this._getOption('containers'),
-      copy: this._getOption('copy'),
-      copySortSource: this._getOption('copySortSource'),
-      revertOnSpill: this._getOption('revertOnSpill'),
-      removeOnSpill: this._getOption('removeOnSpill'),
+      copy: this._convertToBooleanIfRequired(this._getOption('copy')),
+      copySortSource: this._convertToBooleanIfRequired(this._getOption('copySortSource')),
+      revertOnSpill: this._convertToBooleanIfRequired(this._getOption('revertOnSpill')),
+      removeOnSpill: this._convertToBooleanIfRequired(this._getOption('removeOnSpill')),
       direction: this._getOption('direction'),
-      ignoreInputTextSelection: this._getOption('ignoreInputTextSelection'),
+      ignoreInputTextSelection: this._convertToBooleanIfRequired(this._getOption('ignoreInputTextSelection')),
       mirrorContainer: this._getOption('mirrorContainer')
     };
     return result;
@@ -163,6 +165,16 @@ var DragulaAndDrop = exports.DragulaAndDrop = (_dec = (0, _aureliaTemplating.bin
       return this.globalOptions[option];
     }
     return this[option];
+  };
+
+  DragulaAndDrop.prototype._convertToBooleanIfRequired = function _convertToBooleanIfRequired(option) {
+    if (typeof option === 'function') {
+      return option;
+    }
+    if (typeof option === 'string') {
+      return option.toLowerCase() === 'true';
+    }
+    return new Boolean(option);
   };
 
   return DragulaAndDrop;
@@ -648,7 +660,8 @@ var Dragula = exports.Dragula = function () {
   };
 
   Dragula.prototype._isCopy = function _isCopy(item, container) {
-    return typeof this.options.copy === 'boolean' ? this.options.copy : this.options.copy(item, container);
+    var isBoolean = typeof this.options.copy === 'boolean' || _typeof(this.options.copy) === 'object' && typeof this.options.copy.valueOf() === 'boolean';
+    return isBoolean ? this.options.copy : this.options.copy(item, container);
   };
 
   _createClass(Dragula, [{

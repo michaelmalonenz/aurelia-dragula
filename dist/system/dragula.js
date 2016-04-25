@@ -1,7 +1,7 @@
 'use strict';
 
 System.register(['aurelia-dependency-injection', './touchy', './options', './util', './emitter', './classes'], function (_export, _context) {
-  var inject, Container, touchy, GLOBAL_OPTIONS, Options, Util, Emitter, classes, _createClass, MIN_TIME_BETWEEN_REDRAWS_MS, Dragula;
+  var inject, Container, touchy, GLOBAL_OPTIONS, Options, Util, Emitter, classes, _typeof, _createClass, MIN_TIME_BETWEEN_REDRAWS_MS, Dragula;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -26,6 +26,12 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
       classes = _classes;
     }],
     execute: function () {
+      _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+        return typeof obj;
+      } : function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+      };
+
       _createClass = function () {
         function defineProperties(target, props) {
           for (var i = 0; i < props.length; i++) {
@@ -523,7 +529,8 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
         };
 
         Dragula.prototype._isCopy = function _isCopy(item, container) {
-          return typeof this.options.copy === 'boolean' ? this.options.copy : this.options.copy(item, container);
+          var isBoolean = typeof this.options.copy === 'boolean' || _typeof(this.options.copy) === 'object' && typeof this.options.copy.valueOf() === 'boolean';
+          return isBoolean ? this.options.copy : this.options.copy(item, container);
         };
 
         _createClass(Dragula, [{

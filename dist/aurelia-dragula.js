@@ -648,7 +648,9 @@ export class Dragula {
   }
 
   _isCopy(item, container) {
-    return typeof this.options.copy === 'boolean' ? this.options.copy : this.options.copy(item, container);
+    let isBoolean = typeof this.options.copy === 'boolean' ||
+      (typeof this.options.copy === 'object' && typeof this.options.copy.valueOf() === 'boolean');
+    return isBoolean ? this.options.copy : this.options.copy(item, container);
   }
 
 }
