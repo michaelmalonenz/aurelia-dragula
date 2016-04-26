@@ -11,12 +11,12 @@ define(['exports'], function (exports) {
     }
   }
 
-  var Util = exports.Util = function () {
-    function Util() {
-      _classCallCheck(this, Util);
+  var _Util = function () {
+    function _Util() {
+      _classCallCheck(this, _Util);
     }
 
-    Util.nextEl = function nextEl(el) {
+    _Util.prototype.nextEl = function nextEl(el) {
       return el.nextElementSibling || manually();
       function manually() {
         var sibling = el;
@@ -27,7 +27,7 @@ define(['exports'], function (exports) {
       }
     };
 
-    Util.whichMouseButton = function whichMouseButton(e) {
+    _Util.prototype.whichMouseButton = function whichMouseButton(e) {
       if (e.touches !== void 0) {
         return e.touches.length;
       }
@@ -43,7 +43,7 @@ define(['exports'], function (exports) {
       }
     };
 
-    Util.getElementBehindPoint = function getElementBehindPoint(point, x, y) {
+    _Util.prototype.getElementBehindPoint = function getElementBehindPoint(point, x, y) {
       var p = point || {};
       var state = p.className;
       var el = void 0;
@@ -53,23 +53,23 @@ define(['exports'], function (exports) {
       return el;
     };
 
-    Util.getParent = function getParent(el) {
+    _Util.prototype.getParent = function getParent(el) {
       return el.parentNode === document ? null : el.parentNode;
     };
 
-    Util.getRectWidth = function getRectWidth(rect) {
+    _Util.prototype.getRectWidth = function getRectWidth(rect) {
       return rect.width || rect.right - rect.left;
     };
 
-    Util.getRectHeight = function getRectHeight(rect) {
+    _Util.prototype.getRectHeight = function getRectHeight(rect) {
       return rect.height || rect.bottom - rect.top;
     };
 
-    Util.isInput = function isInput(el) {
+    _Util.prototype.isInput = function isInput(el) {
       return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || Util.isEditable(el);
     };
 
-    Util.isEditable = function isEditable(el) {
+    _Util.prototype.isEditable = function isEditable(el) {
       if (!el) {
         return false;
       }
@@ -79,18 +79,18 @@ define(['exports'], function (exports) {
       if (el.contentEditable === 'true') {
         return true;
       }
-      return Util.isEditable(Util.getParent(el));
+      return this.isEditable(this.getParent(el));
     };
 
-    Util.getOffset = function getOffset(el) {
+    _Util.prototype.getOffset = function getOffset(el) {
       var rect = el.getBoundingClientRect();
       return {
-        left: rect.left + Util.getScroll('scrollLeft', 'pageXOffset'),
-        top: rect.top + Util.getScroll('scrollTop', 'pageYOffset')
+        left: rect.left + this.getScroll('scrollLeft', 'pageXOffset'),
+        top: rect.top + this.getScroll('scrollTop', 'pageYOffset')
       };
     };
 
-    Util.getScroll = function getScroll(scrollProp, offsetProp) {
+    _Util.prototype.getScroll = function getScroll(scrollProp, offsetProp) {
       if (typeof window[offsetProp] !== 'undefined') {
         return window[offsetProp];
       }
@@ -100,7 +100,7 @@ define(['exports'], function (exports) {
       return document.body[scrollProp];
     };
 
-    Util.getElementBehindPoint = function getElementBehindPoint(point, x, y) {
+    _Util.prototype.getElementBehindPoint = function getElementBehindPoint(point, x, y) {
       if (point) point.classList.add('gu-hide');
 
       var el = document.elementFromPoint(x, y);
@@ -109,7 +109,7 @@ define(['exports'], function (exports) {
       return el;
     };
 
-    Util.getEventHost = function getEventHost(e) {
+    _Util.prototype.getEventHost = function getEventHost(e) {
       if (e.targetTouches && e.targetTouches.length) {
         return e.targetTouches[0];
       }
@@ -119,15 +119,15 @@ define(['exports'], function (exports) {
       return e;
     };
 
-    Util.getCoord = function getCoord(coord, e) {
-      var host = Util.getEventHost(e);
+    _Util.prototype.getCoord = function getCoord(coord, e) {
+      var host = this.getEventHost(e);
       return host[coord];
     };
 
-    Util.getImmediateChild = function getImmediateChild(dropTarget, target) {
+    _Util.prototype.getImmediateChild = function getImmediateChild(dropTarget, target) {
       var immediate = target;
-      while (immediate !== dropTarget && Util.getParent(immediate) !== dropTarget) {
-        immediate = Util.getParent(immediate);
+      while (immediate !== dropTarget && this.getParent(immediate) !== dropTarget) {
+        immediate = this.getParent(immediate);
       }
       if (immediate === document.documentElement) {
         return null;
@@ -135,6 +135,21 @@ define(['exports'], function (exports) {
       return immediate;
     };
 
-    return Util;
+    _Util.prototype.remove = function remove(node) {
+      if (node) {
+        if (!('remove' in Element.prototype)) {
+          if (node.parentNode) {
+            node.parentNode.removeChild(node);
+          }
+        } else {
+          node.remove();
+        }
+      }
+    };
+
+    return _Util;
   }();
+
+  var Util = new _Util();
+  exports.Util = Util;
 });

@@ -1,5 +1,5 @@
-export let Util = class Util {
-  static nextEl(el) {
+let _Util = class _Util {
+  nextEl(el) {
     return el.nextElementSibling || manually();
     function manually() {
       let sibling = el;
@@ -10,7 +10,7 @@ export let Util = class Util {
     }
   }
 
-  static whichMouseButton(e) {
+  whichMouseButton(e) {
     if (e.touches !== void 0) {
       return e.touches.length;
     }
@@ -26,7 +26,7 @@ export let Util = class Util {
     }
   }
 
-  static getElementBehindPoint(point, x, y) {
+  getElementBehindPoint(point, x, y) {
     let p = point || {};
     let state = p.className;
     let el;
@@ -36,19 +36,19 @@ export let Util = class Util {
     return el;
   }
 
-  static getParent(el) {
+  getParent(el) {
     return el.parentNode === document ? null : el.parentNode;
   }
-  static getRectWidth(rect) {
+  getRectWidth(rect) {
     return rect.width || rect.right - rect.left;
   }
-  static getRectHeight(rect) {
+  getRectHeight(rect) {
     return rect.height || rect.bottom - rect.top;
   }
-  static isInput(el) {
+  isInput(el) {
     return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || Util.isEditable(el);
   }
-  static isEditable(el) {
+  isEditable(el) {
     if (!el) {
       return false;
     }
@@ -58,18 +58,18 @@ export let Util = class Util {
     if (el.contentEditable === 'true') {
       return true;
     }
-    return Util.isEditable(Util.getParent(el));
+    return this.isEditable(this.getParent(el));
   }
 
-  static getOffset(el) {
+  getOffset(el) {
     let rect = el.getBoundingClientRect();
     return {
-      left: rect.left + Util.getScroll('scrollLeft', 'pageXOffset'),
-      top: rect.top + Util.getScroll('scrollTop', 'pageYOffset')
+      left: rect.left + this.getScroll('scrollLeft', 'pageXOffset'),
+      top: rect.top + this.getScroll('scrollTop', 'pageYOffset')
     };
   }
 
-  static getScroll(scrollProp, offsetProp) {
+  getScroll(scrollProp, offsetProp) {
     if (typeof window[offsetProp] !== 'undefined') {
       return window[offsetProp];
     }
@@ -79,7 +79,7 @@ export let Util = class Util {
     return document.body[scrollProp];
   }
 
-  static getElementBehindPoint(point, x, y) {
+  getElementBehindPoint(point, x, y) {
     if (point) point.classList.add('gu-hide');
 
     let el = document.elementFromPoint(x, y);
@@ -88,7 +88,7 @@ export let Util = class Util {
     return el;
   }
 
-  static getEventHost(e) {
+  getEventHost(e) {
     if (e.targetTouches && e.targetTouches.length) {
       return e.targetTouches[0];
     }
@@ -98,19 +98,34 @@ export let Util = class Util {
     return e;
   }
 
-  static getCoord(coord, e) {
-    let host = Util.getEventHost(e);
+  getCoord(coord, e) {
+    let host = this.getEventHost(e);
     return host[coord];
   }
 
-  static getImmediateChild(dropTarget, target) {
+  getImmediateChild(dropTarget, target) {
     let immediate = target;
-    while (immediate !== dropTarget && Util.getParent(immediate) !== dropTarget) {
-      immediate = Util.getParent(immediate);
+    while (immediate !== dropTarget && this.getParent(immediate) !== dropTarget) {
+      immediate = this.getParent(immediate);
     }
     if (immediate === document.documentElement) {
       return null;
     }
     return immediate;
   }
+
+  remove(node) {
+    if (node) {
+      if (!('remove' in Element.prototype)) {
+        if (node.parentNode) {
+          node.parentNode.removeChild(node);
+        }
+      } else {
+        node.remove();
+      }
+    }
+  }
 };
+
+let Util = new _Util();
+export { Util };

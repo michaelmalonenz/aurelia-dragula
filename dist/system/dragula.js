@@ -287,9 +287,8 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
         };
 
         Dragula.prototype.drop = function drop(item, target) {
-          var parent = Util.getParent(item);
           if (this._copy && this.options.copySortSource && target === this._source) {
-            parent.removeChild(_item);
+            Util.remove(this._item);
           }
           if (this._isInitialPlacement(target)) {
             this._emitter.emit('cancel', item, this._source, this._source);
@@ -319,7 +318,7 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
           var reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
           var item = this._copy || this._item;
           var parent = Util.getParent(item);
-          if (parent === this._source && this._copy) {
+          if (this._copy && parent) {
             parent.removeChild(this._copy);
           }
           var initial = this._isInitialPlacement(parent);
@@ -430,11 +429,8 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
             this._lastDropTarget = dropTarget;
             over();
           }
-          var parent = Util.getParent(item);
           if (dropTarget === this._source && this._copy && !this.options.copySortSource) {
-            if (parent) {
-              parent.removeChild(item);
-            }
+            Util.remove(item);
             return;
           }
           var reference = void 0;
@@ -445,8 +441,8 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
             reference = this._initialSibling;
             dropTarget = this._source;
           } else {
-            if (this._copy && parent) {
-              parent.removeChild(item);
+            if (this._copy) {
+              Util.remove(item);
             }
             return;
           }
@@ -487,7 +483,7 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
           if (this._mirror) {
             classes.rm(this.options.mirrorContainer, 'gu-unselectable');
             touchy(document.documentElement, 'removeEventListener', 'mousemove', this.boundDrag);
-            Util.getParent(this._mirror).removeChild(this._mirror);
+            Util.remove(this._mirror);
             this._mirror = null;
           }
         };
@@ -530,6 +526,7 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
 
         Dragula.prototype._isCopy = function _isCopy(item, container) {
           var isBoolean = typeof this.options.copy === 'boolean' || _typeof(this.options.copy) === 'object' && typeof this.options.copy.valueOf() === 'boolean';
+
           return isBoolean ? this.options.copy : this.options.copy(item, container);
         };
 

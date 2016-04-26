@@ -1,7 +1,7 @@
 'use strict';
 
 System.register([], function (_export, _context) {
-  var Util;
+  var _Util, Util;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -12,12 +12,12 @@ System.register([], function (_export, _context) {
   return {
     setters: [],
     execute: function () {
-      _export('Util', Util = function () {
-        function Util() {
-          _classCallCheck(this, Util);
+      _Util = function () {
+        function _Util() {
+          _classCallCheck(this, _Util);
         }
 
-        Util.nextEl = function nextEl(el) {
+        _Util.prototype.nextEl = function nextEl(el) {
           return el.nextElementSibling || manually();
           function manually() {
             var sibling = el;
@@ -28,7 +28,7 @@ System.register([], function (_export, _context) {
           }
         };
 
-        Util.whichMouseButton = function whichMouseButton(e) {
+        _Util.prototype.whichMouseButton = function whichMouseButton(e) {
           if (e.touches !== void 0) {
             return e.touches.length;
           }
@@ -44,7 +44,7 @@ System.register([], function (_export, _context) {
           }
         };
 
-        Util.getElementBehindPoint = function getElementBehindPoint(point, x, y) {
+        _Util.prototype.getElementBehindPoint = function getElementBehindPoint(point, x, y) {
           var p = point || {};
           var state = p.className;
           var el = void 0;
@@ -54,23 +54,23 @@ System.register([], function (_export, _context) {
           return el;
         };
 
-        Util.getParent = function getParent(el) {
+        _Util.prototype.getParent = function getParent(el) {
           return el.parentNode === document ? null : el.parentNode;
         };
 
-        Util.getRectWidth = function getRectWidth(rect) {
+        _Util.prototype.getRectWidth = function getRectWidth(rect) {
           return rect.width || rect.right - rect.left;
         };
 
-        Util.getRectHeight = function getRectHeight(rect) {
+        _Util.prototype.getRectHeight = function getRectHeight(rect) {
           return rect.height || rect.bottom - rect.top;
         };
 
-        Util.isInput = function isInput(el) {
+        _Util.prototype.isInput = function isInput(el) {
           return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || Util.isEditable(el);
         };
 
-        Util.isEditable = function isEditable(el) {
+        _Util.prototype.isEditable = function isEditable(el) {
           if (!el) {
             return false;
           }
@@ -80,18 +80,18 @@ System.register([], function (_export, _context) {
           if (el.contentEditable === 'true') {
             return true;
           }
-          return Util.isEditable(Util.getParent(el));
+          return this.isEditable(this.getParent(el));
         };
 
-        Util.getOffset = function getOffset(el) {
+        _Util.prototype.getOffset = function getOffset(el) {
           var rect = el.getBoundingClientRect();
           return {
-            left: rect.left + Util.getScroll('scrollLeft', 'pageXOffset'),
-            top: rect.top + Util.getScroll('scrollTop', 'pageYOffset')
+            left: rect.left + this.getScroll('scrollLeft', 'pageXOffset'),
+            top: rect.top + this.getScroll('scrollTop', 'pageYOffset')
           };
         };
 
-        Util.getScroll = function getScroll(scrollProp, offsetProp) {
+        _Util.prototype.getScroll = function getScroll(scrollProp, offsetProp) {
           if (typeof window[offsetProp] !== 'undefined') {
             return window[offsetProp];
           }
@@ -101,7 +101,7 @@ System.register([], function (_export, _context) {
           return document.body[scrollProp];
         };
 
-        Util.getElementBehindPoint = function getElementBehindPoint(point, x, y) {
+        _Util.prototype.getElementBehindPoint = function getElementBehindPoint(point, x, y) {
           if (point) point.classList.add('gu-hide');
 
           var el = document.elementFromPoint(x, y);
@@ -110,7 +110,7 @@ System.register([], function (_export, _context) {
           return el;
         };
 
-        Util.getEventHost = function getEventHost(e) {
+        _Util.prototype.getEventHost = function getEventHost(e) {
           if (e.targetTouches && e.targetTouches.length) {
             return e.targetTouches[0];
           }
@@ -120,15 +120,15 @@ System.register([], function (_export, _context) {
           return e;
         };
 
-        Util.getCoord = function getCoord(coord, e) {
-          var host = Util.getEventHost(e);
+        _Util.prototype.getCoord = function getCoord(coord, e) {
+          var host = this.getEventHost(e);
           return host[coord];
         };
 
-        Util.getImmediateChild = function getImmediateChild(dropTarget, target) {
+        _Util.prototype.getImmediateChild = function getImmediateChild(dropTarget, target) {
           var immediate = target;
-          while (immediate !== dropTarget && Util.getParent(immediate) !== dropTarget) {
-            immediate = Util.getParent(immediate);
+          while (immediate !== dropTarget && this.getParent(immediate) !== dropTarget) {
+            immediate = this.getParent(immediate);
           }
           if (immediate === document.documentElement) {
             return null;
@@ -136,8 +136,22 @@ System.register([], function (_export, _context) {
           return immediate;
         };
 
-        return Util;
-      }());
+        _Util.prototype.remove = function remove(node) {
+          if (node) {
+            if (!('remove' in Element.prototype)) {
+              if (node.parentNode) {
+                node.parentNode.removeChild(node);
+              }
+            } else {
+              node.remove();
+            }
+          }
+        };
+
+        return _Util;
+      }();
+
+      _export('Util', Util = new _Util());
 
       _export('Util', Util);
     }

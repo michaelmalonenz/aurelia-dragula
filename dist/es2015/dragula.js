@@ -249,9 +249,8 @@ export let Dragula = class Dragula {
   }
 
   drop(item, target) {
-    let parent = Util.getParent(item);
     if (this._copy && this.options.copySortSource && target === this._source) {
-      parent.removeChild(_item);
+      Util.remove(this._item);
     }
     if (this._isInitialPlacement(target)) {
       this._emitter.emit('cancel', item, this._source, this._source);
@@ -281,7 +280,7 @@ export let Dragula = class Dragula {
     let reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
     let item = this._copy || this._item;
     let parent = Util.getParent(item);
-    if (parent === this._source && this._copy) {
+    if (this._copy && parent) {
       parent.removeChild(this._copy);
     }
     let initial = this._isInitialPlacement(parent);
@@ -388,11 +387,8 @@ export let Dragula = class Dragula {
       this._lastDropTarget = dropTarget;
       over();
     }
-    let parent = Util.getParent(item);
     if (dropTarget === this._source && this._copy && !this.options.copySortSource) {
-      if (parent) {
-        parent.removeChild(item);
-      }
+      Util.remove(item);
       return;
     }
     let reference;
@@ -403,8 +399,8 @@ export let Dragula = class Dragula {
       reference = this._initialSibling;
       dropTarget = this._source;
     } else {
-      if (this._copy && parent) {
-        parent.removeChild(item);
+      if (this._copy) {
+        Util.remove(item);
       }
       return;
     }
@@ -445,7 +441,7 @@ export let Dragula = class Dragula {
     if (this._mirror) {
       classes.rm(this.options.mirrorContainer, 'gu-unselectable');
       touchy(document.documentElement, 'removeEventListener', 'mousemove', this.boundDrag);
-      Util.getParent(this._mirror).removeChild(this._mirror);
+      Util.remove(this._mirror);
       this._mirror = null;
     }
   }
@@ -488,6 +484,7 @@ export let Dragula = class Dragula {
 
   _isCopy(item, container) {
     let isBoolean = typeof this.options.copy === 'boolean' || typeof this.options.copy === 'object' && typeof this.options.copy.valueOf() === 'boolean';
+
     return isBoolean ? this.options.copy : this.options.copy(item, container);
   }
 

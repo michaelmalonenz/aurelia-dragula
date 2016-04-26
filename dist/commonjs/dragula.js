@@ -264,9 +264,8 @@ var Dragula = exports.Dragula = function () {
   };
 
   Dragula.prototype.drop = function drop(item, target) {
-    var parent = _util.Util.getParent(item);
     if (this._copy && this.options.copySortSource && target === this._source) {
-      parent.removeChild(_item);
+      _util.Util.remove(this._item);
     }
     if (this._isInitialPlacement(target)) {
       this._emitter.emit('cancel', item, this._source, this._source);
@@ -296,7 +295,7 @@ var Dragula = exports.Dragula = function () {
     var reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
     var item = this._copy || this._item;
     var parent = _util.Util.getParent(item);
-    if (parent === this._source && this._copy) {
+    if (this._copy && parent) {
       parent.removeChild(this._copy);
     }
     var initial = this._isInitialPlacement(parent);
@@ -407,11 +406,8 @@ var Dragula = exports.Dragula = function () {
       this._lastDropTarget = dropTarget;
       over();
     }
-    var parent = _util.Util.getParent(item);
     if (dropTarget === this._source && this._copy && !this.options.copySortSource) {
-      if (parent) {
-        parent.removeChild(item);
-      }
+      _util.Util.remove(item);
       return;
     }
     var reference = void 0;
@@ -422,8 +418,8 @@ var Dragula = exports.Dragula = function () {
       reference = this._initialSibling;
       dropTarget = this._source;
     } else {
-      if (this._copy && parent) {
-        parent.removeChild(item);
+      if (this._copy) {
+        _util.Util.remove(item);
       }
       return;
     }
@@ -464,7 +460,7 @@ var Dragula = exports.Dragula = function () {
     if (this._mirror) {
       classes.rm(this.options.mirrorContainer, 'gu-unselectable');
       (0, _touchy.touchy)(document.documentElement, 'removeEventListener', 'mousemove', this.boundDrag);
-      _util.Util.getParent(this._mirror).removeChild(this._mirror);
+      _util.Util.remove(this._mirror);
       this._mirror = null;
     }
   };
@@ -507,6 +503,7 @@ var Dragula = exports.Dragula = function () {
 
   Dragula.prototype._isCopy = function _isCopy(item, container) {
     var isBoolean = typeof this.options.copy === 'boolean' || _typeof(this.options.copy) === 'object' && typeof this.options.copy.valueOf() === 'boolean';
+
     return isBoolean ? this.options.copy : this.options.copy(item, container);
   };
 
