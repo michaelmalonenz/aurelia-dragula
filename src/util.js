@@ -1,6 +1,5 @@
-export class Util {
-    //nextEl
-  static nextEl(el) {
+class _Util {
+  nextEl(el) {
     return el.nextElementSibling || manually();
     function manually () {
       let sibling = el;
@@ -11,8 +10,7 @@ export class Util {
     }
   }
 
-  //whichMouseButton
-  static whichMouseButton(e) {
+  whichMouseButton(e) {
     if (e.touches !== void 0) { return e.touches.length; }
     if (e.which !== void 0 && e.which !== 0) { return e.which; } // see https://github.com/bevacqua/dragula/issues/261
     if (e.buttons !== void 0) { return e.buttons; }
@@ -22,8 +20,7 @@ export class Util {
     }
   }
 
-  //getElementBehindPoint
-  static getElementBehindPoint(point, x, y) {
+  getElementBehindPoint(point, x, y) {
     let p = point || {};
     let state = p.className;
     let el;
@@ -33,26 +30,26 @@ export class Util {
     return el;
   }
 
-  static getParent(el) { return el.parentNode === document ? null : el.parentNode; }
-  static getRectWidth(rect) { return rect.width || (rect.right - rect.left); }
-  static getRectHeight(rect) { return rect.height || (rect.bottom - rect.top); }
-  static isInput(el) { return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || Util.isEditable(el); }
-  static isEditable(el) {
+  getParent(el) { return el.parentNode === document ? null : el.parentNode; }
+  getRectWidth(rect) { return rect.width || (rect.right - rect.left); }
+  getRectHeight(rect) { return rect.height || (rect.bottom - rect.top); }
+  isInput(el) { return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || Util.isEditable(el); }
+  isEditable(el) {
     if (!el) { return false; } // no parents were editable
     if (el.contentEditable === 'false') { return false; } // stop the lookup
     if (el.contentEditable === 'true') { return true; } // found a contentEditable element in the chain
-    return Util.isEditable(Util.getParent(el)); // contentEditable is set to 'inherit'
+    return this.isEditable(this.getParent(el)); // contentEditable is set to 'inherit'
   }
 
-  static getOffset(el) {
+  getOffset(el) {
     let rect = el.getBoundingClientRect();
     return {
-      left: rect.left + Util.getScroll('scrollLeft', 'pageXOffset'),
-      top: rect.top + Util.getScroll('scrollTop', 'pageYOffset')
+      left: rect.left + this.getScroll('scrollLeft', 'pageXOffset'),
+      top: rect.top + this.getScroll('scrollTop', 'pageYOffset')
     };
   }
 
-  static getScroll(scrollProp, offsetProp) {
+  getScroll(scrollProp, offsetProp) {
     if (typeof window[offsetProp] !== 'undefined') {
       return window[offsetProp];
     }
@@ -62,7 +59,7 @@ export class Util {
     return document.body[scrollProp];
   }
 
-  static getElementBehindPoint(point, x, y) {
+  getElementBehindPoint(point, x, y) {
     if (point)
       point.classList.add('gu-hide');
 
@@ -73,7 +70,7 @@ export class Util {
     return el;
   }
 
-  static getEventHost(e) {
+  getEventHost(e) {
     // on touchend event, we have to use `e.changedTouches`
     // see http://stackoverflow.com/questions/7192563/touchend-event-properties
     // see https://github.com/bevacqua/dragula/issues/34
@@ -86,19 +83,32 @@ export class Util {
     return e;
   }
 
-  static getCoord(coord, e) {
-    let host = Util.getEventHost(e);
+  getCoord(coord, e) {
+    let host = this.getEventHost(e);
     return host[coord];
   }
 
-  static getImmediateChild(dropTarget, target) {
+  getImmediateChild(dropTarget, target) {
     let immediate = target;
-    while (immediate !== dropTarget && Util.getParent(immediate) !== dropTarget) {
-      immediate = Util.getParent(immediate);
+    while (immediate !== dropTarget && this.getParent(immediate) !== dropTarget) {
+      immediate = this.getParent(immediate);
     }
     if (immediate === document.documentElement) {
       return null;
     }
     return immediate;
   }
+
+  remove(node) {
+    if (!('remove' in Element.prototype)) {
+      if (node.parentNode) {
+        node.parentNode.removeChild(node);
+      }
+    } else {
+      node.remove();
+    }
+  }
 }
+
+let Util = new _Util();
+export { Util };
