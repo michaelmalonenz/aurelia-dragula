@@ -110,6 +110,13 @@ class _Util {
       }
     }
   }
+
+  getViewModel(element) {
+    if (element.au && element.au.controller) {
+      return element.au.controller.viewModel;
+    }
+    return null;
+  }
 }
 
 let Util = new _Util();

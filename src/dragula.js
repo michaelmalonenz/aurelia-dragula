@@ -202,7 +202,7 @@ export class Dragula {
   start(context) {
     if (this._isCopy(context.item, context.source)) {
       this._copy = context.item.cloneNode(true);
-      this._emitter.emit('cloned', this._copy, context.item, 'copy');
+      this._emitter.emit('cloned', this._copy, context.item, 'copy', Util.getViewModel(context.item));
     }
 
     this._source = context.source;
@@ -211,7 +211,7 @@ export class Dragula {
     this._currentSibling = Util.nextEl(context.item);
 
     this.dragging = true;
-    this._emitter.emit('drag', this._item, this._source);
+    this._emitter.emit('drag', this._item, this._source, Util.getViewModel(this._item));
   }
 
   end() {
@@ -253,9 +253,9 @@ export class Dragula {
       Util.remove(this._item);
     }
     if (this._isInitialPlacement(target)) {
-      this._emitter.emit('cancel', item, this._source, this._source);
+      this._emitter.emit('cancel', item, this._source, this._source, Util.getViewModel(item));
     } else {
-      this._emitter.emit('drop', item, target, this._source, this._currentSibling);
+      this._emitter.emit('drop', item, target, this._source, this._currentSibling, Util.getViewModel(item));
     }
     this._cleanup();
   }
@@ -269,7 +269,7 @@ export class Dragula {
     if (parent) {
       parent.removeChild(item);
     }
-    this._emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
+    this._emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source, Util.getViewModel(item));
     this._cleanup();
   }
 
@@ -288,9 +288,9 @@ export class Dragula {
       this._source.insertBefore(item, this._initialSibling);
     }
     if (initial || reverts) {
-      this._emitter.emit('cancel', item, this._source, this._source);
+      this._emitter.emit('cancel', item, this._source, this._source, Util.getViewModel(item));
     } else {
-      this._emitter.emit('drop', item, parent, this._source, this._currentSibling);
+      this._emitter.emit('drop', item, parent, this._source, this._currentSibling, Util.getViewModel(item));
     }
     this._cleanup();
   }
@@ -304,9 +304,9 @@ export class Dragula {
     }
     this.dragging = false;
     if (this._lastDropTarget) {
-      this._emitter.emit('out', item, this._lastDropTarget, this._source);
+      this._emitter.emit('out', item, this._lastDropTarget, this._source, Util.getViewModel(item));
     }
-    this._emitter.emit('dragend', item);
+    this._emitter.emit('dragend', item, Util.getViewModel(item));
     this._source = this._item = this._copy = this._initialSibling = this._currentSibling = this._lastRenderTime = this._lastDropTarget = null;
   }
 
@@ -356,7 +356,9 @@ export class Dragula {
     this._lastRenderTime = Date.now();
     e.preventDefault();
 
-    let moved = (type) => { this._emitter.emit(type, item, this._lastDropTarget, this._source); }
+    let item = this._copy || this._item;
+
+    let moved = (type) => { this._emitter.emit(type, item, this._lastDropTarget, this._source, Util.getViewModel(item)); }
     let over = () => { if (changed) { moved('over'); } }
     let out = () => { if (this._lastDropTarget) { moved('out'); } }
 
@@ -368,7 +370,6 @@ export class Dragula {
     this._mirror.style.left = x + 'px';
     this._mirror.style.top = y + 'px';
 
-    let item = this._copy || this._item;
     let elementBehindCursor = Util.getElementBehindPoint(this._mirror, clientX, clientY);
     let dropTarget = this._findDropTarget(elementBehindCursor, clientX, clientY);
     let changed = dropTarget !== null && dropTarget !== this._lastDropTarget;
@@ -401,7 +402,7 @@ export class Dragula {
     ) {
       this._currentSibling = reference;
       dropTarget.insertBefore(item, reference);
-      this._emitter.emit('shadow', item, dropTarget, this._source);
+      this._emitter.emit('shadow', item, dropTarget, this._source, Util.getViewModel(item));
     }
   }
 
@@ -426,7 +427,7 @@ export class Dragula {
     this.options.mirrorContainer.appendChild(this._mirror);
     touchy(document.documentElement, 'addEventListener', 'mousemove', this.boundDrag);
     classes.add(this.options.mirrorContainer, 'gu-unselectable');
-    this._emitter.emit('cloned', this._mirror, this._item, 'mirror');
+    this._emitter.emit('cloned', this._mirror, this._item, 'mirror', Util.getViewModel(this._item));
   }
 
   removeMirrorImage() {
