@@ -251,7 +251,7 @@ export class Dragula {
   drop(item, target) {
     let parent = Util.getParent(item);
     if (this._copy && this.options.copySortSource && target === this._source) {
-      parent.removeChild(_item);
+      parent.removeChild(item);
     }
     if (this._isInitialPlacement(target)) {
       this._emitter.emit('cancel', item, this._source, this._source);
