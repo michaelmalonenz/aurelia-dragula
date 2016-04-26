@@ -265,7 +265,10 @@ export class Dragula {
       return;
     }
     let item = this._copy || this._item;
-    Util.remove(item);
+    let parent = Util.getParent(item);
+    if (parent) {
+      parent.removeChild(item);
+    }
     this._emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
     this._cleanup();
   }
@@ -276,7 +279,10 @@ export class Dragula {
     }
     let reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
     let item = this._copy || this._item;
-    Util.remove(this._copy);
+    let parent = Util.getParent(item);
+    if (this._copy && parent) {
+      parent.removeChild(this._copy);
+    }
     let initial = this._isInitialPlacement(parent);
     if (initial === false && !this._copy && reverts) {
       this._source.insertBefore(item, this._initialSibling);

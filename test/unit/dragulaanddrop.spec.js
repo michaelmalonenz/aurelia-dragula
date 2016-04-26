@@ -63,38 +63,37 @@ describe('the Dragula and Drop Custom Element', function() {
     //assert
     expect(wasCalled).toBeTruthy();
   });
-  
+
   it('should check copy-option correctly (boolean/true)', function() {
     this.options.copy = true;
     this.createDragula();
-    console.log(this.options.copy);
     let isBoolean = this.dragulaAndDrop.dragula._isCopy(this.item, this.container);
     this.dragulaAndDrop.dragula.options.isContainer(this.container);
-    
+
     //assert
     expect(isBoolean).toBeTruthy();
   });
-  
+
   it('should check copy-option correctly (boolean/false)', function() {
-    
-    this.options.copy = false; 
+
+    this.options.copy = false;
     this.createDragula();
     let isBoolean = this.dragulaAndDrop.dragula._isCopy(this.item, this.container);
     this.dragulaAndDrop.dragula.options.isContainer(this.container);
-    
+
     //assert
     expect(isBoolean).toBeTruthy();
   });
-  
+
   it('should check copy-option correctly (function)', function() {
-    
+
     this.options.copy = function (item, container) {
       // can be empty
-    }; 
+    };
     this.createDragula();
     let isBoolean = this.dragulaAndDrop.dragula._isCopy(this.item, this.container);
     this.dragulaAndDrop.dragula.options.isContainer(this.container);
-    
+
     //assert
     expect(isBoolean).toBeFalsy();
   });

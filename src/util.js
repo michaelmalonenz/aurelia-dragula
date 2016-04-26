@@ -100,12 +100,14 @@ class _Util {
   }
 
   remove(node) {
-    if (!('remove' in Element.prototype)) {
-      if (node.parentNode) {
-        node.parentNode.removeChild(node);
+    if (node) {
+      if (!('remove' in Element.prototype)) {
+        if (node.parentNode) {
+          node.parentNode.removeChild(node);
+        }
+      } else {
+        node.remove();
       }
-    } else {
-      node.remove();
     }
   }
 }
