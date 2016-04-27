@@ -82,7 +82,7 @@ describe('the Dragula and Drop Custom Element', function() {
     this.dragulaAndDrop.dragula.options.isContainer(this.container);
 
     //assert
-    expect(isBoolean).toBeTruthy();
+    expect(isBoolean).toBeFalsy();
   });
 
   it('should check copy-option correctly (function)', function() {

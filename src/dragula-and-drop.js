@@ -120,6 +120,7 @@ export class DragulaAndDrop {
       ignoreInputTextSelection: this._convertToBooleanIfRequired(this._getOption('ignoreInputTextSelection')),
       mirrorContainer: this._getOption('mirrorContainer')
     };
+
     return result;
   }
 
@@ -137,6 +138,6 @@ export class DragulaAndDrop {
     if (typeof option === 'string') {
       return option.toLowerCase() === 'true';
     }
-    return new Boolean(option);
+    return new Boolean(option).valueOf();
   }
 }
