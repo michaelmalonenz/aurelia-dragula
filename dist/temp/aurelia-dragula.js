@@ -157,6 +157,7 @@ var DragulaAndDrop = exports.DragulaAndDrop = (_dec = (0, _aureliaTemplating.bin
       ignoreInputTextSelection: this._convertToBooleanIfRequired(this._getOption('ignoreInputTextSelection')),
       mirrorContainer: this._getOption('mirrorContainer')
     };
+
     return result;
   };
 
@@ -174,7 +175,7 @@ var DragulaAndDrop = exports.DragulaAndDrop = (_dec = (0, _aureliaTemplating.bin
     if (typeof option === 'string') {
       return option.toLowerCase() === 'true';
     }
-    return new Boolean(option);
+    return new Boolean(option).valueOf();
   };
 
   return DragulaAndDrop;
@@ -619,7 +620,7 @@ var Dragula = exports.Dragula = function () {
     if (this._mirror) {
       classes.rm(this.options.mirrorContainer, 'gu-unselectable');
       touchy(document.documentElement, 'removeEventListener', 'mousemove', this.boundDrag);
-      Util.remove(this._mirror);
+      Util.getParent(this._mirror).removeChild(this._mirror);
       this._mirror = null;
     }
   };
@@ -953,18 +954,6 @@ var _Util = function () {
       return null;
     }
     return immediate;
-  };
-
-  _Util.prototype.remove = function remove(node) {
-    if (node) {
-      if (!('remove' in Element.prototype)) {
-        if (node.parentNode) {
-          node.parentNode.removeChild(node);
-        }
-      } else {
-        node.remove();
-      }
-    }
   };
 
   _Util.prototype.getViewModel = function getViewModel(element) {

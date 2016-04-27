@@ -96,6 +96,7 @@ export let DragulaAndDrop = (_dec = bindable({ name: 'moves', defaultBindingMode
       ignoreInputTextSelection: this._convertToBooleanIfRequired(this._getOption('ignoreInputTextSelection')),
       mirrorContainer: this._getOption('mirrorContainer')
     };
+
     return result;
   }
 
@@ -113,6 +114,6 @@ export let DragulaAndDrop = (_dec = bindable({ name: 'moves', defaultBindingMode
     if (typeof option === 'string') {
       return option.toLowerCase() === 'true';
     }
-    return new Boolean(option);
+    return new Boolean(option).valueOf();
   }
 }) || _class) || _class) || _class) || _class) || _class) || _class) || _class) || _class) || _class) || _class) || _class) || _class) || _class) || _class) || _class) || _class) || _class) || _class) || _class) || _class);

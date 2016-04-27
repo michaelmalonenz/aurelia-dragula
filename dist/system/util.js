@@ -136,18 +136,6 @@ System.register([], function (_export, _context) {
           return immediate;
         };
 
-        _Util.prototype.remove = function remove(node) {
-          if (node) {
-            if (!('remove' in Element.prototype)) {
-              if (node.parentNode) {
-                node.parentNode.removeChild(node);
-              }
-            } else {
-              node.remove();
-            }
-          }
-        };
-
         _Util.prototype.getViewModel = function getViewModel(element) {
           if (element && element.au) {
             if (element.au.controller.viewModel.currentViewModel) return element.au.controller.viewModel.currentViewModel;else return element.au.controller.viewModel;

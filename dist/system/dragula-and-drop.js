@@ -117,6 +117,7 @@ System.register(['aurelia-templating', 'aurelia-binding', 'aurelia-dependency-in
             ignoreInputTextSelection: this._convertToBooleanIfRequired(this._getOption('ignoreInputTextSelection')),
             mirrorContainer: this._getOption('mirrorContainer')
           };
+
           return result;
         };
 
@@ -134,7 +135,7 @@ System.register(['aurelia-templating', 'aurelia-binding', 'aurelia-dependency-in
           if (typeof option === 'string') {
             return option.toLowerCase() === 'true';
           }
-          return new Boolean(option);
+          return new Boolean(option).valueOf();
         };
 
         return DragulaAndDrop;

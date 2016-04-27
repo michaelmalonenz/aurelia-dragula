@@ -154,6 +154,7 @@ export class DragulaAndDrop {
       ignoreInputTextSelection: this._convertToBooleanIfRequired(this._getOption('ignoreInputTextSelection')),
       mirrorContainer: this._getOption('mirrorContainer')
     };
+
     return result;
   }
 
@@ -171,7 +172,7 @@ export class DragulaAndDrop {
     if (typeof option === 'string') {
       return option.toLowerCase() === 'true';
     }
-    return new Boolean(option);
+    return new Boolean(option).valueOf();
   }
 }
 
@@ -613,7 +614,7 @@ export class Dragula {
     if (this._mirror) {
       classes.rm(this.options.mirrorContainer, 'gu-unselectable');
       touchy(document.documentElement, 'removeEventListener', 'mousemove', this.boundDrag);
-      Util.remove(this._mirror);
+      Util.getParent(this._mirror).removeChild(this._mirror);
       this._mirror = null;
     }
   }
@@ -899,18 +900,6 @@ class _Util {
       return null;
     }
     return immediate;
-  }
-
-  remove(node) {
-    if (node) {
-      if (!('remove' in Element.prototype)) {
-        if (node.parentNode) {
-          node.parentNode.removeChild(node);
-        }
-      } else {
-        node.remove();
-      }
-    }
   }
 
   getViewModel(element) {

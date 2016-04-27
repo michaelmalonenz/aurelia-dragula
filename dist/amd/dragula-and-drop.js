@@ -106,6 +106,7 @@ define(['exports', 'aurelia-templating', 'aurelia-binding', 'aurelia-dependency-
         ignoreInputTextSelection: this._convertToBooleanIfRequired(this._getOption('ignoreInputTextSelection')),
         mirrorContainer: this._getOption('mirrorContainer')
       };
+
       return result;
     };
 
@@ -123,7 +124,7 @@ define(['exports', 'aurelia-templating', 'aurelia-binding', 'aurelia-dependency-
       if (typeof option === 'string') {
         return option.toLowerCase() === 'true';
       }
-      return new Boolean(option);
+      return new Boolean(option).valueOf();
     };
 
     return DragulaAndDrop;

@@ -488,7 +488,7 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
           if (this._mirror) {
             classes.rm(this.options.mirrorContainer, 'gu-unselectable');
             touchy(document.documentElement, 'removeEventListener', 'mousemove', this.boundDrag);
-            Util.remove(this._mirror);
+            Util.getParent(this._mirror).removeChild(this._mirror);
             this._mirror = null;
           }
         };

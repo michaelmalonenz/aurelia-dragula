@@ -114,18 +114,6 @@ let _Util = class _Util {
     return immediate;
   }
 
-  remove(node) {
-    if (node) {
-      if (!('remove' in Element.prototype)) {
-        if (node.parentNode) {
-          node.parentNode.removeChild(node);
-        }
-      } else {
-        node.remove();
-      }
-    }
-  }
-
   getViewModel(element) {
     if (element && element.au) {
       if (element.au.controller.viewModel.currentViewModel) return element.au.controller.viewModel.currentViewModel;else return element.au.controller.viewModel;

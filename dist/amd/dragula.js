@@ -493,7 +493,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       if (this._mirror) {
         classes.rm(this.options.mirrorContainer, 'gu-unselectable');
         (0, _touchy.touchy)(document.documentElement, 'removeEventListener', 'mousemove', this.boundDrag);
-        _util.Util.remove(this._mirror);
+        _util.Util.getParent(this._mirror).removeChild(this._mirror);
         this._mirror = null;
       }
     };

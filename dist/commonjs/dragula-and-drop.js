@@ -111,6 +111,7 @@ var DragulaAndDrop = exports.DragulaAndDrop = (_dec = (0, _aureliaTemplating.bin
       ignoreInputTextSelection: this._convertToBooleanIfRequired(this._getOption('ignoreInputTextSelection')),
       mirrorContainer: this._getOption('mirrorContainer')
     };
+
     return result;
   };
 
@@ -128,7 +129,7 @@ var DragulaAndDrop = exports.DragulaAndDrop = (_dec = (0, _aureliaTemplating.bin
     if (typeof option === 'string') {
       return option.toLowerCase() === 'true';
     }
-    return new Boolean(option);
+    return new Boolean(option).valueOf();
   };
 
   return DragulaAndDrop;
