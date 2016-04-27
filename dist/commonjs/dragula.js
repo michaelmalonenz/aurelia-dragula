@@ -265,12 +265,13 @@ var Dragula = exports.Dragula = function () {
 
   Dragula.prototype.drop = function drop(item, target) {
     if (this._copy && this.options.copySortSource && target === this._source) {
-      _util.Util.remove(this._item);
+      var parent = _util.Util.getParent(this._item);
+      if (parent) parent.removeChild(this._item);
     }
     if (this._isInitialPlacement(target)) {
-      this._emitter.emit('cancel', item, this._source, this._source, _util.Util.getViewModel(item));
+      this._emitter.emit('cancel', item, this._source, this._source, _util.Util.getViewModel(this._item));
     } else {
-      this._emitter.emit('drop', item, target, this._source, this._currentSibling, _util.Util.getViewModel(item), _util.Util.getViewModel(this._currentSibling));
+      this._emitter.emit('drop', item, target, this._source, this._currentSibling, _util.Util.getViewModel(this._item), _util.Util.getViewModel(this._currentSibling));
     }
     this._cleanup();
   };
@@ -284,7 +285,7 @@ var Dragula = exports.Dragula = function () {
     if (parent) {
       parent.removeChild(item);
     }
-    this._emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source, _util.Util.getViewModel(item));
+    this._emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source, _util.Util.getViewModel(this._item));
     this._cleanup();
   };
 
@@ -303,9 +304,9 @@ var Dragula = exports.Dragula = function () {
       this._source.insertBefore(item, this._initialSibling);
     }
     if (initial || reverts) {
-      this._emitter.emit('cancel', item, this._source, this._source, _util.Util.getViewModel(item));
+      this._emitter.emit('cancel', item, this._source, this._source, _util.Util.getViewModel(this._item));
     } else {
-      this._emitter.emit('drop', item, parent, this._source, this._currentSibling, _util.Util.getViewModel(item));
+      this._emitter.emit('drop', item, parent, this._source, this._currentSibling, _util.Util.getViewModel(this._item), _util.Util.getViewModel(this._currentSibling));
     }
     this._cleanup();
   };
@@ -407,8 +408,11 @@ var Dragula = exports.Dragula = function () {
       this._lastDropTarget = dropTarget;
       over();
     }
+    var parent = _util.Util.getParent(item);
     if (dropTarget === this._source && this._copy && !this.options.copySortSource) {
-      _util.Util.remove(item);
+      if (parent) {
+        parent.removeChild(item);
+      }
       return;
     }
     var reference = void 0;
@@ -419,8 +423,8 @@ var Dragula = exports.Dragula = function () {
       reference = this._initialSibling;
       dropTarget = this._source;
     } else {
-      if (this._copy) {
-        _util.Util.remove(item);
+      if (this._copy && parent) {
+        parent.removeChild(item);
       }
       return;
     }

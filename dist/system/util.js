@@ -149,8 +149,8 @@ System.register([], function (_export, _context) {
         };
 
         _Util.prototype.getViewModel = function getViewModel(element) {
-          if (element.au && element.au.controller) {
-            return element.au.controller.viewModel;
+          if (element && element.au) {
+            if (element.au.controller.viewModel.currentViewModel) return element.au.controller.viewModel.currentViewModel;else return element.au.controller.viewModel;
           }
           return null;
         };

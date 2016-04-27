@@ -422,13 +422,15 @@ export class Dragula {
 
   drop(item, target) {
     if (this._copy && this.options.copySortSource && target === this._source) {
-      Util.remove(this._item);
+      let parent = Util.getParent(this._item);
+      if (parent)
+        parent.removeChild(this._item);
     }
     if (this._isInitialPlacement(target)) {
-      this._emitter.emit('cancel', item, this._source, this._source, Util.getViewModel(item));
+      this._emitter.emit('cancel', item, this._source, this._source, Util.getViewModel(this._item));
     } else {
       this._emitter.emit('drop', item, target, this._source, this._currentSibling,
-        Util.getViewModel(item), Util.getViewModel(this._currentSibling));
+        Util.getViewModel(this._item), Util.getViewModel(this._currentSibling));
     }
     this._cleanup();
   }
@@ -442,7 +444,7 @@ export class Dragula {
     if (parent) {
       parent.removeChild(item);
     }
-    this._emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source, Util.getViewModel(item));
+    this._emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source, Util.getViewModel(this._item));
     this._cleanup();
   }
 
@@ -461,9 +463,10 @@ export class Dragula {
       this._source.insertBefore(item, this._initialSibling);
     }
     if (initial || reverts) {
-      this._emitter.emit('cancel', item, this._source, this._source, Util.getViewModel(item));
+      this._emitter.emit('cancel', item, this._source, this._source, Util.getViewModel(this._item));
     } else {
-      this._emitter.emit('drop', item, parent, this._source, this._currentSibling, Util.getViewModel(item));
+      this._emitter.emit('drop', item, parent, this._source, this._currentSibling,
+        Util.getViewModel(this._item), Util.getViewModel(this._currentSibling));
     }
     this._cleanup();
   }
@@ -551,8 +554,11 @@ export class Dragula {
       this._lastDropTarget = dropTarget;
       over();
     }
+    let parent = Util.getParent(item);
     if (dropTarget === this._source && this._copy && !this.options.copySortSource) {
-      Util.remove(item);
+      if (parent) {
+        parent.removeChild(item);
+      }
       return;
     }
     let reference;
@@ -563,8 +569,8 @@ export class Dragula {
       reference = this._initialSibling;
       dropTarget = this._source;
     } else {
-      if (this._copy) {
-        Util.remove(item);
+      if (this._copy && parent) {
+        parent.removeChild(item);
       }
       return;
     }
@@ -908,8 +914,11 @@ class _Util {
   }
 
   getViewModel(element) {
-    if (element.au && element.au.controller) {
-      return element.au.controller.viewModel;
+    if (element && element.au) {
+      if (element.au.controller.viewModel.currentViewModel)
+        return element.au.controller.viewModel.currentViewModel;
+      else
+        return element.au.controller.viewModel;
     }
     return null;
   }
