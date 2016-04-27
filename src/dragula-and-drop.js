@@ -47,14 +47,14 @@ export class DragulaAndDrop {
 
     this.dragula.on('drop', this._dropFunction.bind(this));
 
-    this.dragula.on('drag', (item, source) => {
+    this.dragula.on('drag', (item, source, itemVM) => {
       if (typeof this.dragFn === 'function')
-        this.dragFn({ item: item, source: source});
+        this.dragFn({ item: item, source: source, itemVM: itemVM });
     });
 
-    this.dragula.on('dragend', (item) => {
+    this.dragula.on('dragend', (item, itemVM) => {
       if (typeof this.dragEndFn === 'function')
-        this.dragEndFn({ item: item });
+        this.dragEndFn({ item: item, itemVM: itemVM });
     })
   }
 
@@ -62,10 +62,10 @@ export class DragulaAndDrop {
     this.dragula.destroy();
   }
 
-  _dropFunction(item, target, source, sibling) {
+  _dropFunction(item, target, source, sibling, itemVM, siblingVM) {
     this.dragula.cancel();
     if (typeof this.dropFn === 'function')
-      this.dropFn({ item: item, target: target, source: source, sibling: sibling });
+      this.dropFn({ item: item, target: target, source: source, sibling: sibling, itemVM: itemVM, siblingVM: siblingVM });
   }
 
   _isContainer(el) {

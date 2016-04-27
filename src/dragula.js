@@ -255,7 +255,8 @@ export class Dragula {
     if (this._isInitialPlacement(target)) {
       this._emitter.emit('cancel', item, this._source, this._source, Util.getViewModel(item));
     } else {
-      this._emitter.emit('drop', item, target, this._source, this._currentSibling, Util.getViewModel(item));
+      this._emitter.emit('drop', item, target, this._source, this._currentSibling,
+        Util.getViewModel(item), Util.getViewModel(this._currentSibling));
     }
     this._cleanup();
   }
