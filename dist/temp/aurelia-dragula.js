@@ -90,12 +90,12 @@ var DragulaAndDrop = exports.DragulaAndDrop = (_dec = (0, _aureliaTemplating.bin
 
     this.dragula.on('drop', this._dropFunction.bind(this));
 
-    this.dragula.on('drag', function (item, source) {
-      if (typeof _this.dragFn === 'function') _this.dragFn({ item: item, source: source });
+    this.dragula.on('drag', function (item, source, itemVM) {
+      if (typeof _this.dragFn === 'function') _this.dragFn({ item: item, source: source, itemVM: itemVM });
     });
 
-    this.dragula.on('dragend', function (item) {
-      if (typeof _this.dragEndFn === 'function') _this.dragEndFn({ item: item });
+    this.dragula.on('dragend', function (item, itemVM) {
+      if (typeof _this.dragEndFn === 'function') _this.dragEndFn({ item: item, itemVM: itemVM });
     });
   };
 
@@ -103,9 +103,9 @@ var DragulaAndDrop = exports.DragulaAndDrop = (_dec = (0, _aureliaTemplating.bin
     this.dragula.destroy();
   };
 
-  DragulaAndDrop.prototype._dropFunction = function _dropFunction(item, target, source, sibling) {
+  DragulaAndDrop.prototype._dropFunction = function _dropFunction(item, target, source, sibling, itemVM, siblingVM) {
     this.dragula.cancel();
-    if (typeof this.dropFn === 'function') this.dropFn({ item: item, target: target, source: source, sibling: sibling });
+    if (typeof this.dropFn === 'function') this.dropFn({ item: item, target: target, source: source, sibling: sibling, itemVM: itemVM, siblingVM: siblingVM });
   };
 
   DragulaAndDrop.prototype._isContainer = function _isContainer(el) {
@@ -371,7 +371,7 @@ var Dragula = exports.Dragula = function () {
   Dragula.prototype.start = function start(context) {
     if (this._isCopy(context.item, context.source)) {
       this._copy = context.item.cloneNode(true);
-      this._emitter.emit('cloned', this._copy, context.item, 'copy');
+      this._emitter.emit('cloned', this._copy, context.item, 'copy', Util.getViewModel(context.item));
     }
 
     this._source = context.source;
@@ -380,7 +380,7 @@ var Dragula = exports.Dragula = function () {
     this._currentSibling = Util.nextEl(context.item);
 
     this.dragging = true;
-    this._emitter.emit('drag', this._item, this._source);
+    this._emitter.emit('drag', this._item, this._source, Util.getViewModel(this._item));
   };
 
   Dragula.prototype.end = function end() {
@@ -422,9 +422,9 @@ var Dragula = exports.Dragula = function () {
       Util.remove(this._item);
     }
     if (this._isInitialPlacement(target)) {
-      this._emitter.emit('cancel', item, this._source, this._source);
+      this._emitter.emit('cancel', item, this._source, this._source, Util.getViewModel(item));
     } else {
-      this._emitter.emit('drop', item, target, this._source, this._currentSibling);
+      this._emitter.emit('drop', item, target, this._source, this._currentSibling, Util.getViewModel(item), Util.getViewModel(this._currentSibling));
     }
     this._cleanup();
   };
@@ -438,7 +438,7 @@ var Dragula = exports.Dragula = function () {
     if (parent) {
       parent.removeChild(item);
     }
-    this._emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
+    this._emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source, Util.getViewModel(item));
     this._cleanup();
   };
 
@@ -457,9 +457,9 @@ var Dragula = exports.Dragula = function () {
       this._source.insertBefore(item, this._initialSibling);
     }
     if (initial || reverts) {
-      this._emitter.emit('cancel', item, this._source, this._source);
+      this._emitter.emit('cancel', item, this._source, this._source, Util.getViewModel(item));
     } else {
-      this._emitter.emit('drop', item, parent, this._source, this._currentSibling);
+      this._emitter.emit('drop', item, parent, this._source, this._currentSibling, Util.getViewModel(item));
     }
     this._cleanup();
   };
@@ -473,9 +473,9 @@ var Dragula = exports.Dragula = function () {
     }
     this.dragging = false;
     if (this._lastDropTarget) {
-      this._emitter.emit('out', item, this._lastDropTarget, this._source);
+      this._emitter.emit('out', item, this._lastDropTarget, this._source, Util.getViewModel(item));
     }
-    this._emitter.emit('dragend', item);
+    this._emitter.emit('dragend', item, Util.getViewModel(item));
     this._source = this._item = this._copy = this._initialSibling = this._currentSibling = this._lastRenderTime = this._lastDropTarget = null;
   };
 
@@ -529,8 +529,10 @@ var Dragula = exports.Dragula = function () {
     this._lastRenderTime = Date.now();
     e.preventDefault();
 
+    var item = this._copy || this._item;
+
     var moved = function moved(type) {
-      _this3._emitter.emit(type, item, _this3._lastDropTarget, _this3._source);
+      _this3._emitter.emit(type, item, _this3._lastDropTarget, _this3._source, Util.getViewModel(item));
     };
     var over = function over() {
       if (changed) {
@@ -551,7 +553,6 @@ var Dragula = exports.Dragula = function () {
     this._mirror.style.left = x + 'px';
     this._mirror.style.top = y + 'px';
 
-    var item = this._copy || this._item;
     var elementBehindCursor = Util.getElementBehindPoint(this._mirror, clientX, clientY);
     var dropTarget = this._findDropTarget(elementBehindCursor, clientX, clientY);
     var changed = dropTarget !== null && dropTarget !== this._lastDropTarget;
@@ -580,7 +581,7 @@ var Dragula = exports.Dragula = function () {
     if (reference === null && changed || reference !== item && reference !== Util.nextEl(item)) {
       this._currentSibling = reference;
       dropTarget.insertBefore(item, reference);
-      this._emitter.emit('shadow', item, dropTarget, this._source);
+      this._emitter.emit('shadow', item, dropTarget, this._source, Util.getViewModel(item));
     }
   };
 
@@ -607,7 +608,7 @@ var Dragula = exports.Dragula = function () {
     this.options.mirrorContainer.appendChild(this._mirror);
     touchy(document.documentElement, 'addEventListener', 'mousemove', this.boundDrag);
     classes.add(this.options.mirrorContainer, 'gu-unselectable');
-    this._emitter.emit('cloned', this._mirror, this._item, 'mirror');
+    this._emitter.emit('cloned', this._mirror, this._item, 'mirror', Util.getViewModel(this._item));
   };
 
   Dragula.prototype.removeMirrorImage = function removeMirrorImage() {
@@ -960,6 +961,13 @@ var _Util = function () {
         node.remove();
       }
     }
+  };
+
+  _Util.prototype.getViewModel = function getViewModel(element) {
+    if (element.au && element.au.controller) {
+      return element.au.controller.viewModel;
+    }
+    return null;
   };
 
   return _Util;

@@ -245,7 +245,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
     Dragula.prototype.start = function start(context) {
       if (this._isCopy(context.item, context.source)) {
         this._copy = context.item.cloneNode(true);
-        this._emitter.emit('cloned', this._copy, context.item, 'copy');
+        this._emitter.emit('cloned', this._copy, context.item, 'copy', _util.Util.getViewModel(context.item));
       }
 
       this._source = context.source;
@@ -254,7 +254,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       this._currentSibling = _util.Util.nextEl(context.item);
 
       this.dragging = true;
-      this._emitter.emit('drag', this._item, this._source);
+      this._emitter.emit('drag', this._item, this._source, _util.Util.getViewModel(this._item));
     };
 
     Dragula.prototype.end = function end() {
@@ -296,9 +296,9 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
         _util.Util.remove(this._item);
       }
       if (this._isInitialPlacement(target)) {
-        this._emitter.emit('cancel', item, this._source, this._source);
+        this._emitter.emit('cancel', item, this._source, this._source, _util.Util.getViewModel(item));
       } else {
-        this._emitter.emit('drop', item, target, this._source, this._currentSibling);
+        this._emitter.emit('drop', item, target, this._source, this._currentSibling, _util.Util.getViewModel(item), _util.Util.getViewModel(this._currentSibling));
       }
       this._cleanup();
     };
@@ -312,7 +312,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       if (parent) {
         parent.removeChild(item);
       }
-      this._emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source);
+      this._emitter.emit(this._copy ? 'cancel' : 'remove', item, parent, this._source, _util.Util.getViewModel(item));
       this._cleanup();
     };
 
@@ -331,9 +331,9 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
         this._source.insertBefore(item, this._initialSibling);
       }
       if (initial || reverts) {
-        this._emitter.emit('cancel', item, this._source, this._source);
+        this._emitter.emit('cancel', item, this._source, this._source, _util.Util.getViewModel(item));
       } else {
-        this._emitter.emit('drop', item, parent, this._source, this._currentSibling);
+        this._emitter.emit('drop', item, parent, this._source, this._currentSibling, _util.Util.getViewModel(item));
       }
       this._cleanup();
     };
@@ -347,9 +347,9 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       }
       this.dragging = false;
       if (this._lastDropTarget) {
-        this._emitter.emit('out', item, this._lastDropTarget, this._source);
+        this._emitter.emit('out', item, this._lastDropTarget, this._source, _util.Util.getViewModel(item));
       }
-      this._emitter.emit('dragend', item);
+      this._emitter.emit('dragend', item, _util.Util.getViewModel(item));
       this._source = this._item = this._copy = this._initialSibling = this._currentSibling = this._lastRenderTime = this._lastDropTarget = null;
     };
 
@@ -403,8 +403,10 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       this._lastRenderTime = Date.now();
       e.preventDefault();
 
+      var item = this._copy || this._item;
+
       var moved = function moved(type) {
-        _this2._emitter.emit(type, item, _this2._lastDropTarget, _this2._source);
+        _this2._emitter.emit(type, item, _this2._lastDropTarget, _this2._source, _util.Util.getViewModel(item));
       };
       var over = function over() {
         if (changed) {
@@ -425,7 +427,6 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       this._mirror.style.left = x + 'px';
       this._mirror.style.top = y + 'px';
 
-      var item = this._copy || this._item;
       var elementBehindCursor = _util.Util.getElementBehindPoint(this._mirror, clientX, clientY);
       var dropTarget = this._findDropTarget(elementBehindCursor, clientX, clientY);
       var changed = dropTarget !== null && dropTarget !== this._lastDropTarget;
@@ -454,7 +455,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       if (reference === null && changed || reference !== item && reference !== _util.Util.nextEl(item)) {
         this._currentSibling = reference;
         dropTarget.insertBefore(item, reference);
-        this._emitter.emit('shadow', item, dropTarget, this._source);
+        this._emitter.emit('shadow', item, dropTarget, this._source, _util.Util.getViewModel(item));
       }
     };
 
@@ -481,7 +482,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       this.options.mirrorContainer.appendChild(this._mirror);
       (0, _touchy.touchy)(document.documentElement, 'addEventListener', 'mousemove', this.boundDrag);
       classes.add(this.options.mirrorContainer, 'gu-unselectable');
-      this._emitter.emit('cloned', this._mirror, this._item, 'mirror');
+      this._emitter.emit('cloned', this._mirror, this._item, 'mirror', _util.Util.getViewModel(this._item));
     };
 
     Dragula.prototype.removeMirrorImage = function removeMirrorImage() {

@@ -147,6 +147,13 @@ define(['exports'], function (exports) {
       }
     };
 
+    _Util.prototype.getViewModel = function getViewModel(element) {
+      if (element.au && element.au.controller) {
+        return element.au.controller.viewModel;
+      }
+      return null;
+    };
+
     return _Util;
   }();
 

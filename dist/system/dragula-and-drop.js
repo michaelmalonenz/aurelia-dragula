@@ -50,12 +50,12 @@ System.register(['aurelia-templating', 'aurelia-binding', 'aurelia-dependency-in
 
           this.dragula.on('drop', this._dropFunction.bind(this));
 
-          this.dragula.on('drag', function (item, source) {
-            if (typeof _this.dragFn === 'function') _this.dragFn({ item: item, source: source });
+          this.dragula.on('drag', function (item, source, itemVM) {
+            if (typeof _this.dragFn === 'function') _this.dragFn({ item: item, source: source, itemVM: itemVM });
           });
 
-          this.dragula.on('dragend', function (item) {
-            if (typeof _this.dragEndFn === 'function') _this.dragEndFn({ item: item });
+          this.dragula.on('dragend', function (item, itemVM) {
+            if (typeof _this.dragEndFn === 'function') _this.dragEndFn({ item: item, itemVM: itemVM });
           });
         };
 
@@ -63,9 +63,9 @@ System.register(['aurelia-templating', 'aurelia-binding', 'aurelia-dependency-in
           this.dragula.destroy();
         };
 
-        DragulaAndDrop.prototype._dropFunction = function _dropFunction(item, target, source, sibling) {
+        DragulaAndDrop.prototype._dropFunction = function _dropFunction(item, target, source, sibling, itemVM, siblingVM) {
           this.dragula.cancel();
-          if (typeof this.dropFn === 'function') this.dropFn({ item: item, target: target, source: source, sibling: sibling });
+          if (typeof this.dropFn === 'function') this.dropFn({ item: item, target: target, source: source, sibling: sibling, itemVM: itemVM, siblingVM: siblingVM });
         };
 
         DragulaAndDrop.prototype._isContainer = function _isContainer(el) {

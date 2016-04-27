@@ -148,6 +148,13 @@ System.register([], function (_export, _context) {
           }
         };
 
+        _Util.prototype.getViewModel = function getViewModel(element) {
+          if (element.au && element.au.controller) {
+            return element.au.controller.viewModel;
+          }
+          return null;
+        };
+
         return _Util;
       }();
 
