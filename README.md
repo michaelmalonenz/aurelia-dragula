@@ -29,19 +29,49 @@ The Custom Element is a convenience for Aurelia.  One can place an element on th
 
 The element itself is called `dragula-and-drop` and you can bind all the options available for the main library (with camel-case converted to hyphenated attribute names in the standard way) to it as well as a couple of extras.  The functions are short-hand for binding to the equivalent events and should be bound with `.call` and if you want to receive arguments, they should be named the same as in the Type column below:
 
-Attribute | Type | Default Value | Description
---------|------|---------------|------------
-target-class | `string` | 'drop-target' | The css class name describing any container element which can be a drop target.
-source-class | `string` | 'drag-source' | The css class name describing any container element which can be a drag source.
-drag-fn | `function(item, source)` | null | A function to be called when dragging begins
-drop-fn | `function(item, target, source, sibling)` | null | A function to be called when the item is dropped.
-drag-end-fn | `function(item)` | null | A function to be called when the drag operation has completed.
+<table>
+  <tr>
+    <th>Attribute</th><th>Type</th><th>Default Value</th>
+  </tr>
+  <tr><th colspan="3">Description</th></tr>
+  <tr>
+    <td>target-class</td><td>string</td><td>'drop-target'</td>
+  </tr>
+  <tr>
+    <td colspan="3">The css class name describing any container element which can be a drop target.</td>
+  </tr>
+  <tr>
+    <td>source-class</td><td>string</td><td>'drag-source'</td>
+  </tr>
+  <tr>
+    <td colspan="3">The css class name describing any container element which can be a drag source.</td>
+  </tr>
+  <tr>
+    <td>drag-fn</td><td>function(item, source, itemVM)</td><td>null</td>
+  </tr>
+  <tr>
+    <td colspan="3">A function to be called when dragging begins.</td>
+  </tr>
+  
+  <tr>
+    <td>drop-fn</td><td>function(item, target, source, sibling, itemVM, siblingVM</td><td>null</td>
+  </tr>
+  <tr>
+    <td colspan="3">A function to be called when the item is dropped.</td>
+  </tr>
+  <tr>
+    <td>drag-end-fn</td><td>function(item, itemVM)</td><td>null</td>
+  </tr>
+  <tr>
+    <td colspan="3">A function to be called when the drag operation completes.</td>
+  </tr>
+</table>
 
 E.g:  
 viewmodel.html:
 ```html
 <template>
-  <dragula-and-drop drop-fn.call="itemDropped(item, target, source, sibling)"></dragula-and-drop>
+  <dragula-and-drop drop-fn.call="itemDropped(item, target, source, sibling, itemVM, siblingVM)"></dragula-and-drop>
   <div class="drag-source drop-target">
     <compose repeat.for="thing of things" view-model.bind="thing"></compose>
   </div>
@@ -55,7 +85,7 @@ export class ViewModel {
     this.things = [];
   }
 
-  itemDropped(item, target, source, sibling) {
+  itemDropped(item, target, source, sibling, itemVM, siblingVM) {
     //do things in here
   }
 }
