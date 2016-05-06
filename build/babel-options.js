@@ -13,9 +13,7 @@ exports.base = function() {
     code:true,
     presets: [ 'es2015-loose', 'stage-1'],
     plugins: [
-      'syntax-flow',
-      'transform-decorators-legacy',
-      'transform-flow-strip-types'
+      'transform-decorators-legacy'
     ]
   };
 };
