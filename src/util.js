@@ -100,7 +100,7 @@ class _Util {
   }
 
   getViewModel(element) {
-    if (element && element.au) {
+    if (element && element.au && element.au.controller) {
       if (element.au.controller.viewModel.currentViewModel)
         return element.au.controller.viewModel.currentViewModel;
       else
