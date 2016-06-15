@@ -1,4 +1,4 @@
-import {customElement,bindable,inlineView} from 'aurelia-templating';
+import {customElement,bindable,noView} from 'aurelia-templating';
 import {bindingMode} from 'aurelia-binding';
 import {inject,Container} from 'aurelia-dependency-injection';
 
@@ -39,6 +39,8 @@ export function rm(el, className) {
   el.className = el.className.replace(lookupClass(className), ' ').trim();
 }
 
+import 'dragula.css!';
+
 @bindable({ name: 'moves', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'accepts', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'invalid', defaultBindingMode: bindingMode.oneTime })
@@ -57,7 +59,7 @@ export function rm(el, className) {
 @bindable({ name: 'dropFn', attribute: 'drop-fn', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'dragEndFn', attribute: 'drag-end-fn', defaultBindingMode: bindingMode.oneTime })
 @customElement('dragula-and-drop')
-@inlineView('<template><require from="./dragula.css"></require></template>')
+@noView()
 @inject(GLOBAL_OPTIONS)
 export class DragulaAndDrop {
 
