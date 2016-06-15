@@ -22,7 +22,7 @@ var _aureliaBinding = require('aurelia-binding');
 
 var _aureliaDependencyInjection = require('aurelia-dependency-injection');
 
-require('./dragula.css');
+require('./dragula.css!');
 
 var _classes = require('./classes');
 

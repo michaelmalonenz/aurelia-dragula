@@ -17,7 +17,7 @@ var _options = require('./options');
 
 var _dragula = require('./dragula');
 
-require('./dragula.css');
+require('./dragula.css!');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 

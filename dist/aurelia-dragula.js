@@ -39,7 +39,7 @@ export function rm(el, className) {
   el.className = el.className.replace(lookupClass(className), ' ').trim();
 }
 
-import './dragula.css';
+import './dragula.css!';
 
 @bindable({ name: 'moves', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'accepts', defaultBindingMode: bindingMode.oneTime })

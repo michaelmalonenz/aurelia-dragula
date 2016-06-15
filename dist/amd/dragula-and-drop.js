@@ -1,4 +1,4 @@
-define(['exports', 'aurelia-templating', 'aurelia-binding', 'aurelia-dependency-injection', './options', './dragula', './dragula.css'], function (exports, _aureliaTemplating, _aureliaBinding, _aureliaDependencyInjection, _options, _dragula) {
+define(['exports', 'aurelia-templating', 'aurelia-binding', 'aurelia-dependency-injection', './options', './dragula', './dragula.css!'], function (exports, _aureliaTemplating, _aureliaBinding, _aureliaDependencyInjection, _options, _dragula) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {

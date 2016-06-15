@@ -1,6 +1,6 @@
 'use strict';
 
-System.register(['aurelia-templating', 'aurelia-binding', 'aurelia-dependency-injection', './options', './dragula', './dragula.css'], function (_export, _context) {
+System.register(['aurelia-templating', 'aurelia-binding', 'aurelia-dependency-injection', './options', './dragula', './dragula.css!'], function (_export, _context) {
   var customElement, bindable, noView, bindingMode, inject, Options, GLOBAL_OPTIONS, Dragula, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _class, DragulaAndDrop;
 
   function _classCallCheck(instance, Constructor) {
