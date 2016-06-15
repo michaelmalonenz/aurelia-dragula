@@ -4,7 +4,7 @@ import {inject} from 'aurelia-dependency-injection';
 
 import {Options, GLOBAL_OPTIONS} from './options';
 import {Dragula} from './dragula';
-import 'dragula.css!';
+import './dragula.css';
 
 @bindable({ name: 'moves', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'accepts', defaultBindingMode: bindingMode.oneTime })
