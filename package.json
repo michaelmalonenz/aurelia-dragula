@@ -73,7 +73,8 @@
       "aurelia-binding": "^1.0.0-beta.2.0.5",
       "aurelia-dependency-injection": "^1.0.0-beta.2.1.0",
       "aurelia-pal-browser": "^1.0.0-beta.3.0.0",
-      "aurelia-templating": "^1.0.0-beta.3.0.2"
+      "aurelia-templating": "^1.0.0-beta.3.0.2",
+      "css": "github:systemjs/plugin-css@^0.1.23"
     },
     "devDependencies": {
       "aurelia-polyfills": "^1.0.0-beta.2.0.0"

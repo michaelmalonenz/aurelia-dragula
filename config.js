@@ -12,6 +12,7 @@ System.config({
     "aurelia-pal-browser": "npm:aurelia-pal-browser@1.0.0-beta.3.0.0",
     "aurelia-polyfills": "npm:aurelia-polyfills@1.0.0-beta.2.0.0",
     "aurelia-templating": "npm:aurelia-templating@1.0.0-beta.3.0.2",
+    "css": "github:systemjs/plugin-css@0.1.23",
     "npm:aurelia-binding@1.0.0-beta.2.0.5": {
       "aurelia-logging": "npm:aurelia-logging@1.0.0-beta.2.0.0",
       "aurelia-metadata": "npm:aurelia-metadata@1.0.0-beta.2.0.0",
