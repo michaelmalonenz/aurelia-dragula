@@ -14,9 +14,6 @@ As Aurelia doesn't support IE < 9, Aurelia-Dragula won't, either.  Aurelia-dragu
 
 Aurelia Dragula differs from the upstream library, in that it also passes the view-models for the `item` (and `sibling` on the drop event) if the item being dragged corresponds to an Aurelia Custom Element.
 
-**Important Note:**
-Ever since v1.2.0 aurelia-dragula requires the css plugin for systemjs to function, but I can't add it as a dependency, because jspm doesn't add it in a format that is valid for package.json you will need to install it yourself like `jspm install css`  apologies for the inconvenience
-
 ##Usage
 
 ```javascript

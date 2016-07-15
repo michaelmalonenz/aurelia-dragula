@@ -70,10 +70,10 @@
       "dist": "dist/amd"
     },
     "dependencies": {
-      "aurelia-binding": "^1.0.0-rc.1.0.2",
-      "aurelia-dependency-injection": "^1.0.0-rc.1.0.0",
-      "aurelia-pal-browser": "^1.0.0-rc.1.0.0",
-      "aurelia-templating": "^1.0.0-rc.1.0.0"
+      "aurelia-binding": "^1.0.0-rc.1.0.3",
+      "aurelia-dependency-injection": "^1.0.0-rc.1.0.1",
+      "aurelia-pal-browser": "^1.0.0-rc.1.0.1",
+      "aurelia-templating": "^1.0.0-rc.1.0.1"
     },
     "devDependencies": {
       "aurelia-polyfills": "^1.0.0-rc.1.0.0"
