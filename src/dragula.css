@@ -10,10 +10,12 @@
   display: none !important;
 }
 .gu-unselectable {
+  -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none !important;
   -moz-user-select: none !important;
   -ms-user-select: none !important;
   user-select: none !important;
+  -khtml-user-select: none !important;    /* Konqueror */
 }
 .gu-transit {
   opacity: 0.2;
