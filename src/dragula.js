@@ -350,6 +350,7 @@ export class Dragula {
   }
 
   drag(e) {
+    e.preventDefault();
     if (!this._mirror) {
       return;
     }
@@ -358,7 +359,6 @@ export class Dragula {
       return;
     }
     this._lastRenderTime = Date.now();
-    e.preventDefault();
 
     let item = this._copy || this._item;
 
