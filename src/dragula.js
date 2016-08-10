@@ -111,12 +111,10 @@ export class Dragula {
     }
     this._grabbed = context;
     this._eventualMovements();
-    if (e.type === 'mousedown') {
-      if (Util.isInput(item)) { // see also: https://github.com/bevacqua/dragula/issues/208
-        item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
-      } else {
-        e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
-      }
+    if (Util.isInput(item)) { // see also: https://github.com/bevacqua/dragula/issues/208
+      item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
+    } else {
+      e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
     }
   }
 
