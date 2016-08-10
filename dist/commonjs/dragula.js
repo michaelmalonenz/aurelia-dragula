@@ -126,13 +126,11 @@ var Dragula = exports.Dragula = function () {
     }
     this._grabbed = context;
     this._eventualMovements();
-    if (e.type === 'mousedown') {
-      if (_util.Util.isInput(item)) {
-        item.focus();
-      } else {
-          e.preventDefault();
-        }
-    }
+    if (_util.Util.isInput(item)) {
+      item.focus();
+    } else {
+        e.preventDefault();
+      }
   };
 
   Dragula.prototype._startBecauseMouseMoved = function _startBecauseMouseMoved(e) {
@@ -366,6 +364,7 @@ var Dragula = exports.Dragula = function () {
   Dragula.prototype.drag = function drag(e) {
     var _this2 = this;
 
+    e.preventDefault();
     if (!this._mirror) {
       return;
     }
@@ -374,7 +373,6 @@ var Dragula = exports.Dragula = function () {
       return;
     }
     this._lastRenderTime = Date.now();
-    e.preventDefault();
 
     var item = this._copy || this._item;
 

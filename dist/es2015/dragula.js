@@ -111,13 +111,11 @@ export let Dragula = class Dragula {
     }
     this._grabbed = context;
     this._eventualMovements();
-    if (e.type === 'mousedown') {
-      if (Util.isInput(item)) {
-        item.focus();
-      } else {
-          e.preventDefault();
-        }
-    }
+    if (Util.isInput(item)) {
+      item.focus();
+    } else {
+        e.preventDefault();
+      }
   }
 
   _startBecauseMouseMoved(e) {
@@ -347,6 +345,7 @@ export let Dragula = class Dragula {
   }
 
   drag(e) {
+    e.preventDefault();
     if (!this._mirror) {
       return;
     }
@@ -355,7 +354,6 @@ export let Dragula = class Dragula {
       return;
     }
     this._lastRenderTime = Date.now();
-    e.preventDefault();
 
     let item = this._copy || this._item;
 

@@ -284,12 +284,10 @@ export class Dragula {
     }
     this._grabbed = context;
     this._eventualMovements();
-    if (e.type === 'mousedown') {
-      if (Util.isInput(item)) { // see also: https://github.com/bevacqua/dragula/issues/208
-        item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
-      } else {
-        e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
-      }
+    if (Util.isInput(item)) { // see also: https://github.com/bevacqua/dragula/issues/208
+      item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
+    } else {
+      e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
     }
   }
 
@@ -523,6 +521,7 @@ export class Dragula {
   }
 
   drag(e) {
+    e.preventDefault();
     if (!this._mirror) {
       return;
     }
@@ -531,7 +530,6 @@ export class Dragula {
       return;
     }
     this._lastRenderTime = Date.now();
-    e.preventDefault();
 
     let item = this._copy || this._item;
 
@@ -660,6 +658,7 @@ export class Dragula {
   }
 
 }
+
 //let debounce = require('./debounce');
 
 class EventListener {
