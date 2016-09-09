@@ -71,13 +71,13 @@
       "dist": "dist/amd"
     },
     "dependencies": {
-      "aurelia-binding": "^1.0.1",
+      "aurelia-binding": "^1.0.4",
       "aurelia-dependency-injection": "^1.0.0",
       "aurelia-pal-browser": "^1.0.0",
-      "aurelia-templating": "^1.0.0"
+      "aurelia-templating": "^1.1.0"
     },
     "devDependencies": {
-      "aurelia-polyfills": "^1.0.0"
+      "aurelia-polyfills": "^1.1.0"
     }
   },
   "directories": {
