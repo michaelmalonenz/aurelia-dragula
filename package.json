@@ -14,6 +14,7 @@
   "license": "MIT",
   "author": "Michael Malone",
   "main": "dist/commonjs/index.js",
+  "typings": "./aurelia-dragula.d.ts",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/michaelmalonenz/aurelia-dragula.git"
