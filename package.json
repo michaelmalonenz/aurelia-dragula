@@ -84,5 +84,13 @@
     "doc": "doc",
     "test": "test"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "aurelia": {
+    "build": {
+      "resources": [
+        "aurelia-dragula/dragula.css",
+        "aurelia-dragula/dragula-and-drop"
+      ]
+    }
+  }
 }
