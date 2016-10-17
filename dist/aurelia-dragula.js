@@ -243,18 +243,18 @@ export class Dragula {
 
   _events(remove) {
     let op = remove ? 'removeEventListener' : 'addEventListener';
-    touchy(document.body, op, 'mousedown', this.boundGrab);
-    touchy(document.body, op, 'mouseup', this.boundRelease);
+    touchy(document.documentElement, op, 'mousedown', this.boundGrab);
+    touchy(document.documentElement, op, 'mouseup', this.boundRelease);
   }
 
   _eventualMovements(remove) {
     let op = remove ? 'removeEventListener' : 'addEventListener';
-    touchy(document.body, op, 'mousemove', this.boundStart);
+    touchy(document.documentElement, op, 'mousemove', this.boundStart);
   }
 
   _movements(remove) {
     let op = remove ? 'removeEventListener' : 'addEventListener';
-    touchy(document.body, op, 'click', this.boundPreventGrabbed);
+    touchy(document.documentElement, op, 'click', this.boundPreventGrabbed);
   }
 
   destroy() {

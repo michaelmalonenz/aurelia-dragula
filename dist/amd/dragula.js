@@ -113,18 +113,18 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
 
     Dragula.prototype._events = function _events(remove) {
       var op = remove ? 'removeEventListener' : 'addEventListener';
-      (0, _touchy.touchy)(document.body, op, 'mousedown', this.boundGrab);
-      (0, _touchy.touchy)(document.body, op, 'mouseup', this.boundRelease);
+      (0, _touchy.touchy)(document.documentElement, op, 'mousedown', this.boundGrab);
+      (0, _touchy.touchy)(document.documentElement, op, 'mouseup', this.boundRelease);
     };
 
     Dragula.prototype._eventualMovements = function _eventualMovements(remove) {
       var op = remove ? 'removeEventListener' : 'addEventListener';
-      (0, _touchy.touchy)(document.body, op, 'mousemove', this.boundStart);
+      (0, _touchy.touchy)(document.documentElement, op, 'mousemove', this.boundStart);
     };
 
     Dragula.prototype._movements = function _movements(remove) {
       var op = remove ? 'removeEventListener' : 'addEventListener';
-      (0, _touchy.touchy)(document.body, op, 'click', this.boundPreventGrabbed);
+      (0, _touchy.touchy)(document.documentElement, op, 'click', this.boundPreventGrabbed);
     };
 
     Dragula.prototype.destroy = function destroy() {
