@@ -56,6 +56,10 @@ export function rm(el, className) {
 @bindable({ name: 'dragFn', attribute: 'drag-fn', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'dropFn', attribute: 'drop-fn', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'dragEndFn', attribute: 'drag-end-fn', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'clonedFn', attribute: 'cloned-fn', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'overFn', attribute: 'over-fn', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'outFn', attribute: 'out-fn', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'shadowFn', attribute: 'shadow-fn', defaultBindingMode: bindingMode.oneTime })
 @customElement('dragula-and-drop')
 @inlineView('<template><require from="./dragula.css"></require></template>')
 @inject(GLOBAL_OPTIONS)
@@ -89,7 +93,27 @@ export class DragulaAndDrop {
     this.dragula.on('dragend', (item, itemVM) => {
       if (typeof this.dragEndFn === 'function')
         this.dragEndFn({ item: item, itemVM: itemVM });
-    })
+    });
+
+    this.dragula.on('cloned', (mirror, item, itemVM) => {
+      if (typeof this.clonedFn === 'function')
+        this.clonedFn({ copy: copy, item: item, itemVM: itemVM });
+    });
+
+    this.dragula.on('over', (item, target, source, itemVM) => {
+      if (typeof this.overFn === 'function')
+        this.overFn({ item: item, target: target, source: source, itemVM: itemVM });
+    });
+
+    this.dragula.on('out', (item, target, source, itemVM) => {
+      if (typeof this.outFn === 'function')
+        this.outFn({ item: item, target: target, source: source, itemVM: itemVM });
+    });
+
+    this.dragula.on('shadow', (item, target, source, itemVM) => {
+      if (typeof this.shadowFn === 'function')
+        this.shadowFn({ item: item, target: target, source: source, itemVM: itemVM });
+    });
   }
 
   unbind() {
