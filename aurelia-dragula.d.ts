@@ -42,6 +42,4 @@ declare namespace dragula {
   function moveBefore(array: Array<any>, itemMatcherFn: (item: Element) => boolean, siblingMatcherFn: (item: Element) => boolean)
 }
 
-declare module "aurelia-dragula" {
-    export default Dragula;
-}
+export = dragula;
