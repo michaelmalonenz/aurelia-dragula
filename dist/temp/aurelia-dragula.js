@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Util = exports.Options = exports.DIRECTION = exports.GLOBAL_OPTIONS = exports.Emitter = exports.Dragula = exports.DragulaAndDrop = undefined;
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -300,8 +300,8 @@ var Dragula = exports.Dragula = function () {
     if (Util.isInput(item)) {
       item.focus();
     } else {
-        e.preventDefault();
-      }
+      e.preventDefault();
+    }
   };
 
   Dragula.prototype._startBecauseMouseMoved = function _startBecauseMouseMoved(e) {
@@ -695,7 +695,7 @@ var Dragula = exports.Dragula = function () {
 }();
 
 var EventListener = function EventListener(func) {
-  var once = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+  var once = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
   _classCallCheck(this, EventListener);
 
@@ -711,7 +711,7 @@ var Emitter = exports.Emitter = function () {
   }
 
   Emitter.prototype.on = function on(type, fn) {
-    var once = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+    var once = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
     var newEvent = new EventListener(fn, once);
     if (this.events[type] === undefined) {

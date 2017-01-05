@@ -1,6 +1,8 @@
 'use strict';
 
 System.register(['aurelia-dependency-injection', './touchy', './options', './util', './emitter', './classes'], function (_export, _context) {
+  "use strict";
+
   var inject, Container, touchy, GLOBAL_OPTIONS, Options, Util, Emitter, classes, _typeof, _createClass, MIN_TIME_BETWEEN_REDRAWS_MS, Dragula;
 
   function _classCallCheck(instance, Constructor) {
@@ -29,7 +31,7 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
       _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
         return typeof obj;
       } : function (obj) {
-        return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
       };
 
       _createClass = function () {
@@ -152,8 +154,8 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
           if (Util.isInput(item)) {
             item.focus();
           } else {
-              e.preventDefault();
-            }
+            e.preventDefault();
+          }
         };
 
         Dragula.prototype._startBecauseMouseMoved = function _startBecauseMouseMoved(e) {

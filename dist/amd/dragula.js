@@ -28,7 +28,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
   var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
     return typeof obj;
   } : function (obj) {
-    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
   };
 
   function _classCallCheck(instance, Constructor) {
@@ -157,8 +157,8 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       if (_util.Util.isInput(item)) {
         item.focus();
       } else {
-          e.preventDefault();
-        }
+        e.preventDefault();
+      }
     };
 
     Dragula.prototype._startBecauseMouseMoved = function _startBecauseMouseMoved(e) {

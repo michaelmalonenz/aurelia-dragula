@@ -1,6 +1,8 @@
 'use strict';
 
 System.register([], function (_export, _context) {
+  "use strict";
+
   var GLOBAL_OPTIONS, DIRECTION, Options;
 
   function _classCallCheck(instance, Constructor) {

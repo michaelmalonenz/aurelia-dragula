@@ -114,8 +114,8 @@ export let Dragula = class Dragula {
     if (Util.isInput(item)) {
       item.focus();
     } else {
-        e.preventDefault();
-      }
+      e.preventDefault();
+    }
   }
 
   _startBecauseMouseMoved(e) {

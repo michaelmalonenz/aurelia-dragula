@@ -1,6 +1,15 @@
 "use strict";
 
 System.register([], function (_export, _context) {
+  "use strict";
+
+  function moveBefore(array, itemMatcherFn, siblingMatcherFn) {
+    var removedItem = remove(array, itemMatcherFn);
+    var nextIndex = array.findIndex(siblingMatcherFn);
+    array.splice(nextIndex >= 0 ? nextIndex : array.length, 0, removedItem);
+  }
+
+  _export("moveBefore", moveBefore);
 
   function remove(array, matcherFn) {
     var index = array.findIndex(matcherFn);
@@ -10,13 +19,6 @@ System.register([], function (_export, _context) {
   }
   return {
     setters: [],
-    execute: function () {
-      function moveBefore(array, itemMatcherFn, siblingMatcherFn) {
-        var removedItem = remove(array, itemMatcherFn);
-        var nextIndex = array.findIndex(siblingMatcherFn);
-        array.splice(nextIndex >= 0 ? nextIndex : array.length, 0, removedItem);
-      }
-      _export("moveBefore", moveBefore);
-    }
+    execute: function () {}
   };
 });

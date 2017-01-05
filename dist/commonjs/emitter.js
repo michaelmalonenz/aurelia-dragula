@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var EventListener = function EventListener(func) {
-  var once = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+  var once = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
   _classCallCheck(this, EventListener);
 
@@ -23,7 +23,7 @@ var Emitter = exports.Emitter = function () {
   }
 
   Emitter.prototype.on = function on(type, fn) {
-    var once = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+    var once = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
     var newEvent = new EventListener(fn, once);
     if (this.events[type] === undefined) {

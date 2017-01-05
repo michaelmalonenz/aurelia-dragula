@@ -1,7 +1,22 @@
 'use strict';
 
 System.register(['./options', './dragula', './move-before'], function (_export, _context) {
+  "use strict";
+
   var Options, GLOBAL_OPTIONS, DIRECTION, Dragula, moveBefore;
+  function configure(config, callback) {
+    var defaults = new Options();
+    config.container.registerInstance(GLOBAL_OPTIONS, defaults);
+
+    if (callback !== undefined && typeof callback === 'function') {
+      callback(defaults);
+    }
+
+    config.globalResources(['./dragula-and-drop']);
+  }
+
+  _export('configure', configure);
+
   return {
     setters: [function (_options) {
       Options = _options.Options;
@@ -20,19 +35,6 @@ System.register(['./options', './dragula', './move-before'], function (_export, 
       _export('DIRECTION', DIRECTION);
 
       _export('moveBefore', moveBefore);
-
-      function configure(config, callback) {
-        var defaults = new Options();
-        config.container.registerInstance(GLOBAL_OPTIONS, defaults);
-
-        if (callback !== undefined && typeof callback === 'function') {
-          callback(defaults);
-        }
-
-        config.globalResources(['./dragula-and-drop']);
-      }
-
-      _export('configure', configure);
     }
   };
 });
