@@ -4,30 +4,15 @@ aurelia-dragula is an [Aurelia](https://aurelia.io) plugin which provides a simp
 
 Because of the way Aurelia works, I have decided to fork [Dragula](https://github.com/bevacqua/dragula) and make it a bit more friendly to the framework.
 
-I intend to make large structural and philosophical changes to the code (which is why I forked, rather than submit pull requests).  It is not that I thought the original is a bad library - far from it, it's a great, pure javascript interface for something that has traditionally been difficult, that suddenly isn't.  I just want a specialised version of it, which I didn't think I could achieve by making a wrapper of it.
-
 To develop for the library, run `npm install`, `jspm install`, `gulp build`, `gulp test`
 
-If installing in an aurelia application, `jspm install npm:aurelia-dragula` and remember to `aurelia.use.plugin('aurelia-dragula')` in your initialisation code.
+If installing in an aurelia application, `jspm install npm:aurelia-dragula` and remember to `aurelia.use.plugin('aurelia-dragula')` in your initialisation code.  Aurelia-dragula is also webpack compatible.
 
 As Aurelia doesn't support IE < 9, Aurelia-Dragula won't, either.  Aurelia-dragula has zero external dependencies.  None. Nada. Keine. Not a one.
 
 Aurelia Dragula differs from the upstream library, in that it also passes the view-models for the `item` (and `sibling` on the drop event) if the item being dragged corresponds to an Aurelia Custom Element.
 
 ##Usage
-
-```javascript
-import {Dragula} from 'aurelia-dragula';
-
-let dragula = new Dragula();
-```
-
-Because of the way aurelia works, it is recommended that the `dragend` event is subscribed to and `cancel` is then called, doing the manipulation of the view-models in JavaScript and letting aurelia re-render the changes.  This is not only recommended, but vital inside of a `repeat.for`.
-
-In fact, if you use the Aurelia Custom Element provided, instead of the raw Dragula object, then the `cancel`ling is done for you.
-
-###Custom Element
-The Custom Element is a convenience for Aurelia.  One can place an element on the page, set the selectors for the source and target containers and immediately get some Drag and Drop functionality.  It becomes a little more involved once actually moving things around on the page, but not a lot.  The main differences with this Element and using the raw API yourself, are that the `revertOnSpill` option is set to true by default and the drag operation is automatically cancelled.
 
 The element itself is called `dragula-and-drop` and you can bind all the options available for the main library (with camel-case converted to hyphenated attribute names in the standard way) to it as well as a couple of extras.  The functions are short-hand for binding to the equivalent events and should be bound with `.call` and if you want to receive arguments, they should be named the same as in the Type column below:
 
