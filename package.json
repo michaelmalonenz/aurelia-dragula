@@ -48,7 +48,7 @@
     "gulp-yuidoc": "^0.1.2",
     "jasmine": "^2.4.1",
     "jasmine-core": "^2.4.1",
-    "jspm": "^0.16.34",
+    "jspm": "^0.16.48",
     "karma": "^0.13.19",
     "karma-babel-preprocessor": "^6.0.1",
     "karma-chrome-launcher": "^0.1.12",
@@ -71,9 +71,9 @@
       "dist": "dist/amd"
     },
     "dependencies": {
-      "aurelia-binding": "^1.0.9",
+      "aurelia-binding": "^1.1.0",
       "aurelia-dependency-injection": "^1.2.0",
-      "aurelia-pal-browser": "^1.0.0",
+      "aurelia-pal-browser": "^1.1.0",
       "aurelia-templating": "^1.1.4"
     },
     "devDependencies": {
