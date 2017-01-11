@@ -60,7 +60,7 @@ System.register(['aurelia-templating', 'aurelia-binding', 'aurelia-dependency-in
             if (typeof _this.dragEndFn === 'function') _this.dragEndFn({ item: item, itemVM: itemVM });
           });
 
-          this.dragula.on('cloned', function (mirror, item, itemVM) {
+          this.dragula.on('cloned', function (copy, item, itemVM) {
             if (typeof _this.clonedFn === 'function') _this.clonedFn({ copy: copy, item: item, itemVM: itemVM });
           });
 

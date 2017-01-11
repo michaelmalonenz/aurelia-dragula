@@ -95,7 +95,7 @@ export class DragulaAndDrop {
         this.dragEndFn({ item: item, itemVM: itemVM });
     });
 
-    this.dragula.on('cloned', (mirror, item, itemVM) => {
+    this.dragula.on('cloned', (copy, item, itemVM) => {
       if (typeof this.clonedFn === 'function')
         this.clonedFn({ copy: copy, item: item, itemVM: itemVM });
     });

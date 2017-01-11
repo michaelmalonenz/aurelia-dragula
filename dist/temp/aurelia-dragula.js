@@ -98,7 +98,7 @@ var DragulaAndDrop = exports.DragulaAndDrop = (_dec = (0, _aureliaTemplating.bin
       if (typeof _this.dragEndFn === 'function') _this.dragEndFn({ item: item, itemVM: itemVM });
     });
 
-    this.dragula.on('cloned', function (mirror, item, itemVM) {
+    this.dragula.on('cloned', function (copy, item, itemVM) {
       if (typeof _this.clonedFn === 'function') _this.clonedFn({ copy: copy, item: item, itemVM: itemVM });
     });
 
