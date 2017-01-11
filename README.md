@@ -118,7 +118,7 @@ They can be used in conjunction with one another, with the individually set sett
     <td colspan="3">When the drag operation is set to begin, this function is called to see whether the item, just before sibling in the DOM, to be dragged from source, by clicking on handle is allowed to be dragged.  Returning true begins the drag operation, returning false stops the drag from happening.</td>
   </tr>
   <tr>
-    <td>accepts</td><td>function(item, source, handle, sibling):boolean</td><td>Options.always</td>
+    <td>accepts</td><td>function(item, target, source, sibling):boolean</td><td>Options.always</td>
   </tr>
   <tr>
     <td colspan="3">When the item, just before sibling, being dragged from source is dropped, this function is called to see whether the target container is allowed to accept the drop.  The resulting action depends on other options (revertOnSpill and removeOnSpill).  Returning true allows the drop, returning false causes the Spill action to complete.</td>
