@@ -87,32 +87,32 @@ export class DragulaAndDrop {
 
     this.dragula.on('drag', (item, source, itemVM) => {
       if (typeof this.dragFn === 'function')
-        this.dragFn({ item: item, source: source, itemVM: itemVM });
+        this.dragFn({ item, source, itemVM });
     });
 
     this.dragula.on('dragend', (item, itemVM) => {
       if (typeof this.dragEndFn === 'function')
-        this.dragEndFn({ item: item, itemVM: itemVM });
+        this.dragEndFn({ item, itemVM });
     });
 
-    this.dragula.on('cloned', (copy, item, itemVM) => {
+    this.dragula.on('cloned', (copy, item, type, itemVM) => {
       if (typeof this.clonedFn === 'function')
-        this.clonedFn({ copy: copy, item: item, itemVM: itemVM });
+        this.clonedFn({ copy, item, type, itemVM });
     });
 
     this.dragula.on('over', (item, target, source, itemVM) => {
       if (typeof this.overFn === 'function')
-        this.overFn({ item: item, target: target, source: source, itemVM: itemVM });
+        this.overFn({ item, target, source, itemVM });
     });
 
     this.dragula.on('out', (item, target, source, itemVM) => {
       if (typeof this.outFn === 'function')
-        this.outFn({ item: item, target: target, source: source, itemVM: itemVM });
+        this.outFn({ item, target, source, itemVM });
     });
 
     this.dragula.on('shadow', (item, target, source, itemVM) => {
       if (typeof this.shadowFn === 'function')
-        this.shadowFn({ item: item, target: target, source: source, itemVM: itemVM });
+        this.shadowFn({ item, target, source, itemVM });
     });
   }
 
@@ -123,7 +123,7 @@ export class DragulaAndDrop {
   _dropFunction(item, target, source, sibling, itemVM, siblingVM) {
     this.dragula.cancel();
     if (typeof this.dropFn === 'function')
-      this.dropFn({ item: item, target: target, source: source, sibling: sibling, itemVM: itemVM, siblingVM: siblingVM });
+      this.dropFn({ item, target, source, sibling, itemVM, siblingVM });
   }
 
   _isContainer(el) {
@@ -142,7 +142,7 @@ export class DragulaAndDrop {
 
   _moves(item, source, handle, sibling) {
     if (typeof this.moves === 'function') {
-      return this.moves({ item: item, source: source, handle: handle, sibling: sibling });
+      return this.moves({ item, source, handle, sibling });
     }
     else {
       return this.globalOptions.moves(item, source, handle, sibling);
@@ -151,7 +151,7 @@ export class DragulaAndDrop {
 
   _accepts(item, target, source, sibling) {
     if (typeof this.accepts === 'function') {
-      return this.accepts({ item: item, target: target, source: source, sibling: sibling });
+      return this.accepts({ item, target, source, sibling });
     }
     else {
       return this.globalOptions.accepts(item, target, source, sibling);
@@ -160,7 +160,7 @@ export class DragulaAndDrop {
 
   _invalid(item, handle) {
     if (typeof this.invalid === 'function') {
-      return this.invalid({ item: item, handle: handle });
+      return this.invalid({ item, handle });
     }
     else {
       return this.globalOptions.invalid(item, handle);
