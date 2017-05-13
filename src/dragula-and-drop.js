@@ -1,10 +1,9 @@
-import {customElement, bindable, noView} from 'aurelia-templating';
+import {customElement, bindable} from 'aurelia-templating';
 import {bindingMode} from 'aurelia-binding';
 import {inject} from 'aurelia-dependency-injection';
 
 import {Options, GLOBAL_OPTIONS} from './options';
 import {Dragula} from './dragula';
-import './dragula.css';
 
 @bindable({ name: 'moves', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'accepts', defaultBindingMode: bindingMode.oneTime })
@@ -28,7 +27,6 @@ import './dragula.css';
 @bindable({ name: 'outFn', attribute: 'out-fn', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'shadowFn', attribute: 'shadow-fn', defaultBindingMode: bindingMode.oneTime })
 @customElement('dragula-and-drop')
-@noView() // @inlineView('<template><require from="./dragula.css"></require></template>')
 @inject(GLOBAL_OPTIONS)
 export class DragulaAndDrop {
 
