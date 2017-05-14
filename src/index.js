@@ -1,6 +1,7 @@
 import {Options, GLOBAL_OPTIONS, DIRECTION} from './options';
 import {Dragula} from './dragula';
 import {moveBefore} from './move-before';
+// import {PLATFORM} from 'aurelia-framework'; // PLATFORM is already available
 
 export {Dragula, Options, DIRECTION, moveBefore};
 
@@ -12,5 +13,5 @@ export function configure(config, callback) {
     callback(defaults);
   }
 
-  config.globalResources(['./dragula-and-drop']);
+  config.globalResources([PLATFORM.moduleName('./dragula-and-drop')]);
 }
