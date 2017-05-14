@@ -60,7 +60,7 @@ export function rm(el, className) {
 @bindable({ name: 'overFn', attribute: 'over-fn', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'outFn', attribute: 'out-fn', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'shadowFn', attribute: 'shadow-fn', defaultBindingMode: bindingMode.oneTime })
-@useView('./dragula-and-drop.html')
+@useView(PLATFORM.moduleName('dragula-and-drop'))
 @customElement('dragula-and-drop')
 @inject(GLOBAL_OPTIONS)
 export class DragulaAndDrop {

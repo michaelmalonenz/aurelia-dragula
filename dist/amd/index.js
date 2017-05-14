@@ -18,6 +18,6 @@ define(['exports', './options', './dragula', './move-before', 'aurelia-pal'], fu
       callback(defaults);
     }
 
-    config.globalResources([_aureliaPal.PLATFORM.moduleName('./dragula-and-drop')]);
+    config.globalResources([_aureliaPal.PLATFORM.moduleName('dragula-and-drop')]);
   }
 });

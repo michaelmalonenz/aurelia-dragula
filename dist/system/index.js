@@ -12,7 +12,7 @@ System.register(['./options', './dragula', './move-before', 'aurelia-pal'], func
       callback(defaults);
     }
 
-    config.globalResources([PLATFORM.moduleName('./dragula-and-drop')]);
+    config.globalResources([PLATFORM.moduleName('dragula-and-drop')]);
   }
 
   _export('configure', configure);

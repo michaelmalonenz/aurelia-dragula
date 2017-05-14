@@ -26,5 +26,5 @@ function configure(config, callback) {
     callback(defaults);
   }
 
-  config.globalResources([_aureliaPal.PLATFORM.moduleName('./dragula-and-drop')]);
+  config.globalResources([_aureliaPal.PLATFORM.moduleName('dragula-and-drop')]);
 }
