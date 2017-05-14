@@ -1,4 +1,4 @@
-import {customElement,bindable,inlineView} from 'aurelia-templating';
+import {customElement,bindable,useView} from 'aurelia-templating';
 import {bindingMode} from 'aurelia-binding';
 import {inject,Container} from 'aurelia-dependency-injection';
 
@@ -60,8 +60,8 @@ export function rm(el, className) {
 @bindable({ name: 'overFn', attribute: 'over-fn', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'outFn', attribute: 'out-fn', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'shadowFn', attribute: 'shadow-fn', defaultBindingMode: bindingMode.oneTime })
+@useView('./dragula-and-drop.html')
 @customElement('dragula-and-drop')
-@inlineView('<template><require from="./dragula.css"></require></template>')
 @inject(GLOBAL_OPTIONS)
 export class DragulaAndDrop {
 

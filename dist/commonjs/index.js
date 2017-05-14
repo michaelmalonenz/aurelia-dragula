@@ -12,6 +12,8 @@ var _dragula = require('./dragula');
 
 var _moveBefore = require('./move-before');
 
+var _aureliaPal = require('aurelia-pal');
+
 exports.Dragula = _dragula.Dragula;
 exports.Options = _options.Options;
 exports.DIRECTION = _options.DIRECTION;
@@ -24,5 +26,5 @@ function configure(config, callback) {
     callback(defaults);
   }
 
-  config.globalResources(['./dragula-and-drop']);
+  config.globalResources([_aureliaPal.PLATFORM.moduleName('./dragula-and-drop')]);
 }

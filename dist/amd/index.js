@@ -1,4 +1,4 @@
-define(['exports', './options', './dragula', './move-before'], function (exports, _options, _dragula, _moveBefore) {
+define(['exports', './options', './dragula', './move-before', 'aurelia-pal'], function (exports, _options, _dragula, _moveBefore, _aureliaPal) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -18,6 +18,6 @@ define(['exports', './options', './dragula', './move-before'], function (exports
       callback(defaults);
     }
 
-    config.globalResources(['./dragula-and-drop']);
+    config.globalResources([_aureliaPal.PLATFORM.moduleName('./dragula-and-drop')]);
   }
 });
