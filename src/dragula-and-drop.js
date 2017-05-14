@@ -1,6 +1,7 @@
 import {customElement, bindable, useView} from 'aurelia-templating';
 import {bindingMode} from 'aurelia-binding';
 import {inject} from 'aurelia-dependency-injection';
+import {PLATFORM} from 'aurelia-pal';
 
 import {Options, GLOBAL_OPTIONS} from './options';
 import {Dragula} from './dragula';
