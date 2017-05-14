@@ -13,5 +13,5 @@ export function configure(config, callback) {
     callback(defaults);
   }
 
-  config.globalResources([PLATFORM.moduleName('dragula-and-drop')]);
+  config.globalResources([PLATFORM.moduleName('./dragula-and-drop')]);
 }

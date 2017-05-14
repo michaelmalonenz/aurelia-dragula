@@ -1,6 +1,7 @@
 import {customElement,bindable,useView} from 'aurelia-templating';
 import {bindingMode} from 'aurelia-binding';
 import {inject,Container} from 'aurelia-dependency-injection';
+import {PLATFORM} from 'aurelia-pal';
 
 /** This is purportedly necessary to support Internet Explorer (not Edge) properly (it doesn't support classList on SVG elements!) */
 
@@ -60,7 +61,7 @@ export function rm(el, className) {
 @bindable({ name: 'overFn', attribute: 'over-fn', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'outFn', attribute: 'out-fn', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'shadowFn', attribute: 'shadow-fn', defaultBindingMode: bindingMode.oneTime })
-@useView(PLATFORM.moduleName('dragula-and-drop'))
+@useView(PLATFORM.moduleName('./dragula-and-drop'))
 @customElement('dragula-and-drop')
 @inject(GLOBAL_OPTIONS)
 export class DragulaAndDrop {
