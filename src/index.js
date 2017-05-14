@@ -1,7 +1,7 @@
 import {Options, GLOBAL_OPTIONS, DIRECTION} from './options';
 import {Dragula} from './dragula';
 import {moveBefore} from './move-before';
-// import {PLATFORM} from 'aurelia-framework'; // PLATFORM is already available
+import {PLATFORM} from 'aurelia-pal';
 
 export {Dragula, Options, DIRECTION, moveBefore};
 
