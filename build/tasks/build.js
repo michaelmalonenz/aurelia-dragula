@@ -12,6 +12,7 @@ var through2 = require('through2');
 var tools = require('aurelia-tools');
 var concat = require('gulp-concat');
 var insert = require('gulp-insert');
+var htmlmin = require('gulp-htmlmin');
 
 var jsName = paths.packageName + '.js';
 
@@ -30,6 +31,7 @@ gulp.task('build', function(callback) {
     'clean',
     'build-index',
     ['build-es2015-temp', 'build-es2015', 'build-commonjs', 'build-amd', 'build-system'],
+    'build-html',
     'copy-css',
     callback
   );
@@ -89,5 +91,14 @@ gulp.task('copy-css', function() {
   [ 'es2015', 'commonjs', 'amd', 'system'].forEach(function(dir) {
     return gulp.src(paths.style)
       .pipe(gulp.dest(paths.output + dir));
+  });
+});
+
+gulp.task('build-html', function() {
+  [ 'es2015', 'commonjs', 'amd', 'system'].forEach(function(dir) {
+    return gulp.src(paths.html)
+    .pipe(changed(paths.output, {extension: '.html'}))
+    .pipe(htmlmin({ collapseWhitespace: true }))
+    .pipe(gulp.dest(paths.output + dir));
   });
 });
