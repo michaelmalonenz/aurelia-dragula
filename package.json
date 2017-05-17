@@ -94,6 +94,13 @@
         "aurelia-dragula/dragula.css",
         "aurelia-dragula/dragula-and-drop"
       ]
+    },
+    "import": {
+      "tutorial": [
+        "add aurelia.use.plugin('aurelia-dragula') in src/main.js/ts",
+        "in aurelia.json ensure the following resources are added",
+        "dragula-and-drop.js, dragula-and-drop.html, dragula.css"
+      ]
     }
   }
 }
