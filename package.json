@@ -48,7 +48,7 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-yuidoc": "^0.1.2",
     "jasmine": "^2.4.1",
-    "jasmine-core": "^2.4.1",
+    "jasmine-core": "^2.6.4",
     "jspm": "^0.16.53",
     "karma": "^0.13.22",
     "karma-babel-preprocessor": "^6.0.1",

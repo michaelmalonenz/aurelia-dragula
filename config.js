@@ -12,7 +12,7 @@ System.config({
     "aurelia-logging": "npm:aurelia-logging@1.3.1",
     "aurelia-pal": "npm:aurelia-pal@1.3.0",
     "aurelia-pal-browser": "npm:aurelia-pal-browser@1.2.1",
-    "aurelia-polyfills": "npm:aurelia-polyfills@1.2.1",
+    "aurelia-polyfills": "npm:aurelia-polyfills@1.2.2",
     "aurelia-templating": "npm:aurelia-templating@1.4.2",
     "npm:aurelia-binding@1.2.1": {
       "aurelia-logging": "npm:aurelia-logging@1.3.1",
@@ -34,7 +34,7 @@ System.config({
     "npm:aurelia-pal-browser@1.2.1": {
       "aurelia-pal": "npm:aurelia-pal@1.3.0"
     },
-    "npm:aurelia-polyfills@1.2.1": {
+    "npm:aurelia-polyfills@1.2.2": {
       "aurelia-pal": "npm:aurelia-pal@1.3.0"
     },
     "npm:aurelia-task-queue@1.2.0": {
