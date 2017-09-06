@@ -41,8 +41,8 @@ var DragulaAndDrop = exports.DragulaAndDrop = (_dec = (0, _aureliaTemplating.bin
       invalid: this._invalid.bind(this)
     };
 
-    var options = Object.assign(aureliaOptions, boundOptions);
-    this.dragula = new _dragula.Dragula(options);
+    this.options = Object.assign(aureliaOptions, boundOptions);
+    this.dragula = new _dragula.Dragula(this.options);
 
     this.dragula.on('drop', this._dropFunction.bind(this));
 
@@ -76,7 +76,7 @@ var DragulaAndDrop = exports.DragulaAndDrop = (_dec = (0, _aureliaTemplating.bin
   };
 
   DragulaAndDrop.prototype._dropFunction = function _dropFunction(item, target, source, sibling, itemVM, siblingVM) {
-    this.dragula.cancel();
+    this.dragula.cancel(this.options.revertOnSpill, true);
     if (typeof this.dropFn === 'function') this.dropFn({ item: item, target: target, source: source, sibling: sibling, itemVM: itemVM, siblingVM: siblingVM });
   };
 

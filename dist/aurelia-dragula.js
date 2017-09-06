@@ -81,8 +81,8 @@ export class DragulaAndDrop {
       invalid: this._invalid.bind(this)
     };
 
-    let options = Object.assign(aureliaOptions, boundOptions);
-    this.dragula = new Dragula(options);
+    this.options = Object.assign(aureliaOptions, boundOptions);
+    this.dragula = new Dragula(this.options);
 
     this.dragula.on('drop', this._dropFunction.bind(this));
 
@@ -122,7 +122,7 @@ export class DragulaAndDrop {
   }
 
   _dropFunction(item, target, source, sibling, itemVM, siblingVM) {
-    this.dragula.cancel();
+    this.dragula.cancel(this.options.revertOnSpill, true);
     if (typeof this.dropFn === 'function')
       this.dropFn({ item, target, source, sibling, itemVM, siblingVM });
   }
