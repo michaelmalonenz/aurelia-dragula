@@ -287,7 +287,7 @@ var Dragula = exports.Dragula = function () {
     this._cleanup();
   };
 
-  Dragula.prototype.cancel = function cancel(revert) {
+  Dragula.prototype.cancel = function cancel(revert, forceIgnoreRevert) {
     if (!this.dragging) {
       return;
     }
@@ -298,7 +298,7 @@ var Dragula = exports.Dragula = function () {
       parent.removeChild(this._copy);
     }
     var initial = this._isInitialPlacement(parent);
-    if (initial === false && !this._copy && reverts) {
+    if (initial === false && !this._copy && (reverts || forceIgnoreRevert)) {
       this._source.insertBefore(item, this._initialSibling);
     }
     if (initial || reverts) {

@@ -315,7 +315,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       this._cleanup();
     };
 
-    Dragula.prototype.cancel = function cancel(revert) {
+    Dragula.prototype.cancel = function cancel(revert, forceIgnoreRevert) {
       if (!this.dragging) {
         return;
       }
@@ -326,7 +326,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
         parent.removeChild(this._copy);
       }
       var initial = this._isInitialPlacement(parent);
-      if (initial === false && !this._copy && reverts) {
+      if (initial === false && !this._copy && (reverts || forceIgnoreRevert)) {
         this._source.insertBefore(item, this._initialSibling);
       }
       if (initial || reverts) {
