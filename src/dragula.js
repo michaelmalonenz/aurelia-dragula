@@ -274,7 +274,7 @@ export class Dragula {
     this._cleanup();
   }
 
-  cancel(revert, forceIgnoreRevert) {
+  cancel(revert, forceIgnoreRevert=false) {
     if (!this.dragging) {
       return;
     }
@@ -285,7 +285,7 @@ export class Dragula {
       parent.removeChild(this._copy);
     }
     let initial = this._isInitialPlacement(parent);
-    if (initial === false && !this._copy && (reverts || forceIgnoreRevert)) {
+    if (initial === false && !this._copy && reverts && !forceIgnoreRevert) {
       this._source.insertBefore(item, this._initialSibling);
     }
     if (initial || reverts) {
