@@ -312,7 +312,9 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
           this._cleanup();
         };
 
-        Dragula.prototype.cancel = function cancel(revert, forceIgnoreRevert) {
+        Dragula.prototype.cancel = function cancel(revert) {
+          var forceIgnoreRevert = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
           if (!this.dragging) {
             return;
           }
@@ -323,7 +325,7 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
             parent.removeChild(this._copy);
           }
           var initial = this._isInitialPlacement(parent);
-          if (initial === false && !this._copy && (reverts || forceIgnoreRevert)) {
+          if (initial === false && !this._copy && reverts && !forceIgnoreRevert) {
             this._source.insertBefore(item, this._initialSibling);
           }
           if (initial || reverts) {
