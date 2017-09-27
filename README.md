@@ -99,9 +99,10 @@ let dragula = new Dragula(options);
 ```
 or
 ```javascript
-aurelia.use('aurelia-dragula', (options) => {
-  options.revertOnSpill = false;
-});
+aurelia.use
+  .plugin('aurelia-dragula', (options) => {
+    options.revertOnSpill = false;
+  });
 ```
 
 They can be used in conjunction with one another, with the individually set settings taking precedence over the global settings.
