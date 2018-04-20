@@ -155,7 +155,7 @@ They can be used in conjunction with one another, with the individually set sett
     <td colspan="3"></td>
   </tr>
   <tr>
-    <td>revertOnSpill</td><td>boolean</td><td>false</td>
+    <td>revertOnSpill</td><td>boolean</td><td>true</td>
   </tr>
   <tr>
     <td colspan="3">If the item is dropped outside of a valid container, then the drag operation will be reverted.</td>
