@@ -321,6 +321,10 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       if (!this.dragging) {
         return;
       }
+
+      if (this._initialSibling.nodeName === '#comment' && this._initialSibling.data === 'anchor') {
+        forceIgnoreRevert = false;
+      }
       var reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
       var item = this._copy || this._item;
       var parent = _util.Util.getParent(item);

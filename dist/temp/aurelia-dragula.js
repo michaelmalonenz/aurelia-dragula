@@ -466,6 +466,10 @@ var Dragula = exports.Dragula = function () {
     if (!this.dragging) {
       return;
     }
+
+    if (this._initialSibling.nodeName === '#comment' && this._initialSibling.data === 'anchor') {
+      forceIgnoreRevert = false;
+    }
     var reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
     var item = this._copy || this._item;
     var parent = Util.getParent(item);

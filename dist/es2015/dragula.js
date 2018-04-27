@@ -276,6 +276,10 @@ export let Dragula = class Dragula {
     if (!this.dragging) {
       return;
     }
+
+    if (this._initialSibling.nodeName === '#comment' && this._initialSibling.data === 'anchor') {
+      forceIgnoreRevert = false;
+    }
     let reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
     let item = this._copy || this._item;
     let parent = Util.getParent(item);

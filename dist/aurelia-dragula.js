@@ -476,6 +476,11 @@ export class Dragula {
     if (!this.dragging) {
       return;
     }
+    // If the initial sibling is the Aurelia <!--anchor--> node, then we have to
+    // re-render on Aurelia's behalf.
+    if (this._initialSibling.nodeName === '#comment' && this._initialSibling.data === 'anchor') {
+      forceIgnoreRevert = false;
+    }
     let reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
     let item = this._copy || this._item;
     let parent = Util.getParent(item);
