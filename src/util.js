@@ -1,3 +1,5 @@
+import * as classes from './classes'
+
 class _Util {
   nextEl (el) {
     return el.nextElementSibling || manually()
@@ -51,13 +53,13 @@ class _Util {
 
   getElementBehindPoint (point, x, y) {
     if (point) {
-      point.classList.add('gu-hide')
+      classes.add(point, 'gu-hide')
     }
 
     let el = document.elementFromPoint(x, y)
 
     if (point) {
-      point.classList.remove('gu-hide')
+      classes.rm(point, 'gu-hide')
     }
     return el
   }
