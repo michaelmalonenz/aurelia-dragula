@@ -91,7 +91,7 @@ describe('drag', function () {
     raise(item2, 'mousedown', { which: 1 })
     raise(item2, 'mousemove', { which: 1 })
 
-    expect(this.drake.dragging).toBe(true, 'final state is drake is dragging')
+    expect(this.drake.dragging).toBe(true, 'final state of drake is dragging')
   })
 
   it('when already dragged, ends (drops) previous drag', function () {
@@ -174,7 +174,7 @@ describe('drag', function () {
     raise(item, 'mousedown', { which: 1 })
     raise(item, 'mousemove', { which: 1 })
 
-    expect(item.className).toBe('gu-transit', 'item has gu-transit class')
+    expect(item.className).toBe('gu-transit', 'item should have gu-transit class')
   })
 
   it('when dragging, body gets gu-unselectable class', function () {

@@ -148,7 +148,8 @@ export class Dragula {
     this._offsetX = Util.getCoord('pageX', e) - offset.left
     this._offsetY = Util.getCoord('pageY', e) - offset.top
 
-    classes.add(this._copy || this._item, 'gu-transit')
+    let item = this._copy || this._item
+    classes.add(item, 'gu-transit')
     this.renderMirrorImage()
     this.drag(e)
   }
@@ -358,7 +359,7 @@ export class Dragula {
       return
     }
 
-    if (this._lastRenderTime !== null && Date.now() - this._lastRenderTime < MIN_TIME_BETWEEN_REDRAWS_MS) {
+    if (this._lastRenderTime != null && Date.now() - this._lastRenderTime < MIN_TIME_BETWEEN_REDRAWS_MS) {
       return
     }
     this._lastRenderTime = Date.now()
@@ -379,8 +380,8 @@ export class Dragula {
 
     let elementBehindCursor = Util.getElementBehindPoint(this._mirror, clientX, clientY)
     let dropTarget = this._findDropTarget(elementBehindCursor, clientX, clientY)
-    let changed = dropTarget !== null && dropTarget !== this._lastDropTarget
-    if (changed || dropTarget === null) {
+    let changed = dropTarget != null && dropTarget !== this._lastDropTarget
+    if (changed || dropTarget == null) {
       out()
       this._lastDropTarget = dropTarget
       over()
@@ -394,7 +395,7 @@ export class Dragula {
     }
     let reference
     let immediate = Util.getImmediateChild(dropTarget, elementBehindCursor)
-    if (immediate !== null) {
+    if (immediate != null) {
       reference = this.getReference(dropTarget, immediate, clientX, clientY)
     } else if (this.options.revertOnSpill === true && !this._copy) {
       reference = this._initialSibling
@@ -406,7 +407,7 @@ export class Dragula {
       return
     }
     if (
-      (reference === null && changed) ||
+      (reference == null && changed) ||
       reference !== item &&
       reference !== Util.nextEl(item)
     ) {

@@ -79,7 +79,6 @@ class _Util {
 
   getCoord (coord, e) {
     let host = this.getEventHost(e)
-    console.log(host, coord, host[coord])
     return host[coord]
   }
 
