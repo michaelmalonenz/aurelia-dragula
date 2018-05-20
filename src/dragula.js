@@ -26,7 +26,7 @@ export class Dragula {
     this.boundPreventGrabbed = this._preventGrabbed.bind(this)
     this.boundDrag = this.drag.bind(this)
 
-    this._events()
+    this._addEvents()
 
     this._mirror // mirror image
     this._source // source container
@@ -67,10 +67,14 @@ export class Dragula {
     return this.options.containers.indexOf(el) !== -1 || this.options.isContainer(el)
   }
 
-  _events (remove) {
-    let op = remove ? 'removeEventListener' : 'addEventListener'
-    touchy(document.documentElement, op, 'mousedown', this.boundGrab)
-    touchy(document.documentElement, op, 'mouseup', this.boundRelease)
+  _addEvents () {
+    touchy(document.documentElement, 'addEventListener', 'mousedown', this.boundGrab)
+    touchy(document.documentElement, 'addEventListener', 'mouseup', this.boundRelease)
+  }
+
+  _removeEvents () {
+    touchy(document.documentElement, 'removeEventListener', 'mousedown', this.boundGrab)
+    touchy(document.documentElement, 'removeEventListener', 'mouseup', this.boundRelease)
   }
 
   _eventualMovements (remove) {
@@ -84,7 +88,7 @@ export class Dragula {
   }
 
   destroy () {
-    this._events(true)
+    this._removeEvents()
     this._release({})
     this._emitter.destroy()
   }
@@ -205,6 +209,7 @@ export class Dragula {
 
     this._source = context.source
     this._item = context.item
+    // _initialSibling might be a comment node if it's the last item of the container
     this._initialSibling = context.item.nextSibling
     this._currentSibling = Util.nextEl(context.item)
 
@@ -325,7 +330,8 @@ export class Dragula {
     } else if (this._mirror) {
       sibling = this._currentSibling
     } else {
-      sibling = (this._copy || this._item).nextSibling
+      let item = this._copy || this._item
+      sibling = item.nextSibling
     }
     return target === this._source && sibling === this._initialSibling
   }
@@ -451,11 +457,10 @@ export class Dragula {
   }
 
   getReference (dropTarget, target, x, y) {
+    const horizontal = this.options.direction === 'horizontal'
     let outside = () => { // slower, but able to figure out any position
       let len = dropTarget.children.length
-      let i
-      let el
-      let rect
+      let i, el, rect
       for (i = 0; i < len; i++) {
         el = dropTarget.children[i]
         rect = el.getBoundingClientRect()
@@ -472,12 +477,11 @@ export class Dragula {
     let inside = () => { // faster, but only available if dropped inside a child element
       let rect = target.getBoundingClientRect()
       if (horizontal) {
-        return resolve(x > rect.left + Util.getRectWidth(rect) / 2)
+        return resolve(x > (rect.left + Util.getRectWidth(rect) / 2))
       }
-      return resolve(y > rect.top + Util.getRectHeight(rect) / 2)
+      return resolve(y > (rect.top + Util.getRectHeight(rect) / 2))
     }
 
-    let horizontal = this.options.direction === 'horizontal'
     let reference = target !== dropTarget ? inside() : outside()
     return reference
   }
