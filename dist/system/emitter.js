@@ -55,7 +55,9 @@ System.register([], function (_export, _context) {
               var index = eventList.findIndex(function (x) {
                 return x.func === fn;
               });
-              if (index >= 0) eventList.splice(index, 1);
+              if (index >= 0) {
+                eventList.splice(index, 1);
+              }
             }
           }
         };

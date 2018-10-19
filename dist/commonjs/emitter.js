@@ -47,7 +47,9 @@ var Emitter = exports.Emitter = function () {
         var index = eventList.findIndex(function (x) {
           return x.func === fn;
         });
-        if (index >= 0) eventList.splice(index, 1);
+        if (index >= 0) {
+          eventList.splice(index, 1);
+        }
       }
     }
   };

@@ -3,6 +3,13 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.Util = undefined;
+
+var _classes = require('./classes');
+
+var classes = _interopRequireWildcard(_classes);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -36,16 +43,6 @@ var _Util = function () {
     if (button !== void 0) {
       return button & 1 ? 1 : button & 2 ? 3 : button & 4 ? 2 : 0;
     }
-  };
-
-  _Util.prototype.getElementBehindPoint = function getElementBehindPoint(point, x, y) {
-    var p = point || {};
-    var state = p.className;
-    var el = void 0;
-    p.className += ' gu-hide';
-    el = document.elementFromPoint(x, y);
-    p.className = state;
-    return el;
   };
 
   _Util.prototype.getParent = function getParent(el) {
@@ -96,11 +93,15 @@ var _Util = function () {
   };
 
   _Util.prototype.getElementBehindPoint = function getElementBehindPoint(point, x, y) {
-    if (point) point.classList.add('gu-hide');
+    if (point) {
+      classes.add(point, 'gu-hide');
+    }
 
     var el = document.elementFromPoint(x, y);
 
-    if (point) point.classList.remove('gu-hide');
+    if (point) {
+      classes.rm(point, 'gu-hide');
+    }
     return el;
   };
 
@@ -132,7 +133,11 @@ var _Util = function () {
 
   _Util.prototype.getViewModel = function getViewModel(element) {
     if (element && element.au && element.au.controller) {
-      if (element.au.controller.viewModel.currentViewModel) return element.au.controller.viewModel.currentViewModel;else return element.au.controller.viewModel;
+      if (element.au.controller.viewModel.currentViewModel) {
+        return element.au.controller.viewModel.currentViewModel;
+      } else {
+        return element.au.controller.viewModel;
+      }
     }
     return null;
   };

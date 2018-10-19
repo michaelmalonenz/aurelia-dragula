@@ -26,7 +26,8 @@ var Options = exports.Options = function () {
     this.copySortSource = false;
     this.revertOnSpill = false;
     this.removeOnSpill = false;
-    this.direction = DIRECTION.VERTICAL, this.ignoreInputTextSelection = true;
+    this.direction = DIRECTION.VERTICAL;
+    this.ignoreInputTextSelection = true;
     this.mirrorContainer = document.body;
   }
 
