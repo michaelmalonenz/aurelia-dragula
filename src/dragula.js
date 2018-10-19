@@ -89,7 +89,7 @@ export class Dragula {
 
   destroy () {
     this._removeEvents()
-    this._release({})
+    this._release({clientX: -1, clientY: -1})
     this._emitter.destroy()
   }
 
