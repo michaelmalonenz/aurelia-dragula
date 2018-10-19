@@ -292,11 +292,10 @@ export class Dragula {
     let reverts = arguments.length > 0 ? revert : this.options.revertOnSpill
     let item = this._copy || this._item
     let parent = Util.getParent(item)
-    if (this._copy && parent) {
-      parent.removeChild(this._copy)
-    }
     let initial = this._isInitialPlacement(parent)
-    if (initial === false && !this._copy && reverts && !forceIgnoreRevert) {
+    if (initial === false && reverts && this._copy && parent && parent !== this._source) {
+      parent.removeChild(this._copy)
+    } else {
       this._source.insertBefore(item, this._initialSibling)
     }
     if (initial || reverts) {
