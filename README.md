@@ -12,7 +12,7 @@ As Aurelia doesn't support IE < 9, Aurelia-Dragula won't, either.  Aurelia-dragu
 
 Aurelia Dragula differs from the upstream library, in that it also passes the view-models for the `item` (and `sibling` on the drop event) if the item being dragged corresponds to an Aurelia Custom Element.
 
-##Usage
+## Usage
 
 The element itself is called `dragula-and-drop` and you can bind all the options available for the main library (with camel-case converted to hyphenated attribute names in the standard way) to it as well as a couple of extras.  The functions are short-hand for binding to the equivalent events and should be bound with `.call` and if you want to receive arguments, they should be named the same as in the Type column below:
 
@@ -87,7 +87,7 @@ Where `array` is the array in which to move the objects,
 A more complete example is available [here](https://github.com/michaelmalonenz/aurelia-dragula-example).
 
 
-###Options
+### Options
 `import {Options} from 'aurelia-dragula;`
 
 The options can either be passed in as a parameter to the Dragula constructor for individual instances, or can be set globally during plugin configuration:
@@ -99,9 +99,10 @@ let dragula = new Dragula(options);
 ```
 or
 ```javascript
-aurelia.use('aurelia-dragula', (options) => {
-  options.revertOnSpill = false;
-});
+aurelia.use
+  .plugin('aurelia-dragula', (options) => {
+    options.revertOnSpill = false;
+  });
 ```
 
 They can be used in conjunction with one another, with the individually set settings taking precedence over the global settings.
@@ -186,7 +187,7 @@ They can be used in conjunction with one another, with the individually set sett
 </table>
 
 
-###Events
+### Events
 Events can be subscribed to by calling `dragula.on` with the event name and a callback.  They can be registered for multiple times, with different callbacks.
 
 ```javascript

@@ -52,7 +52,9 @@ define(['exports'], function (exports) {
           var index = eventList.findIndex(function (x) {
             return x.func === fn;
           });
-          if (index >= 0) eventList.splice(index, 1);
+          if (index >= 0) {
+            eventList.splice(index, 1);
+          }
         }
       }
     };

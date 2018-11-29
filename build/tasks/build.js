@@ -30,7 +30,7 @@ gulp.task('build', function(callback) {
   return runSequence(
     'clean',
     'build-index',
-    ['build-es2015-temp', 'build-es2015', 'build-commonjs', 'build-amd', 'build-system'],
+    ['build-commonjs', 'build-amd', 'build-system'],
     'build-html',
     'copy-css',
     callback
@@ -57,18 +57,6 @@ gulp.task('build-index', function(){
     .pipe(gulp.dest(paths.output));
 });
 
-gulp.task('build-es2015-temp', function () {
-    return gulp.src(paths.output + jsName)
-      .pipe(to5(assign({}, compilerOptions.commonjs())))
-      .pipe(gulp.dest(paths.output + 'temp'));
-});
-
-gulp.task('build-es2015', function () {
-  return gulp.src(paths.source)
-    .pipe(to5(assign({}, compilerOptions.es2015())))
-    .pipe(gulp.dest(paths.output + 'es2015'));
-});
-
 gulp.task('build-commonjs', function () {
   return gulp.src(paths.source)
     .pipe(to5(assign({}, compilerOptions.commonjs())))
@@ -88,7 +76,7 @@ gulp.task('build-system', function () {
 });
 
 gulp.task('copy-css', function() {
-  [ 'es2015', 'commonjs', 'amd', 'system'].forEach(function(dir) {
+  [ 'commonjs', 'amd', 'system'].forEach(function(dir) {
     return gulp.src(paths.style)
       .pipe(gulp.dest(paths.output + dir));
   });

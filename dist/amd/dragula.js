@@ -61,7 +61,6 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
     function Dragula(options) {
       _classCallCheck(this, Dragula);
 
-      var len = arguments.length;
       var globalOptions = _aureliaDependencyInjection.Container.instance.get(_options.GLOBAL_OPTIONS);
       this.options = Object.assign({}, globalOptions, options);
       this._emitter = new _emitter.Emitter();
@@ -78,7 +77,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       this.boundPreventGrabbed = this._preventGrabbed.bind(this);
       this.boundDrag = this.drag.bind(this);
 
-      this._events();
+      this._addEvents();
 
       this._mirror;
       this._source;
@@ -111,10 +110,14 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       return this.options.containers.indexOf(el) !== -1 || this.options.isContainer(el);
     };
 
-    Dragula.prototype._events = function _events(remove) {
-      var op = remove ? 'removeEventListener' : 'addEventListener';
-      (0, _touchy.touchy)(document.documentElement, op, 'mousedown', this.boundGrab);
-      (0, _touchy.touchy)(document.documentElement, op, 'mouseup', this.boundRelease);
+    Dragula.prototype._addEvents = function _addEvents() {
+      (0, _touchy.touchy)(document.documentElement, 'addEventListener', 'mousedown', this.boundGrab);
+      (0, _touchy.touchy)(document.documentElement, 'addEventListener', 'mouseup', this.boundRelease);
+    };
+
+    Dragula.prototype._removeEvents = function _removeEvents() {
+      (0, _touchy.touchy)(document.documentElement, 'removeEventListener', 'mousedown', this.boundGrab);
+      (0, _touchy.touchy)(document.documentElement, 'removeEventListener', 'mouseup', this.boundRelease);
     };
 
     Dragula.prototype._eventualMovements = function _eventualMovements(remove) {
@@ -128,8 +131,8 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
     };
 
     Dragula.prototype.destroy = function destroy() {
-      this._events(true);
-      this._release({});
+      this._removeEvents();
+      this._release({ clientX: -1, clientY: -1 });
       this._emitter.destroy();
     };
 
@@ -192,7 +195,8 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       this._offsetX = _util.Util.getCoord('pageX', e) - offset.left;
       this._offsetY = _util.Util.getCoord('pageY', e) - offset.top;
 
-      classes.add(this._copy || this._item, 'gu-transit');
+      var item = this._copy || this._item;
+      classes.add(item, 'gu-transit');
       this.renderMirrorImage();
       this.drag(e);
     };
@@ -248,6 +252,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
 
       this._source = context.source;
       this._item = context.item;
+
       this._initialSibling = context.item.nextSibling;
       this._currentSibling = _util.Util.nextEl(context.item);
 
@@ -292,7 +297,9 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
     Dragula.prototype.drop = function drop(item, target) {
       if (this._copy && this.options.copySortSource && target === this._source) {
         var parent = _util.Util.getParent(this._item);
-        if (parent) parent.removeChild(this._item);
+        if (parent) {
+          parent.removeChild(this._item);
+        }
       }
       if (this._isInitialPlacement(target)) {
         this._emitter.emit('cancel', item, this._source, this._source, _util.Util.getViewModel(this._item));
@@ -316,17 +323,22 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
     };
 
     Dragula.prototype.cancel = function cancel(revert) {
+      var forceIgnoreRevert = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
       if (!this.dragging) {
         return;
+      }
+
+      if (this._initialSibling && this._initialSibling.nodeName === '#comment' && this._initialSibling.data === 'anchor') {
+        forceIgnoreRevert = false;
       }
       var reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
       var item = this._copy || this._item;
       var parent = _util.Util.getParent(item);
-      if (this._copy && parent) {
-        parent.removeChild(this._copy);
-      }
       var initial = this._isInitialPlacement(parent);
-      if (initial === false && !this._copy && reverts) {
+      if (initial === false && reverts && this._copy && parent && parent !== this._source) {
+        parent.removeChild(this._copy);
+      } else {
         this._source.insertBefore(item, this._initialSibling);
       }
       if (initial || reverts) {
@@ -359,7 +371,8 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       } else if (this._mirror) {
         sibling = this._currentSibling;
       } else {
-        sibling = (this._copy || this._item).nextSibling;
+        var item = this._copy || this._item;
+        sibling = item.nextSibling;
       }
       return target === this._source && sibling === this._initialSibling;
     };
@@ -397,7 +410,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
         return;
       }
 
-      if (this._lastRenderTime !== null && Date.now() - this._lastRenderTime < MIN_TIME_BETWEEN_REDRAWS_MS) {
+      if (this._lastRenderTime != null && Date.now() - this._lastRenderTime < MIN_TIME_BETWEEN_REDRAWS_MS) {
         return;
       }
       this._lastRenderTime = Date.now();
@@ -428,8 +441,8 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
 
       var elementBehindCursor = _util.Util.getElementBehindPoint(this._mirror, clientX, clientY);
       var dropTarget = this._findDropTarget(elementBehindCursor, clientX, clientY);
-      var changed = dropTarget !== null && dropTarget !== this._lastDropTarget;
-      if (changed || dropTarget === null) {
+      var changed = dropTarget != null && dropTarget !== this._lastDropTarget;
+      if (changed || dropTarget == null) {
         out();
         this._lastDropTarget = dropTarget;
         over();
@@ -443,7 +456,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
       }
       var reference = void 0;
       var immediate = _util.Util.getImmediateChild(dropTarget, elementBehindCursor);
-      if (immediate !== null) {
+      if (immediate != null) {
         reference = this.getReference(dropTarget, immediate, clientX, clientY);
       } else if (this.options.revertOnSpill === true && !this._copy) {
         reference = this._initialSibling;
@@ -454,7 +467,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
         }
         return;
       }
-      if (reference === null && changed || reference !== item && reference !== _util.Util.nextEl(item)) {
+      if (reference == null && changed || reference !== item && reference !== _util.Util.nextEl(item)) {
         this._currentSibling = reference;
         dropTarget.insertBefore(item, reference);
         this._emitter.emit('shadow', item, dropTarget, this._source, _util.Util.getViewModel(item));
@@ -497,11 +510,12 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
     };
 
     Dragula.prototype.getReference = function getReference(dropTarget, target, x, y) {
+      var horizontal = this.options.direction === 'horizontal';
       var outside = function outside() {
         var len = dropTarget.children.length;
-        var i = void 0;
-        var el = void 0;
-        var rect = void 0;
+        var i = void 0,
+            el = void 0,
+            rect = void 0;
         for (i = 0; i < len; i++) {
           el = dropTarget.children[i];
           rect = el.getBoundingClientRect();
@@ -527,7 +541,6 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
         return resolve(y > rect.top + _util.Util.getRectHeight(rect) / 2);
       };
 
-      var horizontal = this.options.direction === 'horizontal';
       var reference = target !== dropTarget ? inside() : outside();
       return reference;
     };
