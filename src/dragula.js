@@ -130,7 +130,10 @@ export class Dragula {
       return // when text is selected on an input and then dragged, mouseup doesn't fire. this is our only hope
     }
     // truthy check fixes #239, equality fixes #207
-    if (e.clientX !== void 0 && e.clientX === this._moveX && e.clientY !== void 0 && e.clientY === this._moveY) {
+    if (e.clientX !== void 0 &&
+      e.clientX === this._moveX &&
+      e.clientY !== void 0 &&
+      e.clientY === this._moveY) {
       return
     }
     if (this.options.ignoreInputTextSelection) {

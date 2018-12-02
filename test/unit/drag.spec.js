@@ -88,8 +88,8 @@ describe('drag', function () {
       expect(container).toBe(div, 'second argument is container')
     })
 
-    raise(item2, 'mousedown', { which: 1 })
-    raise(item2, 'mousemove', { which: 1 })
+    raise(item2, 'mousedown', { which: 1, clientX: 10, clientY: 10 })
+    raise(item2, 'mousemove', { which: 1, clientX: 15, clientY: 15 })
 
     expect(this.drake.dragging).toBe(true, 'final state of drake is dragging')
   })
@@ -113,8 +113,8 @@ describe('drag', function () {
     drake.on('drop', drop)
     drake.on('drag', drag)
 
-    raise(item2, 'mousedown', { which: 1 })
-    raise(item2, 'mousemove', { which: 1 })
+    raise(item2, 'mousedown', { which: 1, clientX: 10, clientY: 10 })
+    raise(item2, 'mousemove', { which: 1, clientX: 15, clientY: 15 })
 
     expect(drake.dragging).toBe(true, 'final state is drake is dragging')
 
@@ -147,8 +147,8 @@ describe('drag', function () {
     drake.on('cloned', cloned)
     drake.on('drag', drag)
 
-    raise(item2, 'mousedown', { which: 1 })
-    raise(item2, 'mousemove', { which: 1 })
+    raise(item2, 'mousedown', { which: 1, clientX: 10, clientY: 10 })
+    raise(item2, 'mousemove', { which: 1, clientX: 15, clientY: 15 })
 
     expect(drake.dragging).toBe(true, 'final state is drake is dragging')
 
@@ -171,8 +171,8 @@ describe('drag', function () {
     div.appendChild(item)
     document.body.appendChild(div)
 
-    raise(item, 'mousedown', { which: 1 })
-    raise(item, 'mousemove', { which: 1 })
+    raise(item, 'mousedown', { which: 1, clientX: 10, clientY: 10 })
+    raise(item, 'mousemove', { which: 1, clientX: 15, clientY: 15 })
 
     expect(item.className).toBe('gu-transit', 'item should have gu-transit class')
   })
@@ -184,22 +184,22 @@ describe('drag', function () {
     div.appendChild(item)
     document.body.appendChild(div)
 
-    raise(item, 'mousedown', { which: 1 })
-    raise(item, 'mousemove', { which: 1 })
+    raise(item, 'mousedown', { which: 1, clientX: 10, clientY: 10 })
+    raise(item, 'mousemove', { which: 1, clientX: 15, clientY: 15 })
 
     expect(document.body.className).toBe('gu-unselectable', 'body has gu-unselectable class')
   })
 
   it('when dragging, source radio inputs retain their checked attribute', function () {
-    var div = document.createElement('div');
-    var item = document.createElement('div');
-    var drake = createDragula([div]);
-    item.innerHTML = '<em><input type=radio name=foo checked /></em>';
-    div.appendChild(item);
-    document.body.appendChild(div);
-    drake.on('cloned', cloned);
-    raise(item, 'mousedown', { which: 1 });
-    raise(item, 'mousemove', { which: 1 });
+    var div = document.createElement('div')
+    var item = document.createElement('div')
+    var drake = createDragula([div])
+    item.innerHTML = '<em><input type=radio name=foo checked /></em>'
+    div.appendChild(item)
+    document.body.appendChild(div)
+    drake.on('cloned', cloned)
+    raise(item, 'mousedown', { which: 1, clientX: 10, clientY: 10 })
+    raise(item, 'mousemove', { which: 1, clientX: 15, clientY: 15 })
     function cloned (mirror) {
       expect(item.getElementsByTagName('input')[0].checked).toBeTruthy()
       expect(mirror.getElementsByTagName('input')[0].checked).toBeTruthy()
@@ -216,8 +216,8 @@ describe('drag', function () {
 
     drake.on('cloned', cloned)
 
-    raise(item, 'mousedown', { which: 1 })
-    raise(item, 'mousemove', { which: 1 })
+    raise(item, 'mousedown', { which: 1, clientX: 10, clientY: 10 })
+    raise(item, 'mousemove', { which: 1, clientX: 15, clientY: 15 })
 
     function cloned (mirror, target) {
       expect(item.className).toBe('gu-transit', 'item does not have gu-mirror class')
@@ -242,8 +242,8 @@ describe('drag', function () {
 
     drake.on('cloned', cloned)
 
-    raise(item, 'mousedown', { which: 1 })
-    raise(item, 'mousemove', { which: 1 })
+    raise(item, 'mousedown', { which: 1, clientX: 10, clientY: 10 })
+    raise(item, 'mousemove', { which: 1, clientX: 15, clientY: 15 })
 
     function cloned (mirror) {
       expect(mirror.parentNode).toBe(mirrorContainer, 'mirrors parent is the configured mirrorContainer')
@@ -257,8 +257,8 @@ describe('drag', function () {
     div.appendChild(item)
     document.body.appendChild(div)
 
-    raise(item, 'mousedown', { which: 1 })
-    raise(item, 'mousemove', { which: 1 })
+    raise(item, 'mousedown', { which: 1, clientX: 10, clientY: 10 })
+    raise(item, 'mousemove', { which: 1, clientX: 15, clientY: 15 })
 
     expect(item.className).toBe('gu-transit', 'item has gu-transit class')
 
@@ -274,8 +274,8 @@ describe('drag', function () {
     div.appendChild(item)
     document.body.appendChild(div)
 
-    raise(item, 'mousedown', { which: 1 })
-    raise(item, 'mousemove', { which: 1 })
+    raise(item, 'mousedown', { which: 1, clientX: 10, clientY: 10 })
+    raise(item, 'mousemove', { which: 1, clientX: 15, clientY: 15 })
 
     expect(document.body.className).toBe('gu-unselectable', 'body has gu-unselectable class')
 
@@ -296,9 +296,10 @@ describe('drag', function () {
     div.appendChild(item)
     document.body.appendChild(div)
 
-    raise(item, 'mousedown', { which: 1 })
-    raise(item, 'mousemove', { which: 1 })
-    raise(item, 'mousemove', { which: 1 }) // ensure the copy method condition is only asserted once
+    raise(item, 'mousedown', { which: 1, clientX: 10, clientY: 10 })
+    raise(item, 'mousemove', { which: 1, clientX: 15, clientY: 15 })
+    // ensure the copy method condition is only asserted once
+    raise(item, 'mousemove', { which: 1, clientX: 15, clientY: 15 })
 
     function checkCondition (el, source) {
       expect(el.className).toBe('copyable', 'dragged element classname is copyable')
@@ -317,7 +318,7 @@ describe('drag', function () {
 
     drake.on('drop', () => fail())
 
-    raise(item, 'mousedown', { which: 1 })
-    raise(item, 'mousemove', { which: 1 })
+    raise(item, 'mousedown', { which: 1, clientX: 10, clientY: 10 })
+    raise(item, 'mousemove', { which: 1, clientX: 15, clientY: 15 })
   })
 })
