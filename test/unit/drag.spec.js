@@ -190,23 +190,21 @@ describe('drag', function () {
     expect(document.body.className).toBe('gu-unselectable', 'body has gu-unselectable class')
   })
 
-  test('when dragging, source radio inputs retain their checked attribute', function (t) {
+  it('when dragging, source radio inputs retain their checked attribute', function () {
     var div = document.createElement('div');
     var item = document.createElement('div');
-    var drake = dragula([div]);
+    var drake = createDragula([div]);
     item.innerHTML = '<em><input type=radio name=foo checked /></em>';
     div.appendChild(item);
     document.body.appendChild(div);
     drake.on('cloned', cloned);
-    events.raise(item, 'mousedown', { which: 1 });
-    events.raise(item, 'mousemove', { which: 1 });
-    t.plan(4);
-    t.end();
+    raise(item, 'mousedown', { which: 1 });
+    raise(item, 'mousemove', { which: 1 });
     function cloned (mirror) {
-      t.equal(item.getElementsByTagName('input')[0].checked, true, 'source radio is still checked');
-      t.equal(mirror.getElementsByTagName('input')[0].checked, false, 'mirror radio is not checked');
+      expect(item.getElementsByTagName('input')[0].checked).toBeTruthy()
+      expect(mirror.getElementsByTagName('input')[0].checked).toBeTruthy()
     }
-  });
+  })
 
   it('when dragging, element gets a mirror image for show', function () {
     let div = document.createElement('div')
