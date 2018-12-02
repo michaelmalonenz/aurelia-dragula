@@ -232,6 +232,18 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
           };
         };
 
+        Dragula.prototype._cloneNodeWithoutCheckedRadios = function _cloneNodeWithoutCheckedRadios(el) {
+          var mirror = el.cloneNode(true);
+          var mirrorInputs = mirror.getElementsByTagName('input');
+          var len = mirrorInputs.length;
+          for (var i = 0; i < len; i++) {
+            if (mirrorInputs[i].type === 'radio') {
+              mirrorInputs[i].checked = false;
+            }
+          }
+          return mirror;
+        };
+
         Dragula.prototype.manualStart = function manualStart(item) {
           var context = this._canStart(item);
           if (context) {
@@ -241,7 +253,7 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
 
         Dragula.prototype.start = function start(context) {
           if (this._isCopy(context.item, context.source)) {
-            this._copy = context.item.cloneNode(true);
+            this._copy = this._cloneNodeWithoutCheckedRadios(context.item);
             this._emitter.emit('cloned', this._copy, context.item, 'copy', Util.getViewModel(context.item));
           }
 
@@ -484,7 +496,7 @@ System.register(['aurelia-dependency-injection', './touchy', './options', './uti
             return;
           }
           var rect = this._item.getBoundingClientRect();
-          this._mirror = this._item.cloneNode(true);
+          this._mirror = this._cloneNodeWithoutCheckedRadios(this._item);
           this._mirror.style.width = Util.getRectWidth(rect) + 'px';
           this._mirror.style.height = Util.getRectHeight(rect) + 'px';
           classes.rm(this._mirror, 'gu-transit');

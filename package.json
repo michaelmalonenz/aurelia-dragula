@@ -1,6 +1,6 @@
 {
   "name": "aurelia-dragula",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "An aurelia compatible version of Dragula",
   "keywords": [
     "aurelia",
@@ -44,7 +44,7 @@
     "gulp-htmlmin": "^3.0.0",
     "gulp-insert": "^0.5.0",
     "gulp-notify": "^2.2.0",
-    "gulp-plumber": "^1.1.0",
+    "gulp-plumber": "^1.2.1",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-yuidoc": "^0.1.2",
     "jasmine": "^2.4.1",
@@ -59,7 +59,7 @@
     "object.assign": "^1.1.1",
     "require-dir": "^1.1.0",
     "run-sequence": "^1.0.2",
-    "through2": "^2.0.1",
+    "through2": "^2.0.5",
     "vinyl-paths": "^1.0.0",
     "yargs": "^2.3.0",
     "yui": "^3.18.1"
