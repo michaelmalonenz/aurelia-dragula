@@ -294,14 +294,9 @@ export class Dragula {
     this._cleanup()
   }
 
-  cancel (revert, forceIgnoreRevert = false) {
+  cancel (revert) {
     if (!this.dragging) {
       return
-    }
-    // If the initial sibling is the Aurelia <!--anchor--> node, then we have to
-    // re-render on Aurelia's behalf.
-    if (this._initialSibling && this._initialSibling.nodeName === '#comment' && this._initialSibling.data === 'anchor') {
-      forceIgnoreRevert = false
     }
     let reverts = arguments.length > 0 ? revert : this.options.revertOnSpill
     let item = this._copy || this._item
@@ -350,7 +345,7 @@ export class Dragula {
   }
 
   _findDropTarget (elementBehindCursor, clientX, clientY) {
-    let accepted = () => {
+    const accepted = () => {
       let droppable = this.isContainer(target)
       if (droppable === false) {
         return false
@@ -425,11 +420,8 @@ export class Dragula {
       }
       return
     }
-    if (
-      (reference == null && changed) ||
-      reference !== item &&
-      reference !== Util.nextEl(item)
-    ) {
+    if ((reference == null && changed) ||
+      (reference !== item && reference !== Util.nextEl(item))) {
       this._currentSibling = reference
       dropTarget.insertBefore(item, reference)
       this._emitter.emit('shadow', item, dropTarget, this._source, Util.getViewModel(item))
@@ -471,7 +463,7 @@ export class Dragula {
 
   getReference (dropTarget, target, x, y) {
     const horizontal = this.options.direction === 'horizontal'
-    let outside = () => { // slower, but able to figure out any position
+    const outside = () => { // slower, but able to figure out any position
       let len = dropTarget.children.length
       let i, el, rect
       for (i = 0; i < len; i++) {
@@ -483,11 +475,11 @@ export class Dragula {
       return null
     }
 
-    let resolve = (after) => {
+    const resolve = (after) => {
       return after ? Util.nextEl(target) : target
     }
 
-    let inside = () => { // faster, but only available if dropped inside a child element
+    const inside = () => { // faster, but only available if dropped inside a child element
       let rect = target.getBoundingClientRect()
       if (horizontal) {
         return resolve(x > (rect.left + Util.getRectWidth(rect) / 2))
@@ -505,5 +497,4 @@ export class Dragula {
 
     return isBoolean ? this.options.copy : this.options.copy(item, container)
   }
-
 }
