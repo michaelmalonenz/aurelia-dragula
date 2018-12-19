@@ -266,6 +266,12 @@ export class Dragula {
   }
 
   drop (item, target) {
+    // If the sibling is null, then we need to shift it before the Aurelia <!--anchor--> node
+    const prevSibling = item.previousSibling
+    if (this._currentSibling == null && prevSibling &&
+        prevSibling.nodeName === '#comment' && prevSibling.data === 'anchor') {
+      target.insertBefore(prevSibling)
+    }
     if (this._copy && this.options.copySortSource && target === this._source) {
       let parent = Util.getParent(this._item)
       if (parent) {

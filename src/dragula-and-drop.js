@@ -88,7 +88,6 @@ export class DragulaAndDrop {
   }
 
   _dropFunction(item, target, source, sibling, itemVM, siblingVM) {
-    this.dragula.cancel(this.options.revertOnSpill, true);
     if (typeof this.dropFn === 'function')
       this.dropFn({ item, target, source, sibling, itemVM, siblingVM });
   }
