@@ -31,7 +31,6 @@ import {Dragula} from './dragula';
 @useView('./dragula-and-drop.html')
 @inject(GLOBAL_OPTIONS)
 export class DragulaAndDrop {
-
   constructor(globalOptions) {
     this.dragula = {};
     this.globalOptions = globalOptions;
