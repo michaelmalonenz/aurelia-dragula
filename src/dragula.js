@@ -1,14 +1,13 @@
-import {Container} from 'aurelia-dependency-injection'
-import {touchy} from './touchy'
-import {GLOBAL_OPTIONS} from './options'
-import {Util} from './util'
-import {Emitter} from './emitter'
+import { Container } from 'aurelia-dependency-injection'
+import { touchy } from './touchy'
+import { GLOBAL_OPTIONS } from './options'
+import { Util } from './util'
+import { Emitter } from './emitter'
 import * as classes from './classes'
 
 const MIN_TIME_BETWEEN_REDRAWS_MS = 20
 
 export class Dragula {
-
   constructor (options) {
     let globalOptions = Container.instance.get(GLOBAL_OPTIONS)
     this.options = Object.assign({}, globalOptions, options)
@@ -28,19 +27,19 @@ export class Dragula {
 
     this._addEvents()
 
-    this._mirror // mirror image
-    this._source // source container
-    this._item // item being dragged
-    this._offsetX // reference x
-    this._offsetY // reference y
-    this._moveX // reference move x
-    this._moveY // reference move y
-    this._initialSibling // reference sibling when grabbed
-    this._currentSibling // reference sibling now
-    this._copy // item used for copying
+    this._mirror = null // mirror image
+    this._source = null // source container
+    this._item = null // item being dragged
+    this._offsetX = null // reference x
+    this._offsetY = null // reference y
+    this._moveX = null // reference move x
+    this._moveY = null // reference move y
+    this._initialSibling = null // reference sibling when grabbed
+    this._currentSibling = null // reference sibling now
+    this._copy = null // item used for copying
     this._lastRenderTime = null // last time we rendered the mirror
     this._lastDropTarget = null // last container item was over
-    this._grabbed // holds mousedown context until first mousemove
+    this._grabbed = false // holds mousedown context until first mousemove
   }
 
   on (eventName, callback) {
@@ -89,7 +88,7 @@ export class Dragula {
 
   destroy () {
     this._removeEvents()
-    this._release({clientX: -1, clientY: -1})
+    this._release({ clientX: -1, clientY: -1 })
     this._emitter.destroy()
   }
 
@@ -197,16 +196,16 @@ export class Dragula {
     }
   }
 
-  _cloneNodeWithoutCheckedRadios(el) {
-    var mirror = el.cloneNode(true);
-    var mirrorInputs = mirror.getElementsByTagName('input');
-    var len = mirrorInputs.length;
+  _cloneNodeWithoutCheckedRadios (el) {
+    var mirror = el.cloneNode(true)
+    var mirrorInputs = mirror.getElementsByTagName('input')
+    var len = mirrorInputs.length
     for (var i = 0; i < len; i++) {
       if (mirrorInputs[i].type === 'radio') {
-        mirrorInputs[i].checked = false;
+        mirrorInputs[i].checked = false
       }
     }
-    return mirror;
+    return mirror
   }
 
   manualStart (item) {
