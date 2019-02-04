@@ -309,7 +309,7 @@ define(['exports', 'aurelia-dependency-injection', './touchy', './options', './u
     Dragula.prototype.drop = function drop(item, target) {
       var prevSibling = item.previousSibling;
       if (this._currentSibling == null && prevSibling && prevSibling.nodeName === '#comment' && prevSibling.data === 'anchor') {
-        target.insertBefore(prevSibling);
+        target.insertBefore(item, prevSibling);
       }
       if (this._copy && this.options.copySortSource && target === this._source) {
         var parent = _util.Util.getParent(this._item);
