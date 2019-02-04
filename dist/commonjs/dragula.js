@@ -51,19 +51,19 @@ var Dragula = exports.Dragula = function () {
 
     this._addEvents();
 
-    this._mirror;
-    this._source;
-    this._item;
-    this._offsetX;
-    this._offsetY;
-    this._moveX;
-    this._moveY;
-    this._initialSibling;
-    this._currentSibling;
-    this._copy;
+    this._mirror = null;
+    this._source = null;
+    this._item = null;
+    this._offsetX = null;
+    this._offsetY = null;
+    this._moveX = null;
+    this._moveY = null;
+    this._initialSibling = null;
+    this._currentSibling = null;
+    this._copy = null;
     this._lastRenderTime = null;
     this._lastDropTarget = null;
-    this._grabbed;
+    this._grabbed = false;
   }
 
   Dragula.prototype.on = function on(eventName, callback) {
@@ -279,6 +279,10 @@ var Dragula = exports.Dragula = function () {
   };
 
   Dragula.prototype.drop = function drop(item, target) {
+    var prevSibling = item.previousSibling;
+    if (this._currentSibling == null && prevSibling && prevSibling.nodeName === '#comment' && prevSibling.data === 'anchor') {
+      target.insertBefore(prevSibling);
+    }
     if (this._copy && this.options.copySortSource && target === this._source) {
       var parent = _util.Util.getParent(this._item);
       if (parent) {
@@ -307,14 +311,8 @@ var Dragula = exports.Dragula = function () {
   };
 
   Dragula.prototype.cancel = function cancel(revert) {
-    var forceIgnoreRevert = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
     if (!this.dragging) {
       return;
-    }
-
-    if (this._initialSibling && this._initialSibling.nodeName === '#comment' && this._initialSibling.data === 'anchor') {
-      forceIgnoreRevert = false;
     }
     var reverts = arguments.length > 0 ? revert : this.options.revertOnSpill;
     var item = this._copy || this._item;

@@ -65,7 +65,6 @@ export function rm (el, className) {
 @useView('./dragula-and-drop.html')
 @inject(GLOBAL_OPTIONS)
 export class DragulaAndDrop {
-
   constructor(globalOptions) {
     this.dragula = {};
     this.globalOptions = globalOptions;
@@ -122,7 +121,6 @@ export class DragulaAndDrop {
   }
 
   _dropFunction(item, target, source, sibling, itemVM, siblingVM) {
-    this.dragula.cancel(this.options.revertOnSpill, true);
     if (typeof this.dropFn === 'function')
       this.dropFn({ item, target, source, sibling, itemVM, siblingVM });
   }
@@ -201,17 +199,16 @@ export class DragulaAndDrop {
   }
 }
 
-import {Container} from 'aurelia-dependency-injection'
-import {touchy} from './touchy'
-import {GLOBAL_OPTIONS} from './options'
-import {Util} from './util'
-import {Emitter} from './emitter'
+import { Container } from 'aurelia-dependency-injection'
+import { touchy } from './touchy'
+import { GLOBAL_OPTIONS } from './options'
+import { Util } from './util'
+import { Emitter } from './emitter'
 import * as classes from './classes'
 
 const MIN_TIME_BETWEEN_REDRAWS_MS = 20
 
 export class Dragula {
-
   constructor (options) {
     let globalOptions = Container.instance.get(GLOBAL_OPTIONS)
     this.options = Object.assign({}, globalOptions, options)
@@ -231,19 +228,19 @@ export class Dragula {
 
     this._addEvents()
 
-    this._mirror // mirror image
-    this._source // source container
-    this._item // item being dragged
-    this._offsetX // reference x
-    this._offsetY // reference y
-    this._moveX // reference move x
-    this._moveY // reference move y
-    this._initialSibling // reference sibling when grabbed
-    this._currentSibling // reference sibling now
-    this._copy // item used for copying
+    this._mirror = null // mirror image
+    this._source = null // source container
+    this._item = null // item being dragged
+    this._offsetX = null // reference x
+    this._offsetY = null // reference y
+    this._moveX = null // reference move x
+    this._moveY = null // reference move y
+    this._initialSibling = null // reference sibling when grabbed
+    this._currentSibling = null // reference sibling now
+    this._copy = null // item used for copying
     this._lastRenderTime = null // last time we rendered the mirror
     this._lastDropTarget = null // last container item was over
-    this._grabbed // holds mousedown context until first mousemove
+    this._grabbed = false // holds mousedown context until first mousemove
   }
 
   on (eventName, callback) {
@@ -292,7 +289,7 @@ export class Dragula {
 
   destroy () {
     this._removeEvents()
-    this._release({clientX: -1, clientY: -1})
+    this._release({ clientX: -1, clientY: -1 })
     this._emitter.destroy()
   }
 
@@ -333,7 +330,10 @@ export class Dragula {
       return // when text is selected on an input and then dragged, mouseup doesn't fire. this is our only hope
     }
     // truthy check fixes #239, equality fixes #207
-    if (e.clientX !== void 0 && e.clientX === this._moveX && e.clientY !== void 0 && e.clientY === this._moveY) {
+    if (e.clientX !== void 0 &&
+      e.clientX === this._moveX &&
+      e.clientY !== void 0 &&
+      e.clientY === this._moveY) {
       return
     }
     if (this.options.ignoreInputTextSelection) {
@@ -397,16 +397,16 @@ export class Dragula {
     }
   }
 
-  _cloneNodeWithoutCheckedRadios(el) {
-    var mirror = el.cloneNode(true);
-    var mirrorInputs = mirror.getElementsByTagName('input');
-    var len = mirrorInputs.length;
+  _cloneNodeWithoutCheckedRadios (el) {
+    var mirror = el.cloneNode(true)
+    var mirrorInputs = mirror.getElementsByTagName('input')
+    var len = mirrorInputs.length
     for (var i = 0; i < len; i++) {
       if (mirrorInputs[i].type === 'radio') {
-        mirrorInputs[i].checked = false;
+        mirrorInputs[i].checked = false
       }
     }
-    return mirror;
+    return mirror
   }
 
   manualStart (item) {
@@ -467,6 +467,12 @@ export class Dragula {
   }
 
   drop (item, target) {
+    // If the sibling is null, then we need to shift it before the Aurelia <!--anchor--> node
+    const prevSibling = item.previousSibling
+    if (this._currentSibling == null && prevSibling &&
+        prevSibling.nodeName === '#comment' && prevSibling.data === 'anchor') {
+      target.insertBefore(prevSibling)
+    }
     if (this._copy && this.options.copySortSource && target === this._source) {
       let parent = Util.getParent(this._item)
       if (parent) {
@@ -495,14 +501,9 @@ export class Dragula {
     this._cleanup()
   }
 
-  cancel (revert, forceIgnoreRevert = false) {
+  cancel (revert) {
     if (!this.dragging) {
       return
-    }
-    // If the initial sibling is the Aurelia <!--anchor--> node, then we have to
-    // re-render on Aurelia's behalf.
-    if (this._initialSibling && this._initialSibling.nodeName === '#comment' && this._initialSibling.data === 'anchor') {
-      forceIgnoreRevert = false
     }
     let reverts = arguments.length > 0 ? revert : this.options.revertOnSpill
     let item = this._copy || this._item
@@ -551,7 +552,7 @@ export class Dragula {
   }
 
   _findDropTarget (elementBehindCursor, clientX, clientY) {
-    let accepted = () => {
+    const accepted = () => {
       let droppable = this.isContainer(target)
       if (droppable === false) {
         return false
@@ -626,11 +627,8 @@ export class Dragula {
       }
       return
     }
-    if (
-      (reference == null && changed) ||
-      reference !== item &&
-      reference !== Util.nextEl(item)
-    ) {
+    if ((reference == null && changed) ||
+      (reference !== item && reference !== Util.nextEl(item))) {
       this._currentSibling = reference
       dropTarget.insertBefore(item, reference)
       this._emitter.emit('shadow', item, dropTarget, this._source, Util.getViewModel(item))
@@ -672,7 +670,7 @@ export class Dragula {
 
   getReference (dropTarget, target, x, y) {
     const horizontal = this.options.direction === 'horizontal'
-    let outside = () => { // slower, but able to figure out any position
+    const outside = () => { // slower, but able to figure out any position
       let len = dropTarget.children.length
       let i, el, rect
       for (i = 0; i < len; i++) {
@@ -684,11 +682,11 @@ export class Dragula {
       return null
     }
 
-    let resolve = (after) => {
+    const resolve = (after) => {
       return after ? Util.nextEl(target) : target
     }
 
-    let inside = () => { // faster, but only available if dropped inside a child element
+    const inside = () => { // faster, but only available if dropped inside a child element
       let rect = target.getBoundingClientRect()
       if (horizontal) {
         return resolve(x > (rect.left + Util.getRectWidth(rect) / 2))
@@ -706,7 +704,6 @@ export class Dragula {
 
     return isBoolean ? this.options.copy : this.options.copy(item, container)
   }
-
 }
 
 // let debounce = require('./debounce')
@@ -804,7 +801,7 @@ export class Options {
     this.isContainer = Options.never
     this.copy = false
     this.copySortSource = false
-    this.revertOnSpill = false
+    this.revertOnSpill = true
     this.removeOnSpill = false
     this.direction = DIRECTION.VERTICAL
     this.ignoreInputTextSelection = true

@@ -29,7 +29,7 @@ define(['exports'], function (exports) {
       this.isContainer = Options.never;
       this.copy = false;
       this.copySortSource = false;
-      this.revertOnSpill = false;
+      this.revertOnSpill = true;
       this.removeOnSpill = false;
       this.direction = DIRECTION.VERTICAL;
       this.ignoreInputTextSelection = true;

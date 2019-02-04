@@ -76,7 +76,6 @@ var DragulaAndDrop = exports.DragulaAndDrop = (_dec = (0, _aureliaTemplating.bin
   };
 
   DragulaAndDrop.prototype._dropFunction = function _dropFunction(item, target, source, sibling, itemVM, siblingVM) {
-    this.dragula.cancel(this.options.revertOnSpill, true);
     if (typeof this.dropFn === 'function') this.dropFn({ item: item, target: target, source: source, sibling: sibling, itemVM: itemVM, siblingVM: siblingVM });
   };
 

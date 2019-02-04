@@ -36,7 +36,7 @@ System.register([], function (_export, _context) {
           this.isContainer = Options.never;
           this.copy = false;
           this.copySortSource = false;
-          this.revertOnSpill = false;
+          this.revertOnSpill = true;
           this.removeOnSpill = false;
           this.direction = DIRECTION.VERTICAL;
           this.ignoreInputTextSelection = true;
