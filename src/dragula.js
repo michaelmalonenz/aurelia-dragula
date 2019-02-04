@@ -270,7 +270,7 @@ export class Dragula {
     const prevSibling = item.previousSibling
     if (this._currentSibling == null && prevSibling &&
         prevSibling.nodeName === '#comment' && prevSibling.data === 'anchor') {
-      target.insertBefore(prevSibling)
+      target.insertBefore(item, prevSibling)
     }
     if (this._copy && this.options.copySortSource && target === this._source) {
       let parent = Util.getParent(this._item)
