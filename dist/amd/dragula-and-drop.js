@@ -31,7 +31,8 @@ define(['exports', 'aurelia-templating', 'aurelia-binding', 'aurelia-dependency-
         isContainer: this._isContainer.bind(this),
         moves: this._moves.bind(this),
         accepts: this._accepts.bind(this),
-        invalid: this._invalid.bind(this)
+        invalid: this._invalid.bind(this),
+        copy: this._copy.bind(this)
       };
 
       this.options = Object.assign(aureliaOptions, boundOptions);
@@ -110,10 +111,19 @@ define(['exports', 'aurelia-templating', 'aurelia-binding', 'aurelia-dependency-
       }
     };
 
+    DragulaAndDrop.prototype._copy = function _copy(item, container) {
+      if (typeof this.copy === 'function') {
+        return this.copy({ item: item, container: container });
+      }
+      if (typeof this.globalOptions.copy === 'function') {
+        return this.globalOptions.copy({ item: item, container: container });
+      }
+      return this._convertToBooleanIfRequired(this._getOption('copy'));
+    };
+
     DragulaAndDrop.prototype._setupOptions = function _setupOptions() {
       var result = {
         containers: this._getOption('containers'),
-        copy: this._convertToBooleanIfRequired(this._getOption('copy')),
         copySortSource: this._convertToBooleanIfRequired(this._getOption('copySortSource')),
         revertOnSpill: this._convertToBooleanIfRequired(this._getOption('revertOnSpill')),
         removeOnSpill: this._convertToBooleanIfRequired(this._getOption('removeOnSpill')),
