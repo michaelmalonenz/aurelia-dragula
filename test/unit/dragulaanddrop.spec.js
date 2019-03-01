@@ -20,16 +20,11 @@ describe('the Dragula and Drop Custom Element', function () {
     this.container.classList.add('drag-source')
     this.container.classList.add('drop-target')
 
-    this.commentBegin = document.createComment('<view>')
-    this.commentEnd = document.createComment('</view>')
+    this.commentAnchor = document.createComment('anchor')
 
-    this.container.appendChild(this.commentBegin)
     this.container.appendChild(this.item)
-    this.container.appendChild(this.commentEnd)
-
-    this.container.appendChild(this.commentBegin)
     this.container.appendChild(this.sibling)
-    this.container.appendChild(this.commentEnd)
+    this.container.appendChild(this.commentAnchor)
 
     document.body.appendChild(this.container)
 

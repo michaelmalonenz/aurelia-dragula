@@ -9,11 +9,11 @@ describe('drake defaults', () => {
     expect(typeof options.accepts).toBe('function')
     expect(typeof options.invalid).toBe('function')
     expect(typeof options.isContainer).toBe('function')
-    expect(options.copy).toBe(false)
-    expect(options.revertOnSpill).toBe(false)
-    expect(options.removeOnSpill).toBe(false)
-    expect(options.direction).toBe('vertical')
-    expect(options.mirrorContainer).toBe(document.body)
+    expect(options.copy).toBe(false, 'copy')
+    expect(options.revertOnSpill).toBe(true, 'revertOnSpill')
+    expect(options.removeOnSpill).toBe(false, 'removeOnSpill')
+    expect(options.direction).toBe('vertical', 'direction')
+    expect(options.mirrorContainer).toBe(document.body, 'mirrorContainer')
   })
 
   it('still has sensible options when combined with dragula', () => {
@@ -24,11 +24,11 @@ describe('drake defaults', () => {
     expect(typeof dragula.options.accepts).toBe('function')
     expect(typeof dragula.options.invalid).toBe('function')
     expect(typeof dragula.options.isContainer).toBe('function')
-    expect(dragula.options.copy).toBe(false)
-    expect(dragula.options.revertOnSpill).toBe(false)
-    expect(dragula.options.removeOnSpill).toBe(false)
-    expect(dragula.options.direction).toBe('vertical')
-    expect(dragula.options.mirrorContainer).toBe(document.body)
+    expect(dragula.options.copy).toBe(false, 'copy')
+    expect(dragula.options.revertOnSpill).toBe(true, 'revertOnSpill')
+    expect(dragula.options.removeOnSpill).toBe(false, 'removeOnSpill')
+    expect(dragula.options.direction).toBe('vertical', 'direction')
+    expect(dragula.options.mirrorContainer).toBe(document.body, 'mirrorContainer')
   })
 
   it('combine with the supplied options correctly', function () {
