@@ -62,6 +62,7 @@ export function rm (el, className) {
 @bindable({ name: 'outFn', attribute: 'out-fn', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'shadowFn', attribute: 'shadow-fn', defaultBindingMode: bindingMode.oneTime })
 @bindable({ name: 'removeFn', attribute: 'remove-fn', defaultBindingMode: bindingMode.oneTime })
+@bindable({ name: 'cancelFn', attribute: 'cancel-fn', defaultBindingMode: bindingMode.oneTime })
 @customElement('dragula-and-drop')
 @useView('./dragula-and-drop.html')
 @inject(GLOBAL_OPTIONS)
@@ -120,6 +121,11 @@ export class DragulaAndDrop {
     this.dragula.on('remove', (item, target, source, itemVM) => {
       if (typeof this.removeFn === 'function')
         this.removeFn({ item, target, source, itemVM });
+    });
+
+    this.dragula.on('cancel', (item, target, source, itemVM) => {
+      if (typeof this.cancelFn === 'function')
+        this.cancelFn({ item, target, source, itemVM });
     });
   }
 
