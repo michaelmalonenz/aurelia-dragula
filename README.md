@@ -277,3 +277,11 @@ dragula.once('drag', (item, source, itemVM) => {
   </tr>
 </table>
 
+### Bundling
+Bundling with Aurelia-Dragula currently requires the following resources:
+```
+"aurelia-dragula",
+"aurelia-dragula/dragula.css!text",
+"aurelia-dragula/dragula-and-drop.html!text",
+"aurelia-dragula/dragula-and-drop.js"
+```
