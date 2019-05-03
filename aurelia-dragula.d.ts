@@ -39,7 +39,7 @@ declare namespace dragula {
     drop(item: Element, target: Element);
   }
 
-  function moveBefore(array: Array<any>, itemMatcherFn: (item: Element) => boolean, siblingMatcherFn: (item: Element) => boolean)
+  function moveBefore<T>(array: T[], itemMatcherFn: (item: T) => boolean, siblingMatcherFn: (item: T) => boolean)
 }
 
 export = dragula;
