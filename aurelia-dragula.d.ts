@@ -35,11 +35,11 @@ declare namespace dragula {
     once(events: string, callback: Function): void;
     canMove(item: Element): boolean;
     destroy(): void;
-    isContainer(item: Element);
-    drop(item: Element, target: Element);
+    isContainer(item: Element): boolean;
+    drop(item: Element, target: Element): void;
   }
 
-  function moveBefore<T>(array: T[], itemMatcherFn: (item: T) => boolean, siblingMatcherFn: (item: T) => boolean)
+  function moveBefore<T>(array: T[], itemMatcherFn: (item: T) => boolean, siblingMatcherFn: (item: T) => boolean): void;
 }
 
 export = dragula;
