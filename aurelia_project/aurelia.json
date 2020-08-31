@@ -1,0 +1,121 @@
+{
+  "name": "aurelia-dragula",
+  "type": "project:plugin",
+  "paths": {
+    "root": "dev-app",
+    "resources": "../src",
+    "elements": "../src/elements",
+    "attributes": "../src/attributes",
+    "valueConverters": "../src/value-converters",
+    "bindingBehaviors": "../src/binding-behaviors"
+  },
+  "transpiler": {
+    "id": "babel",
+    "fileExtension": ".js",
+    "options": {
+      "plugins": [
+        [
+          "@babel/plugin-transform-modules-amd",
+          {
+            "loose": true
+          }
+        ]
+      ]
+    },
+    "source": [
+      "dev-app/**/*.js",
+      "src/**/*.js"
+    ]
+  },
+  "plugin": {
+    "source": {
+      "js": "src/**/*.js",
+      "css": "src/**/*.css",
+      "html": "src/**/*.html",
+      "json": "src/**/*.json"
+    }
+  },
+  "markupProcessor": {
+    "source": [
+      "dev-app/**/*.html",
+      "src/**/*.html"
+    ]
+  },
+  "cssProcessor": {
+    "source": [
+      "dev-app/**/*.css",
+      "src/**/*.css"
+    ]
+  },
+  "jsonProcessor": {
+    "source": [
+      "dev-app/**/*.json",
+      "src/**/*.json"
+    ]
+  },
+  "platform": {
+    "port": 9000,
+    "host": "localhost",
+    "open": false,
+    "index": "index.html",
+    "baseDir": ".",
+    "output": "scripts"
+  },
+  "build": {
+    "targets": [
+      {
+        "port": 9000,
+        "index": "index.html",
+        "baseDir": ".",
+        "output": "scripts"
+      }
+    ],
+    "options": {
+      "minify": "stage & prod",
+      "sourcemaps": "dev & stage",
+      "rev": "prod",
+      "cache": "dev & stage"
+    },
+    "bundles": [
+      {
+        "name": "app-bundle.js",
+        "source": [
+          "**/*.{js,json,css,html}"
+        ]
+      },
+      {
+        "name": "vendor-bundle.js",
+        "prepend": [
+          "node_modules/regenerator-runtime/runtime.js",
+          "node_modules/promise-polyfill/dist/polyfill.min.js",
+          "node_modules/requirejs/require.js"
+        ],
+        "dependencies": [
+          "aurelia-bootstrapper",
+          "aurelia-loader-default",
+          "aurelia-pal-browser",
+          {
+            "name": "aurelia-testing",
+            "env": "dev"
+          },
+          "text"
+        ]
+      }
+    ],
+    "loader": {
+      "type": "require",
+      "configTarget": "vendor-bundle.js",
+      "includeBundleMetadataInConfig": "auto",
+      "plugins": [
+        {
+          "name": "text",
+          "extensions": [
+            ".html",
+            ".css"
+          ],
+          "stub": false
+        }
+      ]
+    }
+  }
+}

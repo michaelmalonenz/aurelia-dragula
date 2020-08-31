@@ -1,52 +1,55 @@
-'use strict';
+"use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+exports.__esModule = true;
+exports.Emitter = void 0;
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var EventListener = function EventListener(func) {
-  var once = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-  _classCallCheck(this, EventListener);
+var EventListener = function EventListener(func, once) {
+  if (once === void 0) {
+    once = false;
+  }
 
   this.func = func;
   this.once = once;
 };
 
-var Emitter = exports.Emitter = function () {
+var Emitter = /*#__PURE__*/function () {
   function Emitter() {
-    _classCallCheck(this, Emitter);
-
     this.events = {};
   }
 
-  Emitter.prototype.on = function on(type, fn) {
-    var once = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var _proto = Emitter.prototype;
+
+  _proto.on = function on(type, fn, once) {
+    if (once === void 0) {
+      once = false;
+    }
 
     var newEvent = new EventListener(fn, once);
+
     if (this.events[type] === undefined) {
       this.events[type] = [];
     }
+
     this.events[type].push(newEvent);
   };
 
-  Emitter.prototype.once = function once(type, fn) {
+  _proto.once = function once(type, fn) {
     this.on(type, fn, true);
   };
 
-  Emitter.prototype.off = function off(type, fn) {
+  _proto.off = function off(type, fn) {
     if (arguments.length === 1) {
       delete this.events[type];
     } else if (arguments.length === 0) {
       this.events = {};
     } else {
       var eventList = this.events[type];
+
       if (eventList) {
         var index = eventList.findIndex(function (x) {
           return x.func === fn;
         });
+
         if (index >= 0) {
           eventList.splice(index, 1);
         }
@@ -54,22 +57,25 @@ var Emitter = exports.Emitter = function () {
     }
   };
 
-  Emitter.prototype.destroy = function destroy() {
+  _proto.destroy = function destroy() {
     this.events = {};
   };
 
-  Emitter.prototype.emit = function emit() {
+  _proto.emit = function emit() {
     var _this = this;
 
-    var args = arguments ? [].concat(Array.prototype.slice.call(arguments)) : [];
+    var args = arguments ? Array.prototype.slice.call(arguments) : [];
     var type = args.shift();
     var et = (this.events[type] || []).slice(0);
+
     if (type === 'error' && !et.length) {
       throw args.length === 1 ? args[0] : args;
     }
+
     var toDeregister = [];
     et.forEach(function (listener) {
       listener.func.apply(listener, args);
+
       if (listener.once) {
         toDeregister.push(listener);
       }
@@ -81,3 +87,6 @@ var Emitter = exports.Emitter = function () {
 
   return Emitter;
 }();
+
+exports.Emitter = Emitter;
+//# sourceMappingURL=emitter.js.map

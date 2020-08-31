@@ -1,0 +1,82 @@
+import gulp from 'gulp';
+import gulpIf from 'gulp-if';
+import plumber from 'gulp-plumber';
+import babel from 'gulp-babel';
+import rename from 'gulp-rename';
+import cache from 'gulp-cache';
+import project from '../aurelia.json';
+import fs from 'fs';
+import {Transform} from 'stream';
+import { CLIOptions, build, Configuration } from 'aurelia-cli';
+import * as gulpSourcemaps from 'gulp-sourcemaps';
+
+let env = CLIOptions.getEnvironment();
+const buildOptions = new Configuration(project.build.options);
+const useCache = buildOptions.isApplicable('cache');
+
+function configureEnvironment() {
+  return gulp.src(`aurelia_project/environments/${env}.js`, {
+      since: gulp.lastRun(configureEnvironment)
+    })
+    .pipe(rename('environment.js'))
+    .pipe(new Transform({
+      objectMode: true,
+      transform: function (file, _, cb) {
+        // https://github.com/aurelia/cli/issues/1031
+        fs.unlink(`${project.paths.root}/${file.relative}`, function () {
+          cb(null, file);
+        });
+      }
+    }))
+    .pipe(gulp.dest(project.paths.root));
+}
+
+function buildJavaScript() {
+  let transpile = babel(project.transpiler.options);
+  if (useCache) {
+    // the cache directory is "gulp-cache/projName-env" inside folder require('os').tmpdir()
+    // use command 'au clear-cache' to purge all caches
+    transpile = cache(transpile, {
+      name: project.name + '-' + env
+    });
+  }
+
+  return gulp.src(project.transpiler.source, {
+      sourcemaps: true,
+      since: gulp.lastRun(buildJavaScript)
+    })
+    .pipe(gulpIf(CLIOptions.hasFlag('watch'), plumber()))
+    .pipe(transpile)
+    .pipe(build.bundle());
+}
+
+export default gulp.series(
+  configureEnvironment,
+  buildJavaScript
+);
+
+export function buildPluginJavaScript(dest, format) {
+  return function processPluginJavaScript() {
+    let opts = {};
+    if (format === 'commonjs') {
+      opts = {
+        plugins: [
+          ['@babel/plugin-transform-modules-commonjs', {
+            loose: true
+          }]
+        ]
+      };
+    }
+    const transpile = babel(opts);
+
+    return gulp.src(project.plugin.source.js)
+      .pipe(gulpIf(CLIOptions.hasFlag('watch'), plumber()))
+      .pipe(gulpSourcemaps.init())
+      .pipe(transpile)
+      .pipe(gulpSourcemaps.write('.', {
+        includeContent: false,
+        sourceRoot: '../../src/'
+      }))
+      .pipe(gulp.dest(dest));
+  };
+}

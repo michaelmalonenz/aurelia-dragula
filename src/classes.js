@@ -32,5 +32,5 @@ export function rm (el, className) {
     el.classList.remove(className)
     return
   }
-  el.className = el.className.replace(lookupClass(className), ' ').trim();
+  el.className = el.className.replace(lookupClass(className), ' ').trim()
 }

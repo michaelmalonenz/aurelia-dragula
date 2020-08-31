@@ -6,7 +6,6 @@ export const DIRECTION = {
 }
 
 export class Options {
-
   constructor () {
     this.moves = Options.always
     this.accepts = Options.always

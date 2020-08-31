@@ -1,8 +1,6 @@
-'use strict';
+"use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+exports.__esModule = true;
 exports.touchy = touchy;
 var touch = {
   mouseup: 'touchend',
@@ -30,3 +28,4 @@ function touchy(el, op, type, fn) {
     el[op](type, fn);
   }
 }
+//# sourceMappingURL=touchy.js.map

@@ -1,22 +1,17 @@
-'use strict';
+"use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var GLOBAL_OPTIONS = exports.GLOBAL_OPTIONS = 'GlobalOptions';
-
-var DIRECTION = exports.DIRECTION = {
+exports.__esModule = true;
+exports.Options = exports.DIRECTION = exports.GLOBAL_OPTIONS = void 0;
+var GLOBAL_OPTIONS = 'GlobalOptions';
+exports.GLOBAL_OPTIONS = GLOBAL_OPTIONS;
+var DIRECTION = {
   VERTICAL: 'vertical',
   HORIZONTAL: 'horizontal'
 };
+exports.DIRECTION = DIRECTION;
 
-var Options = exports.Options = function () {
+var Options = /*#__PURE__*/function () {
   function Options() {
-    _classCallCheck(this, Options);
-
     this.moves = Options.always;
     this.accepts = Options.always;
     this.invalid = Options.invalidTarget;
@@ -45,3 +40,6 @@ var Options = exports.Options = function () {
 
   return Options;
 }();
+
+exports.Options = Options;
+//# sourceMappingURL=options.js.map

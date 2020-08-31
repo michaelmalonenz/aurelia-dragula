@@ -1,7 +1,4 @@
-// let debounce = require('./debounce')
-
 class EventListener {
-
   constructor (func, once = false) {
     this.func = func
     this.once = once
@@ -9,7 +6,6 @@ class EventListener {
 }
 
 export class Emitter {
-
   constructor () {
     this.events = {}
   }

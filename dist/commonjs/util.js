@@ -1,80 +1,91 @@
-'use strict';
+"use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Util = undefined;
+exports.__esModule = true;
+exports.Util = void 0;
 
-var _classes = require('./classes');
+var classes = _interopRequireWildcard(require("./classes"));
 
-var classes = _interopRequireWildcard(_classes);
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _Util = /*#__PURE__*/function () {
+  function _Util() {}
 
-var _Util = function () {
-  function _Util() {
-    _classCallCheck(this, _Util);
-  }
+  var _proto = _Util.prototype;
 
-  _Util.prototype.nextEl = function nextEl(el) {
+  _proto.nextEl = function nextEl(el) {
     return el.nextElementSibling || manually();
+
     function manually() {
       var sibling = el;
+
       do {
         sibling = sibling.nextSibling;
       } while (sibling && sibling.nodeType !== 1);
+
       return sibling;
     }
   };
 
-  _Util.prototype.whichMouseButton = function whichMouseButton(e) {
+  _proto.whichMouseButton = function whichMouseButton(e) {
     if (e.touches !== void 0) {
       return e.touches.length;
     }
+
     if (e.which !== void 0 && e.which !== 0) {
       return e.which;
-    }
+    } // see https://github.com/bevacqua/dragula/issues/261
+
+
     if (e.buttons !== void 0) {
       return e.buttons;
     }
+
     var button = e.button;
+
     if (button !== void 0) {
+      // see https://github.com/jquery/jquery/blob/99e8ff1baa7ae341e94bb89c3e84570c7c3ad9ea/src/event.js#L573-L575
       return button & 1 ? 1 : button & 2 ? 3 : button & 4 ? 2 : 0;
     }
   };
 
-  _Util.prototype.getParent = function getParent(el) {
+  _proto.getParent = function getParent(el) {
     return el.parentNode === document ? null : el.parentNode;
   };
 
-  _Util.prototype.getRectWidth = function getRectWidth(rect) {
+  _proto.getRectWidth = function getRectWidth(rect) {
     return rect.width || rect.right - rect.left;
   };
 
-  _Util.prototype.getRectHeight = function getRectHeight(rect) {
+  _proto.getRectHeight = function getRectHeight(rect) {
     return rect.height || rect.bottom - rect.top;
   };
 
-  _Util.prototype.isInput = function isInput(el) {
+  _proto.isInput = function isInput(el) {
     return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || Util.isEditable(el);
   };
 
-  _Util.prototype.isEditable = function isEditable(el) {
+  _proto.isEditable = function isEditable(el) {
     if (!el) {
       return false;
-    }
+    } // no parents were editable
+
+
     if (el.contentEditable === 'false') {
       return false;
-    }
+    } // stop the lookup
+
+
     if (el.contentEditable === 'true') {
       return true;
-    }
-    return this.isEditable(this.getParent(el));
+    } // found a contentEditable element in the chain
+
+
+    return this.isEditable(this.getParent(el)); // contentEditable is set to 'inherit'
   };
 
-  _Util.prototype.getOffset = function getOffset(el) {
+  _proto.getOffset = function getOffset(el) {
     var rect = el.getBoundingClientRect();
     return {
       left: rect.left + this.getScroll('scrollLeft', 'pageXOffset'),
@@ -82,17 +93,19 @@ var _Util = function () {
     };
   };
 
-  _Util.prototype.getScroll = function getScroll(scrollProp, offsetProp) {
+  _proto.getScroll = function getScroll(scrollProp, offsetProp) {
     if (typeof window[offsetProp] !== 'undefined') {
       return window[offsetProp];
     }
+
     if (document.documentElement.clientHeight) {
       return document.documentElement[scrollProp];
     }
+
     return document.body[scrollProp];
   };
 
-  _Util.prototype.getElementBehindPoint = function getElementBehindPoint(point, x, y) {
+  _proto.getElementBehindPoint = function getElementBehindPoint(point, x, y) {
     if (point) {
       classes.add(point, 'gu-hide');
     }
@@ -102,36 +115,45 @@ var _Util = function () {
     if (point) {
       classes.rm(point, 'gu-hide');
     }
+
     return el;
   };
 
-  _Util.prototype.getEventHost = function getEventHost(e) {
+  _proto.getEventHost = function getEventHost(e) {
+    // on touchend event, we have to use `e.changedTouches`
+    // see http://stackoverflow.com/questions/7192563/touchend-event-properties
+    // see https://github.com/bevacqua/dragula/issues/34
     if (e.targetTouches && e.targetTouches.length) {
       return e.targetTouches[0];
     }
+
     if (e.changedTouches && e.changedTouches.length) {
       return e.changedTouches[0];
     }
+
     return e;
   };
 
-  _Util.prototype.getCoord = function getCoord(coord, e) {
+  _proto.getCoord = function getCoord(coord, e) {
     var host = this.getEventHost(e);
     return host[coord];
   };
 
-  _Util.prototype.getImmediateChild = function getImmediateChild(dropTarget, target) {
+  _proto.getImmediateChild = function getImmediateChild(dropTarget, target) {
     var immediate = target;
+
     while (immediate !== dropTarget && this.getParent(immediate) !== dropTarget) {
       immediate = this.getParent(immediate);
     }
+
     if (immediate === document.documentElement) {
       return null;
     }
+
     return immediate;
   };
 
-  _Util.prototype.getViewModel = function getViewModel(element) {
+  _proto.getViewModel = function getViewModel(element) {
     if (element && element.au && element.au.controller) {
       if (element.au.controller.viewModel.currentViewModel) {
         return element.au.controller.viewModel.currentViewModel;
@@ -139,6 +161,7 @@ var _Util = function () {
         return element.au.controller.viewModel;
       }
     }
+
     return null;
   };
 
@@ -147,3 +170,4 @@ var _Util = function () {
 
 var Util = new _Util();
 exports.Util = Util;
+//# sourceMappingURL=util.js.map
