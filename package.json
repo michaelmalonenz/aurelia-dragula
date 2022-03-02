@@ -50,7 +50,7 @@
     "jasmine": "^2.4.1",
     "jasmine-core": "^2.99.1",
     "jspm": "^0.16.55",
-    "karma": "^0.13.22",
+    "karma": "^6.3.16",
     "karma-babel-preprocessor": "^6.0.1",
     "karma-chrome-launcher": "^0.1.12",
     "karma-coverage": "^0.3.1",
