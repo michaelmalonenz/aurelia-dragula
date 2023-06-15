@@ -49,7 +49,7 @@
     "gulp-yuidoc": "^0.1.2",
     "jasmine": "^2.4.1",
     "jasmine-core": "^2.99.1",
-    "jspm": "^2.0.0-beta.7",
+    "jspm": "^3.0.1",
     "karma": "^0.13.22",
     "karma-babel-preprocessor": "^8.0.2",
     "karma-chrome-launcher": "^0.1.12",
